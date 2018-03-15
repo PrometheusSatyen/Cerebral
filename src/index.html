@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="./css/main.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <title>Cerebral</title>
+</head>
+
+<body>
+
+<div id="App"></div>
+
+</body>
+
+<script>
+    let WebFontConfig = {
+        google: { families: [ 'Roboto:400,300,500:latin' ] }
+    };
+    (function() {
+        let wf = document.createElement('script');
+        wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+        wf.type = 'text/javascript';
+        wf.async = 'true';
+        let s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(wf, s);
+    })();
+</script>
+
+<script type="text/jsx">
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import {AppContainer} from 'react-hot-loader';
+    import {HashRouter} from 'react-router-dom';
+
+    const render = () => {
+        const App = require('./components/App').default;
+        ReactDOM.render(<AppContainer><HashRouter><App/></HashRouter></AppContainer>, document.getElementById('App'));
+    };
+
+    render();
+    if (module.hot) {
+        module.hot.accept(render);
+    }
+</script>
+
+</html>

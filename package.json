@@ -1,0 +1,80 @@
+{
+  "name": "eve-cerebral",
+  "productName": "Cerebral",
+  "version": "0.2.1",
+  "description": "Character Manager for EVE Online",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "eslint --cache --color --ext .jsx,.js src"
+  },
+  "keywords": [],
+  "author": "Prometheus Satyen",
+  "license": "UNLICENSED",
+  "config": {
+    "forge": {
+      "make_targets": {
+        "win32": [
+          "squirrel"
+        ],
+        "darwin": [
+          "zip"
+        ],
+        "linux": [
+          "deb",
+          "rpm"
+        ]
+      },
+      "electronPackagerConfig": {
+        "packageManager": "npm",
+        "icon": "resources/icon.ico",
+        "ignore": [
+          ".idea"
+        ]
+      },
+      "electronWinstallerConfig": {
+        "name": "eve_cerebral",
+        "icon": "resources/icon.ico",
+        "setupIcon": "resources/icon.ico",
+        "loadingGif": "resources/installing.gif",
+        "noMsi": true
+      },
+      "electronInstallerDebian": {},
+      "electronInstallerRedhat": {},
+      "windowsStoreConfig": {
+        "packageName": "",
+        "name": "EVE Cerebral"
+      }
+    }
+  },
+  "dependencies": {
+    "electron-compile": "^6.4.2",
+    "electron-devtools-installer": "^2.2.3",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-store": "^1.3.0",
+    "material-ui": "^0.20.0",
+    "react": "^15.6.2",
+    "react-dom": "^15.6.2",
+    "react-hot-loader": "^4.0.0",
+    "react-router-dom": "^4.2.2",
+    "request": "^2.83.0",
+    "request-promise-native": "^1.0.5",
+    "winston": "^3.0.0-rc2"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-es2015-classes": "^6.24.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "electron-forge": "^5.1.1",
+    "electron-prebuilt-compile": "1.8.2",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-jsx-a11y": "^5.1.1",
+    "eslint-plugin-react": "^7.7.0"
+  }
+}
