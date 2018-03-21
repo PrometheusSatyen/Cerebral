@@ -70,7 +70,7 @@ const createWindow = async () => {
 
 app.on('ready', createWindow);
 app.on('activate', () => {
-    if (mainWindow === null) {
+    if (mainWindow === undefined) {
         createWindow();
     }
 });

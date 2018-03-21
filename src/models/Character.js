@@ -166,6 +166,7 @@ class Character {
             let charData = await client.get('characters/' + this.id, 'v4');
             Object.assign(this, charData);
             this.save();
+            this.markRefreshed('character_info');
         }
     }
 
@@ -174,6 +175,7 @@ class Character {
             let client = new EsiClient();
             this.portraits = await client.get('characters/' + this.id + '/portrait', 'v2');
             this.save();
+            this.markRefreshed('portrait');
         }
     }
 
@@ -182,6 +184,7 @@ class Character {
             let client = new EsiClient();
             this.corporation = await client.get('corporations/' + this.corporation_id, 'v4');
             this.save();
+            this.markRefreshed('corporation');
         }
     }
 
@@ -191,6 +194,7 @@ class Character {
                 let client = new EsiClient();
                 this.alliance = await client.get('alliances/' + this.alliance_id, 'v3');
                 this.save();
+                this.markRefreshed('alliance');
             }
         }
     }
@@ -215,6 +219,7 @@ class Character {
             await Promise.all(promises);
 
             this.save();
+            this.markRefreshed('skills');
         }
     }
 
@@ -237,6 +242,7 @@ class Character {
             await Promise.all(promises);
 
             this.save();
+            this.markRefreshed('skill_queue');
         }
     }
 
@@ -249,6 +255,7 @@ class Character {
 
             this.attributes = await client.get('characters/' + this.id + '/attributes', 'v1');
             this.save();
+            this.markRefreshed('attributes');
         }
     }
 
@@ -276,6 +283,7 @@ class Character {
             await Promise.all(promises);
 
             this.save();
+            this.markRefreshed('implants');
         }
     }
 
@@ -288,18 +296,19 @@ class Character {
 
             this.balance = await client.get('characters/' + this.id + '/wallet', 'v1');
             this.save();
+            this.markRefreshed('wallet');
         }
     }
 
     shouldRefresh(type) {
-        if ((!this.nextRefreshes.hasOwnProperty(type)) || (new Date(this.nextRefreshes[type].do) < new Date())) {
-            this.nextRefreshes[type] = {
-                do: new Date(new Date().getTime() + appProperties.refresh_intervals[type] * 1000)
-            };
-            return true;
-        } else {
-            return false;
-        }
+        return (!this.nextRefreshes.hasOwnProperty(type)) || (new Date(this.nextRefreshes[type].do) < new Date());
+    }
+
+    markRefreshed(type) {
+        this.nextRefreshes[type] = {
+            last: new Date(),
+            do: new Date(new Date().getTime() + appProperties.refresh_intervals[type] * 1000)
+        };
     }
 
     static async build() {
@@ -319,8 +328,6 @@ class Character {
         });
 
         await Promise.all(promises);
-
-        setInterval(Character.build, 60000);
 
         Character.pushToSubscribers();
     }
@@ -402,5 +409,7 @@ class Character {
 }
 
 Character.load();
+
+setInterval(Character.build, 60000);
 
 export default Character;
