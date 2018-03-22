@@ -39,8 +39,7 @@
         "name": "eve_cerebral",
         "icon": "resources/icon.ico",
         "setupIcon": "resources/icon.ico",
-        "loadingGif": "resources/installing.gif",
-        "noMsi": true
+        "loadingGif": "resources/installing.gif"
       },
       "electronInstallerDebian": {},
       "electronInstallerRedhat": {},
