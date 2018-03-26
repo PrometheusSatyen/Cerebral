@@ -36,6 +36,14 @@ class Character {
         return undefined;
     }
 
+    getFinishedSkillsInQueue() {
+        const currentDate = new Date();
+
+        return this.skillQueue.filter((o) => {
+            return (o.hasOwnProperty('finish_date')) && (new Date(o.finish_date) < currentDate);
+        });
+    }
+
     getLastSkill() {
         let lastDate = new Date();
         let lastSkill = undefined;
@@ -89,6 +97,23 @@ class Character {
         return new Date(new Date().getTime() + millisecondsToTrainSp);
     }
 
+    /**
+     * Determining total SP is quite challenging. This is the method:
+     *
+     *  * Iterate over all skills the character has
+     *  * If a skill is the currently training skill, we completely ignore the skillpoints_in_skill which CCP gives us.
+     *    Instead, we use the training_start_sp figure from the queue, and then add on the projected SP which the
+     *    character will have trained since the start_date.
+     *  * Else if a skill is in the queue at least once listed as finished, we start with the skillpoints_in_skill
+     *    figure for the skill. We then add on the difference between the end and start sp for each finished level of
+     *    the skill in the queue.
+     *  * Else, the skill is not in any way in the queue, and we can simply use the skillpoints_in_skill figure
+     *
+     * Note that this will NOT be accurate if the character is currently using a cerebral accelerator (boosters are not
+     * shown in the API).
+     *
+     * @returns int projected character sp at this moment in time
+     */
     getTotalSp() {
         let totalSp = 0;
 
@@ -97,15 +122,24 @@ class Character {
             return this.total_sp;
         }
 
+        const finishedSkills = this.getFinishedSkillsInQueue();
+        const finishedSkillIds = finishedSkills.map(o => o.skill_id);
         for(let skill of this.skills) {
-            if (skill.skill_id !== currentSkill.skill_id) {
-                totalSp += skill.skillpoints_in_skill;
-            } else {
-                // Note: THIS WILL NOT BE ACCURATE IF TRAINING BOOSTERS HAVE BEEN TAKEN
+            if (skill.skill_id === currentSkill.skill_id) {
                 let startingMilliseconds = new Date(currentSkill.start_date).getTime();
                 let millisecondsPassed = new Date().getTime() - startingMilliseconds;
                 let additionalTrainedSp = millisecondsPassed * this.getCurrentSpPerMillisecond();
                 totalSp += (currentSkill.training_start_sp + additionalTrainedSp);
+            } else if (finishedSkillIds.includes(skill.skill_id)) {
+                const queueEntries = finishedSkills.filter(o => o.skill_id === skill.skill_id);
+
+                for(let queueEntry of queueEntries) {
+                    totalSp += (queueEntry.level_end_sp - queueEntry.training_start_sp);
+                }
+
+                totalSp += skill.skillpoints_in_skill;
+            } else {
+                totalSp += skill.skillpoints_in_skill;
             }
         }
 

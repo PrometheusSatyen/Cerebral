@@ -52,7 +52,7 @@ module.exports = {
         'portrait': 43200,
         'corporation': 43200,
         'alliance': 43200,
-        'skills': 3600,
+        'skills': 900,
         'skill_queue': 900,
         'attributes': 3600,
         'wallet': 900,
