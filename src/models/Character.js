@@ -4,6 +4,8 @@ import Store from 'electron-store';
 
 import EsiClient from '../helpers/eve/EsiClient';
 import TypeHelper from '../helpers/TypeHelper';
+import StationHelper from '../helpers/StationHelper';
+import StructureHelper from '../helpers/StructureHelper';
 
 import AuthorizedCharacter from './AuthorizedCharacter';
 
@@ -363,6 +365,26 @@ class Character {
 
                 this.jumpClones.push(jumpClone);
             }
+
+            Array.prototype.push.apply(promises, this.jumpClones.map((o) => {
+                if (o.location_type === "station") {
+                    return StationHelper.resolveStation(o.location_id).then(station => {
+                        delete station.system.planets;
+                        o.location = station;
+                        return o;
+                    });
+                } else if (o.location_type === "structure") {
+                    return StructureHelper.resolveStructure(o.location_id, client).then(structure => {
+                        if (structure !== undefined) {
+                            delete structure.system.planets;
+                            o.location = structure;
+                        }
+                        return o;
+                    });
+                } else {
+                    return Promise.resolve(undefined); // unknown location type (wtf? this won't happen, if it does, smths changed with jump clones)
+                }
+            }));
 
             await Promise.all(promises);
 

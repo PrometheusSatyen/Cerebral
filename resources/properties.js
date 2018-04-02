@@ -42,6 +42,10 @@ module.exports = {
             'name': 'esi-mail.read_mail.v1',
             'description': 'EVE Mail'
         },
+        {
+            'name': 'esi-universe.read_structures.v1',
+            'description': 'Dockable Structure Information'
+        },
     ],
 
     'eve_esi_url': 'https://esi.tech.ccp.is',

@@ -84,7 +84,7 @@ export default class Character extends React.Component {
                                     return(
                                         <div key={jumpClone.jump_clone_id}>
                                             <strong>Name:</strong> {jumpClone.name ? jumpClone.name : "N/A" }<br/>
-                                            <strong>Location:</strong> Unknown
+                                            {jumpClone.location !== undefined ? jumpClone.location.name : "Unknown Location" }
                                             <ul>
                                                 {jumpClone.implants.map(implant => {
                                                     return (
