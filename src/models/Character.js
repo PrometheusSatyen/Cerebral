@@ -190,7 +190,8 @@ class Character {
             this.refreshCorporation(),
             this.refreshAlliance(),
             this.refreshWallet(),
-            this.refreshImplants()
+            this.refreshImplants(),
+            this.refreshJumpClones()
         ]);
     }
 
@@ -327,6 +328,46 @@ class Character {
 
             this.save();
             this.markRefreshed('implants');
+        }
+    }
+
+    async refreshJumpClones() {
+        if (this.shouldRefresh('clones')) {
+            let client = new EsiClient();
+
+            let authInfo = AuthorizedCharacter.get(this.id);
+            client.auth(await authInfo.getAccessToken());
+
+            let cloneData = await client.get('characters/' + this.id + '/clones', 'v3');
+            let promises = [];
+            this.jumpClones = [];
+
+            for (let jumpCloneData of cloneData.jump_clones) {
+                let jumpClone = {};
+
+                jumpClone.implants = [];
+                for (let id of jumpCloneData.implants) {
+                    jumpClone.implants.push({id: id});
+                }
+
+                Array.prototype.push.apply(promises, jumpClone.implants.map((o) => {
+                    return TypeHelper.resolveType(o.id).then(res => {
+                        o.name = res.name;
+                        o.dogmaAttributes = res.dogma_attributes;
+                        return o;
+                    });
+                }));
+
+                delete jumpCloneData.implants;
+                Object.assign(jumpClone, jumpCloneData);
+
+                this.jumpClones.push(jumpClone);
+            }
+
+            await Promise.all(promises);
+
+            this.save();
+            this.markRefreshed('clones');
         }
     }
 

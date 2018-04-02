@@ -5,6 +5,7 @@ XXXX-XX-XX: 0.3.0 Alpha
     * Attributes and remap information
     * Active implants
     * Skill queue
+    * Jump clones
 * Individual character pages can be opened by clicking on a character in the left navigation, or by clicking on a row on the Character Overview/SP Farrming tables.
 
 2018-03-26: 0.2.3 Alpha

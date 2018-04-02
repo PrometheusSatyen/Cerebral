@@ -73,6 +73,31 @@ export default class Character extends React.Component {
                             }
                         </CardText>
                     </Card>
+
+                    <Card style={styles.card}>
+                        <CardHeader
+                            title="Jump Clones"
+                        />
+                        <CardText>
+                            {CharacterModel.get(this.props.match.params.characterId).jumpClones.length > 0 ?
+                                CharacterModel.get(this.props.match.params.characterId).jumpClones.map(jumpClone => {
+                                    return(
+                                        <div key={jumpClone.jump_clone_id}>
+                                            <strong>Name:</strong> {jumpClone.name ? jumpClone.name : "N/A" }<br/>
+                                            <strong>Location:</strong> Unknown
+                                            <ul>
+                                                {jumpClone.implants.map(implant => {
+                                                    return (
+                                                        <li key={implant.id}>{implant.name}</li>
+                                                    )
+                                                })}
+                                            </ul>
+                                        </div>
+                                    )
+                                }) :
+                                "No Jump Clones"}
+                        </CardText>
+                    </Card>
                 </div>
 
                 <div style={styles.cardDiv}>

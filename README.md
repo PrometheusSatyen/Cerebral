@@ -29,6 +29,7 @@ Current Functionality:
     * Attributes and remap information
     * Active implants
     * Skill queue
+    * Jump clones
 
 Planned Functionality:
 -------------------------
