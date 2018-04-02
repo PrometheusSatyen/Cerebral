@@ -1,12 +1,7 @@
 import React from 'react';
+import {Redirect} from 'react-router';
 import Avatar from 'material-ui/Avatar';
-
-import {
-    Table,
-    TableBody,
-    TableRow,
-    TableRowColumn,
-} from 'material-ui/Table';
+import {Table, TableBody, TableRow, TableRowColumn} from 'material-ui/Table';
 import Character from '../../models/Character';
 import DateTimeHelper from '../../helpers/DateTimeHelper';
 
@@ -25,7 +20,8 @@ export default class CharactersOverviewTable extends React.Component {
         super(props);
         this.state = {
             characters: Object.values(Character.getAll()).sort((a, b) => b.getTotalSp() - a.getTotalSp()),
-            ticking: true
+            ticking: true,
+            redirectPath: undefined
         };
     }
 
@@ -50,13 +46,27 @@ export default class CharactersOverviewTable extends React.Component {
         }
     }
 
+    handleClick(e, characterId) {
+        let path = '/characters/' + characterId;
+
+        this.setState({
+            redirectPath: path
+        });
+    }
+
     render() {
+        if (this.state.redirectPath !== undefined) {
+            this.setState({redirectPath: undefined});
+
+            return <Redirect push to={this.state.redirectPath}/>;
+        }
+
         return (
             <Table style={styles.charactersTable}>
                 <TableBody displayRowCheckbox={false}>
                     {this.state.characters.map(character => {
                         return (
-                            <TableRow key={character.id}>
+                            <TableRow key={character.id} selectable={false} onClick={(e) => this.handleClick(e, character.id)}>
                                 <TableRowColumn style={{width: '20px'}}>
                                     <Avatar src={character.portraits.px128x128} style={{marginTop: "5px"}}/>
                                 </TableRowColumn>

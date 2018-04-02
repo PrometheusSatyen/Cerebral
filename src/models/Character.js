@@ -194,6 +194,15 @@ class Character {
         ]);
     }
 
+    getDateOfBirth() {
+        return new Date(this.birthday);
+    }
+
+    getNextYearlyRemapDate() {
+        const remapAvailable = new Date(this.attributes.accrued_remap_cooldown_date);
+        return remapAvailable > new Date() ? remapAvailable : true;
+    }
+
     async refreshInfo() {
         if (this.shouldRefresh('character_info')) {
             let client = new EsiClient();

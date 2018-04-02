@@ -27,7 +27,7 @@ export default class LeftNav extends React.Component {
         Character.unsubscribe(this.subscriberId);
     }
 
-    handleClick(e) {
+    handleClick(e, characterId) {
         let path;
         let value;
         let input = e.target.innerHTML;
@@ -42,6 +42,9 @@ export default class LeftNav extends React.Component {
                 path = '/';
                 value = 1;
                 break;
+            default:
+                path = '/characters/' + characterId;
+                value = characterId;
         }
 
         this.setState({
@@ -72,6 +75,7 @@ export default class LeftNav extends React.Component {
                                 key={character.id}
                                 primaryText={character.name}
                                 leftAvatar={<Avatar src={character.portraits.px128x128}/>}
+                                onClick={(e) => this.handleClick(e, character.id)}
                             />
                         )
                     })}
