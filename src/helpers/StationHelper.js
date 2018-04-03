@@ -4,6 +4,7 @@ import EsiClient from './eve/EsiClient';
 import Store from 'electron-store';
 
 import SystemHelper from './SystemHelper';
+import TypeHelper from './TypeHelper';
 
 let things = undefined;
 const thingsStore = new Store({
@@ -20,6 +21,9 @@ export default class StationHelper {
             let client = new EsiClient();
             things[id] = await client.get('universe/stations/' + id, 'v2', {}, false, false);
             things[id].system = await SystemHelper.resolveSystem(things[id].system_id);
+            things[id].type = await TypeHelper.resolveType(things[id].type_id);
+            delete things[id].type.dogma_attributes;
+            delete things[id].type.dogma_effects;
             StationHelper.save();
         }
 

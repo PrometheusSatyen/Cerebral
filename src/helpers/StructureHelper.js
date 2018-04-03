@@ -3,6 +3,7 @@
 import Store from 'electron-store';
 
 import SystemHelper from './SystemHelper';
+import TypeHelper from './TypeHelper';
 
 let things = undefined;
 const thingsStore = new Store({
@@ -12,14 +13,17 @@ let thingsLastUsed = 0;
 let thingsSaveTimeout;
 
 export default class StructureHelper {
-    static async resolveStructure(id, client) { // an authenticated client needs to be passed
+    static async resolveStructure(id, client, clientCharacterId) { // an authenticated client needs to be passed
         StructureHelper.require();
 
         if (
             (!things.hasOwnProperty(id)) || // if the structure isn't cached
             (
-                (things[id].hasOwnProperty('failed')) && // or the structure is cached but FAILED
-                (false) // and last fetch was > 7 days ago (TODO!)
+                (things[id].hasOwnProperty('failed')) && // or the structure is cached as FAILED
+                (
+                    (!things[id].characterIdsAttempted.includes(clientCharacterId)) || // and a pull hasn't been attempted with this character
+                    (false) // or a pull hasn't been attempted with this character in > 30 days (TODO!)
+                )
             )
         ) {
             try {
@@ -31,12 +35,20 @@ export default class StructureHelper {
                 delete things[id].solar_system_id;
 
                 things[id].system = await SystemHelper.resolveSystem(things[id].system_id);
+                things[id].type = await TypeHelper.resolveType(things[id].type_id);
+                delete things[id].type.dogma_attributes;
+                delete things[id].type.dogma_effects;
             } catch (err) {
                 if (err.statusCode === 403) {
-                    things[id] = {
-                        failed: true,
-                        fetchDate: new Date()
-                    };
+                    if (!things.hasOwnProperty(id)) {
+                        things[id] = {};
+                    }
+                    if (!things[id].hasOwnProperty('characterIdsAttempted')) {
+                        things[id].characterIdsAttempted = [];
+                    }
+
+                    things[id].failed = true;
+                    things[id].characterIdsAttempted.push(clientCharacterId);
                 }
             }
 

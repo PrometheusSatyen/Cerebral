@@ -352,7 +352,7 @@ class Character {
                 delete station.system.planets;
                 this.home_location.location = station;
             } else if (this.home_location.location_type === 'structure') {
-                const structure = await StructureHelper.resolveStructure(this.home_location.location_id, client);
+                const structure = await StructureHelper.resolveStructure(this.home_location.location_id, client, this.id);
                 if (structure !== undefined) {
                     delete structure.system.planets;
                     this.home_location.location = structure;
@@ -393,7 +393,7 @@ class Character {
                         return o;
                     });
                 } else if (o.location_type === "structure") {
-                    return StructureHelper.resolveStructure(o.location_id, client).then(structure => {
+                    return StructureHelper.resolveStructure(o.location_id, client, authInfo.id).then(structure => {
                         if (structure !== undefined) {
                             delete structure.system.planets;
                             o.location = structure;
@@ -432,7 +432,7 @@ class Character {
                 delete station.system.planets;
                 this.location.location = station;
             } else if (this.location.structure_id !== undefined) {
-                const structure = await StructureHelper.resolveStructure(this.location.structure_id, client);
+                const structure = await StructureHelper.resolveStructure(this.location.structure_id, client, this.id);
                 if (structure !== undefined) {
                     delete structure.system.planets;
                     this.location.location = structure;

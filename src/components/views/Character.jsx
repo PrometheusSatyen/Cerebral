@@ -45,13 +45,13 @@ export default class Character extends React.Component {
                                 <strong>Alliance:</strong> {CharacterModel.get(this.props.match.params.characterId).alliance !== undefined ? CharacterModel.get(this.props.match.params.characterId).alliance.name : "N/A"}<br/>
                                 <strong>Home Location:</strong> {
                                     CharacterModel.get(this.props.match.params.characterId).home_location.location !== undefined ?
-                                        CharacterModel.get(this.props.match.params.characterId).home_location.location.name :
-                                        "Unknown"
+                                        `${CharacterModel.get(this.props.match.params.characterId).home_location.location.name} (${CharacterModel.get(this.props.match.params.characterId).home_location.location.type.name})` :
+                                        "Unknown Structure"
                                 }<br/>
                                 <strong>Current Location:</strong> {CharacterModel.get(this.props.match.params.characterId).location.system.name} (
                                 {
                                     CharacterModel.get(this.props.match.params.characterId).location.hasOwnProperty('location') ?
-                                    CharacterModel.get(this.props.match.params.characterId).location.location.name :
+                                    `${CharacterModel.get(this.props.match.params.characterId).location.location.name} (${CharacterModel.get(this.props.match.params.characterId).location.location.type.name})` :
                                         (
                                             CharacterModel.get(this.props.match.params.characterId).location.hasOwnProperty('structure_id') ?
                                                 "Unknown Structure" :
@@ -92,7 +92,11 @@ export default class Character extends React.Component {
                                     return(
                                         <div key={jumpClone.jump_clone_id}>
                                             <strong>Name:</strong> {jumpClone.name ? jumpClone.name : "N/A" }<br/>
-                                            {jumpClone.location !== undefined ? jumpClone.location.name : "Unknown Location" }
+                                            {
+                                                jumpClone.location !== undefined ?
+                                                    `${jumpClone.location.name} (${jumpClone.location.type.name})` :
+                                                    "Unknown Structure"
+                                            }
                                             <ul>
                                                 {jumpClone.implants.map(implant => {
                                                     return (
