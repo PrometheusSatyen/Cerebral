@@ -24,7 +24,5 @@ build_script:
 test: off
 
 artifacts:
-  - path: 'out\make\squirrel.windows\x64\*.exe'
-    name: 'Setup64'
-  - path: 'out\make\squirrel.windows\x86\*.exe'
-    name: 'Setup86'
+  - path: 'out\make\**\*.exe'
+    name: 'setup-exe'
