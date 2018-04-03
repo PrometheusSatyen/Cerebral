@@ -1,4 +1,4 @@
-XXXX-XX-XX: 0.3.0 Alpha
+2018-04-03: 0.3.0 Alpha
 -------------------------
 * Individual character pages added showing:
     * Basic character information: date of birth, security status, SP, wallet balance
