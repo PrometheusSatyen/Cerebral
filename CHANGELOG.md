@@ -2,6 +2,7 @@ XXXX-XX-XX: 0.3.0 Alpha
 -------------------------
 * Individual character pages added showing:
     * Basic character information: date of birth, security status, SP, wallet balance
+    * Home location, current location, active ship
     * Attributes and remap information
     * Active implants
     * Skill queue

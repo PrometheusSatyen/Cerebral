@@ -61,6 +61,7 @@ module.exports = {
         'attributes': 3600,
         'wallet': 900,
         'implants': 900,
-        'clones': 900
+        'clones': 900,
+        'location': 300
     }
 };

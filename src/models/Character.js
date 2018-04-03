@@ -11,6 +11,7 @@ import AuthorizedCharacter from './AuthorizedCharacter';
 
 import alphaSkillSet from '../../resources/alpha_skill_set';
 import appProperties from '../../resources/properties';
+import SystemHelper from '../helpers/SystemHelper';
 
 let subscribedComponents = [];
 let characters;
@@ -193,7 +194,8 @@ class Character {
             this.refreshAlliance(),
             this.refreshWallet(),
             this.refreshImplants(),
-            this.refreshJumpClones()
+            this.refreshJumpClones(),
+            this.refreshLocation()
         ]);
     }
 
@@ -341,9 +343,24 @@ class Character {
             client.auth(await authInfo.getAccessToken());
 
             let cloneData = await client.get('characters/' + this.id + '/clones', 'v3');
+
+            // home location
+            this.home_location = cloneData.home_location;
+            if (this.home_location.location_type === 'station') {
+                const station = await StationHelper.resolveStation(this.home_location.location_id);
+                delete station.system.planets;
+                this.home_location.location = station;
+            } else if (this.home_location.location_type === 'structure') {
+                const structure = await StructureHelper.resolveStructure(this.home_location.location_id, client);
+                if (structure !== undefined) {
+                    delete structure.system.planets;
+                    this.home_location.location = structure;
+                }
+            }
+
+            // general jump clone data + resolve implant names/dogma attributes in the clones
             let promises = [];
             this.jumpClones = [];
-
             for (let jumpCloneData of cloneData.jump_clones) {
                 let jumpClone = {};
 
@@ -366,6 +383,7 @@ class Character {
                 this.jumpClones.push(jumpClone);
             }
 
+            // resolve locations
             Array.prototype.push.apply(promises, this.jumpClones.map((o) => {
                 if (o.location_type === "station") {
                     return StationHelper.resolveStation(o.location_id).then(station => {
@@ -390,6 +408,38 @@ class Character {
 
             this.save();
             this.markRefreshed('clones');
+        }
+    }
+
+    async refreshLocation() {
+        if (this.shouldRefresh('location')) {
+            let client = new EsiClient();
+
+            let authInfo = AuthorizedCharacter.get(this.id);
+            client.auth(await authInfo.getAccessToken());
+
+            this.location = await client.get('characters/' + this.id + '/location', 'v1');
+
+            // standardising solar_system_id --> system_id since ccp is indecisive
+            this.location.system_id = this.location.solar_system_id;
+            delete this.location.solar_system_id;
+            this.location.system = await SystemHelper.resolveSystem(this.location.system_id);
+
+            // lookup station/structure
+            if (this.location.station_id !== undefined) {
+                const station = await StationHelper.resolveStation(this.location.station_id);
+                delete station.system.planets;
+                this.location.location = station;
+            } else if (this.location.structure_id !== undefined) {
+                const structure = await StructureHelper.resolveStructure(this.location.structure_id, client);
+                if (structure !== undefined) {
+                    delete structure.system.planets;
+                    this.location.location = structure;
+                }
+            }
+
+            this.save();
+            this.markRefreshed('location');
         }
     }
 

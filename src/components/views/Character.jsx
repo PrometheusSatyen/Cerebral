@@ -33,7 +33,24 @@ export default class Character extends React.Component {
                             <p style={{marginTop: 0}}>
                                 <strong>Date of Birth:</strong> {CharacterModel.get(this.props.match.params.characterId).getDateOfBirth().toLocaleString(navigator.language)}<br/>
                                 <strong>Security Status:</strong> {CharacterModel.get(this.props.match.params.characterId).security_status.toLocaleString(navigator.language, { minimumFractionDigits: 2 })}<br/>
-                                <strong>Wallet Balance:</strong> {CharacterModel.get(this.props.match.params.characterId).balance.toLocaleString(navigator.language, { minimumFractionDigits: 2 })} ISK
+                                <strong>Wallet Balance:</strong> {CharacterModel.get(this.props.match.params.characterId).balance.toLocaleString(navigator.language, { minimumFractionDigits: 2 })} ISK<br/>
+                                <strong>Corporation:</strong> {CharacterModel.get(this.props.match.params.characterId).corporation.name}<br/>
+                                <strong>Alliance:</strong> {CharacterModel.get(this.props.match.params.characterId).alliance !== undefined ? CharacterModel.get(this.props.match.params.characterId).alliance.name : "N/A"}<br/>
+                                <strong>Home Location:</strong> {
+                                    CharacterModel.get(this.props.match.params.characterId).home_location.location !== undefined ?
+                                        CharacterModel.get(this.props.match.params.characterId).home_location.location.name :
+                                        "Unknown"
+                                }<br/>
+                                <strong>Current Location:</strong> {CharacterModel.get(this.props.match.params.characterId).location.system.name} (
+                                {
+                                    CharacterModel.get(this.props.match.params.characterId).location.hasOwnProperty('location') ?
+                                    CharacterModel.get(this.props.match.params.characterId).location.location.name :
+                                        (
+                                            CharacterModel.get(this.props.match.params.characterId).location.hasOwnProperty('structure_id') ?
+                                                "Unknown Structure" :
+                                                "Undocked"
+                                        )
+                                })
                             </p>
 
                             <p>
@@ -54,23 +71,6 @@ export default class Character extends React.Component {
                                         "Now"
                                 }
                             </p>
-                        </CardText>
-                    </Card>
-
-                    <Card style={styles.card}>
-                        <CardHeader
-                            title="Active Implants"
-                        />
-                        <CardText>
-                            {
-                                CharacterModel.get(this.props.match.params.characterId).implants.length > 0 ?
-                                    CharacterModel.get(this.props.match.params.characterId).implants.map(implant => {
-                                        return(
-                                            <span key={implant.id}>{implant.name}<br/></span>
-                                        )
-                                    }) :
-                                    "No Active Implants"
-                            }
                         </CardText>
                     </Card>
 
@@ -101,6 +101,23 @@ export default class Character extends React.Component {
                 </div>
 
                 <div style={styles.cardDiv}>
+                    <Card style={styles.card}>
+                        <CardHeader
+                            title="Active Implants"
+                        />
+                        <CardText>
+                            {
+                                CharacterModel.get(this.props.match.params.characterId).implants.length > 0 ?
+                                    CharacterModel.get(this.props.match.params.characterId).implants.map(implant => {
+                                        return(
+                                            <span key={implant.id}>{implant.name}<br/></span>
+                                        )
+                                    }) :
+                                    "No Active Implants"
+                            }
+                        </CardText>
+                    </Card>
+
                     <Card style={styles.card}>
                         <CardHeader
                             title="Skill Queue"

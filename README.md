@@ -26,6 +26,7 @@ Current Functionality:
     * Current SP/hour
 * Individual character pages showing:
     * Basic character information: date of birth, security status, SP, wallet balance
+    * Home location, current location, active ship
     * Attributes and remap information
     * Active implants
     * Skill queue
