@@ -6,7 +6,7 @@ import AuthorizedCharacter from '../../models/AuthorizedCharacter';
 import {Card, CardHeader, CardText} from 'material-ui/Card';
 import FontIcon from 'material-ui/FontIcon';
 import DateTimeHelper from '../../helpers/DateTimeHelper';
-import {blue500, red500, greenA200} from 'material-ui/styles/colors';
+import {red500, greenA200} from 'material-ui/styles/colors';
 
 const styles = {
     cardDiv: {
