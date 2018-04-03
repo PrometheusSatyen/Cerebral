@@ -7,11 +7,12 @@ XXXX-XX-XX: 0.3.0 Alpha
     * Active implants
     * Skill queue
     * Jump clones
+    * Scopes granted
 * Individual character pages can be opened by clicking on a character in the left navigation, or by clicking on a row on the Character Overview/SP Farrming tables.
 * A new scope "esi-universe.read_structures.v1" is now requested when adding a character.
     * This scope is used to resolve names and locations for structures for jump clones, home station, etc.
     * If you have characters entered into Cerebral, you should simply authorize them all again using the button and the scope will be added automatically.
-    * If you do not re-authorize old characters, you may see locations listed as "Unknown Location".
+    * If you do not re-authorize old characters, you may see locations listed as Unknown.
 * Lots of backend work around station/structure/system information.
 
 2018-03-26: 0.2.3 Alpha

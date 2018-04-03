@@ -8,43 +8,43 @@ module.exports = {
     'scopes': [
         {
             'name': 'esi-location.read_location.v1',
-            'description': 'Location'
+            'description': 'Read Current Location'
         },
         {
             'name': 'esi-location.read_ship_type.v1',
-            'description': 'Active Ship Type'
+            'description': 'Read Active Ship Type'
         },
         {
             'name': 'esi-location.read_online.v1',
-            'description': 'Online Status'
+            'description': 'Read Online Status'
         },
         {
             'name': 'esi-skills.read_skills.v1',
-            'description': 'Skills'
+            'description': 'Read Skills'
         },
         {
             'name': 'esi-skills.read_skillqueue.v1',
-            'description': 'Skill Queue'
+            'description': 'Read Skill Queue'
         },
         {
             'name': 'esi-clones.read_clones.v1',
-            'description': 'Jump Clones'
+            'description': 'Read Jump Clones'
         },
         {
             'name': 'esi-clones.read_implants.v1',
-            'description': 'Active Implants'
+            'description': 'Read Active Implants'
         },
         {
             'name': 'esi-wallet.read_character_wallet.v1',
-            'description': 'Wallet'
+            'description': 'Read Wallet'
         },
         {
             'name': 'esi-mail.read_mail.v1',
-            'description': 'EVE Mail'
+            'description': 'Read EVE Mail'
         },
         {
             'name': 'esi-universe.read_structures.v1',
-            'description': 'Dockable Structure Information'
+            'description': 'Read Dockable Structure Information'
         },
     ],
 

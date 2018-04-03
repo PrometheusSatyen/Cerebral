@@ -31,6 +31,7 @@ Current Functionality:
     * Active implants
     * Skill queue
     * Jump clones
+    * Scopes granted
 
 Planned Functionality:
 -------------------------

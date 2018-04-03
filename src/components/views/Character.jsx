@@ -1,8 +1,12 @@
 import React from 'react';
 
 import CharacterModel from '../../models/Character';
+import AuthorizedCharacter from '../../models/AuthorizedCharacter';
+
 import {Card, CardHeader, CardText} from 'material-ui/Card';
+import FontIcon from 'material-ui/FontIcon';
 import DateTimeHelper from '../../helpers/DateTimeHelper';
+import {blue500, red500, greenA200} from 'material-ui/styles/colors';
 
 const styles = {
     cardDiv: {
@@ -11,6 +15,9 @@ const styles = {
     },
     card: {
         margin: 10
+    },
+    scopeIcons: {
+        fontSize: 14
     }
 };
 
@@ -134,6 +141,21 @@ export default class Character extends React.Component {
                                     }) :
                                     "No Skills in Queue"
                             }
+                        </CardText>
+                    </Card>
+
+                    <Card style={styles.card}>
+                        <CardHeader
+                            title="Scopes Granted"
+                        />
+                        <CardText>
+                            <strong>Note:</strong> If you are missing any scopes, please simply use the Authorize Character button on the character overview and re-add this character.<br/><br/>
+
+                            {AuthorizedCharacter.get(this.props.match.params.characterId).getScopeInfo().map(scope => {
+                                return(
+                                    <span key={scope.name}><FontIcon style={styles.scopeIcons} className="material-icons" color={scope.isGranted ? greenA200 : red500}>{scope.isGranted ? "check" : "clear"}</FontIcon> {scope.description}<br/></span>
+                                )
+                            })}
                         </CardText>
                     </Card>
                 </div>

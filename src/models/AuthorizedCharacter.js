@@ -3,6 +3,7 @@
 const Store = require('electron-store');
 
 import SsoClient from '../helpers/eve/SsoClient';
+import appProperties from '../../resources/properties';
 
 let authorizedCharacters;
 const authorizedCharactersStore = new Store({
@@ -41,6 +42,20 @@ class AuthorizedCharacter {
         this.save();
 
         return this.accessToken;
+    }
+
+    getScopeInfo() {
+        let scopeInfo = [];
+
+        for(const scope of appProperties.scopes) {
+            scopeInfo.push({
+                name: scope.name,
+                description: scope.description,
+                isGranted: this.scopes.includes(scope.name)
+            });
+        }
+
+        return scopeInfo;
     }
 
     static getAll() {
