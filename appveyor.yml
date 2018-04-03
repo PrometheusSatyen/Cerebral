@@ -1,7 +1,7 @@
-build: off
+version: '0.3.0b{build}'
 
 platform:
-  - x86
+  - x64
 
 environment:
   nodejs_version: "9"
@@ -16,13 +16,15 @@ install:
 cache:
   - node_modules
 
-test_script:
+build_script:
   - node --version
   - npm --version
-
-after_test:
   - npm run make
+
+test: off
 
 artifacts:
   - path: 'out\make\squirrel.windows\x64\*.exe'
-    name: 'Setup'
+    name: 'Setup64'
+  - path: 'out\make\squirrel.windows\x86\*.exe'
+    name: 'Setup86'
