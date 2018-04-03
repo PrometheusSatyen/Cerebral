@@ -6,8 +6,11 @@ platform:
 environment:
   nodejs_version: "9"
 
+init:
+  - git config --global core.autocrlf true
+
 install:
-  - ps: Install-Product node $env:nodejs_version
+  - ps: Install-Product node $env:nodejs_version x64
   - npm install -g npm@latest
   - npm install -g electron-forge@latest
   - npm install electron-osx-sign@0.4.10 # electron-forge is depending on broken electron-osx-sign@0.4.9, we force 0.4.10
@@ -15,14 +18,18 @@ install:
 
 cache:
   - node_modules
+  - '%APPDATA%\npm-cache'
 
 build_script:
   - node --version
+  - node -p "process"
   - npm --version
   - npm run make
 
 test: off
 
 artifacts:
-  - path: 'out\make\**\*.exe'
-    name: 'setup-exe'
+  - path: 'out\make\squirrel.windows\ia32\*.exe'
+    name: 'setup-32'
+  - path: 'out\make\squirrel.windows\x64\*.exe'
+    name: 'setup-64'
