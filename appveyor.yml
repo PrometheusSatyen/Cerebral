@@ -1,4 +1,4 @@
-version: '0.3.0b{build}'
+version: '{branch}b{build}'
 
 platform:
   - x64
@@ -29,7 +29,15 @@ build_script:
 test: off
 
 artifacts:
-  - path: 'out\make\squirrel.windows\ia32\*.exe'
-    name: 'setup-32'
   - path: 'out\make\squirrel.windows\x64\*.exe'
-    name: 'setup-64'
+    name: 'win32-x64-setup'
+
+deploy:
+  description: ''
+  provider: GitHub
+  auth_token:
+    secure: XXqjojR8Is9XBibE1OtwCAbCJe6RhUO5BFoKtj8GhttIcxjv3FPCu9b7rug+VjF1
+  artifact: win32-x64-setup
+  draft: true
+  on:
+    appveyor_repo_tag: true # deploy on tag push only
