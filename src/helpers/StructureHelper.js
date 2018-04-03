@@ -14,6 +14,8 @@ let thingsSaveTimeout;
 
 export default class StructureHelper {
     static async resolveStructure(id, client, clientCharacterId) { // an authenticated client needs to be passed
+        clientCharacterId = clientCharacterId.toString();
+
         StructureHelper.require();
 
         if (
@@ -72,6 +74,15 @@ export default class StructureHelper {
             things = thingsStore.get('things');
             if (things === undefined) {
                 things = {};
+            }
+
+            for(const structureId in things) {
+                if (things.hasOwnProperty(structureId)) {
+                    if (things[structureId].hasOwnProperty('characterIdsAttempted')) {
+                        things[structureId].characterIdsAttempted = things[structureId].characterIdsAttempted.map(
+                            i => i.toString());
+                    }
+                }
             }
         }
     }

@@ -22,7 +22,9 @@ let charactersSaveTimeout;
 
 class Character {
     constructor(id, name) {
-        this.id = id;
+        if (id !== undefined) {
+            id = id.toString();
+        }
         this.name = name;
         this.nextRefreshes = {};
     }
@@ -533,8 +535,9 @@ class Character {
 
             if (rawCharacters !== undefined) {
                 Object.keys(rawCharacters).map(id => {
-                    newCharacters[id] = new Character();
-                    Object.assign(newCharacters[id], rawCharacters[id])
+                    newCharacters[id.toString()] = new Character();
+                    Object.assign(newCharacters[id.toString()], rawCharacters[id]);
+                    newCharacters[id.toString()].id = id.toString();
                 });
             }
 

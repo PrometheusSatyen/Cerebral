@@ -15,6 +15,9 @@ const authorizedCharactersStore = new Store({
 
 class AuthorizedCharacter {
     constructor(id, accessToken, accessTokenExpiry, refreshToken, ownerHash, scopes) {
+        if (id !== undefined) {
+            id = id.toString();
+        }
         this.id = id;
         this.accessToken = accessToken;
         this.accessTokenExpiry = accessTokenExpiry;
@@ -76,8 +79,9 @@ class AuthorizedCharacter {
 
             if (rawCharacters !== undefined) {
                 Object.keys(rawCharacters).map(id => {
-                    newCharacters[id] = new AuthorizedCharacter();
-                    Object.assign(newCharacters[id], rawCharacters[id])
+                    newCharacters[id.toString()] = new AuthorizedCharacter();
+                    Object.assign(newCharacters[id.toString()], rawCharacters[id]);
+                    newCharacters[id.toString()].id = id.toString()
                 });
             }
 

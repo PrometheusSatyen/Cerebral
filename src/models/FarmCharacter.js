@@ -11,6 +11,9 @@ let subscribedComponents = [];
 class FarmCharacter {
 
     constructor(id, baseSp) {
+        if (id !== undefined) {
+            id = id.toString();
+        }
         this.id = id;
         this.baseSp = baseSp;
     }
@@ -34,7 +37,8 @@ class FarmCharacter {
                 for(let [id, rawCharacter] of rawCharacters) {
                     let character = new FarmCharacter();
                     Object.assign(character, rawCharacter);
-                    farmCharacters.set(id, character);
+                    character.id = character.id.toString();
+                    farmCharacters.set(character.id, character);
                 }
             }
         }
