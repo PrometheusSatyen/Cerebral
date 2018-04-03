@@ -97,6 +97,27 @@ export default class StructureHelper {
             thingsStore.set('things', things);
         }
     }
+
+    static removeCharacterIdFromAttemptedLists(characterId) {
+        characterId = characterId.toString();
+
+        StructureHelper.require();
+
+        for(const structureId in things) {
+            if (things.hasOwnProperty(structureId)) {
+                if (things[structureId].hasOwnProperty('characterIdsAttempted')) {
+                    const i = things[structureId].characterIdsAttempted.indexOf(characterId);
+                    console.log(characterId);
+                    console.log(i);
+                    if (i !== -1) {
+                        things[structureId].characterIdsAttempted.splice(i, 1);
+                    }
+                }
+            }
+        }
+
+        StructureHelper.save();
+    }
 }
 
 setInterval(StructureHelper.doMaintenance, 5000);

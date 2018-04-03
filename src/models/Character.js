@@ -483,6 +483,20 @@ class Character {
         };
     }
 
+    static markCharacterForForceRefresh(characterId) {
+        characterId = characterId.toString();
+
+        if (characters.hasOwnProperty(characterId)) {
+            let character = characters[characterId];
+            for (const key in character.nextRefreshes) {
+                if (character.nextRefreshes.hasOwnProperty(key)) {
+                    character.nextRefreshes[key].do = new Date(0); // 1970
+                    character.save();
+                }
+            }
+        }
+    }
+
     static async build() {
         Character.suspendSubscribers();
 

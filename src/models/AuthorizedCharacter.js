@@ -1,9 +1,12 @@
 'use strict';
 
+import StructureHelper from '../helpers/StructureHelper';
+
 const Store = require('electron-store');
 
 import SsoClient from '../helpers/eve/SsoClient';
 import appProperties from '../../resources/properties';
+import Character from './Character';
 
 let authorizedCharacters;
 const authorizedCharactersStore = new Store({
@@ -87,6 +90,14 @@ class AuthorizedCharacter {
             authorizedCharacters[this.id] = this;
             authorizedCharactersStore.set('authorizedCharacters', authorizedCharacters);
         }
+
+        // when a save is triggered, we can assume that a new token+scopes was just granted
+        // we go into the structures cache and we clear this character id from anywhere it appears in an attempted list
+        // this ensures that on next refresh structures will be attempted to be repulled
+        StructureHelper.removeCharacterIdFromAttemptedLists(this.id);
+
+        // we also mark for a force refresh
+        Character.markCharacterForForceRefresh(this.id);
     }
 }
 
