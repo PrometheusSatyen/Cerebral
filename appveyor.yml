@@ -8,9 +8,9 @@ environment:
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm install -g npm
+  - npm install -g npm@latest
+  - npm install -g electron-forge@latest
   - npm install
-  - npm install -g electron-forge
 
 cache:
   - node_modules
