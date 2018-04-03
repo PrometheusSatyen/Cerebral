@@ -1,14 +1,16 @@
 # Cerebral
 
+![version](https://img.shields.io/github/release/prometheussatyen/cerebral.svg) ![appveyor build status](https://ci.appveyor.com/api/projects/status/github/prometheussatyen/cerebral?svg=true)
+
 In May 2018, the EVE XML/CREST APIs will shutdown and take EVEMon and many other legacy tools with them to the grave.
 
 Not being able to live without EVEMon, I decided to try and replicate it as best I could utilizing the new EVE ESI API.  
 If you enjoy using Cerebral, please consider an ISK donation to the in-game character "Prometheus Satyen". Donations mean I have to spend less time ratting and can spend more time developing!
 
-This is an alpha release! That means:
+Cerebral is currently in alpha testing! That means:
 -------------------------
 * There may be bugs in Cerebral. It won't delete your boot.ini but it might lose your tokens, crash, freeze up, etc.
-* I am only distributing a Windows version during alpha testing. macOS and Linux versions will be available once I move to beta phase.
+* I am only distributing a Windows-x64 version during alpha testing. macOS and Linux versions will be available once I move to beta phase.
 
 Current Functionality:
 -------------------------
@@ -35,18 +37,23 @@ Current Functionality:
 
 Planned Functionality:
 -------------------------
+* More information on the individual character pages, with tabs for a detailed overview of the skill queue, contracts, mails, etc.
 * Skill Planner, replicating EVEMon's skill planning functionality, including remaps, implants, etc.
 * Configurable alerts (training stopped, character lapsed to alpha, ready for extraction, etc.)
 * Skill Extraction Planner, experiment with extracting skills from your character to see how much ISK you would get.
 
 Screenshots:
 -------------------------
+![character overview](https://prom.gaydar.space/2018-04-03_18-03-04_3ULjJZE6Vh9DWVQzglZvOM6FfwYpjo.png)
+
+![sp-farming](https://prom.gaydar.space/2018-04-03_18-03-04_btXXy0WCslQmpiJkqajmVfKin9I2Wn.png)
+
+![character-page](https://prom.gaydar.space/2018-04-03_18-03-04_fnvC20LNuvTldThgQPHqlVUsfExq1B.png)
 
 Installation Instructions:
 -------------------------
-1. Download the latest release.
-2. Double click and wait for it to install. This may take 2-3 minutes. Be patient.
-    
+1. Download the latest release setup file from the Releases page.
+2. Double click and wait for it to install. This may take 2-3 minutes. Be patient.  
     **Note:** Windows SmartScreen might block the install, just click More Info --> Run anyway.
 3. Once installation is complete Cerebral will launch and you can start using it. A Start Menu/Desktop shortcut will be created automatically.
 
