@@ -1,0 +1,14 @@
+environment:
+  nodejs_version: "9"
+
+install:
+  - ps: Install-Product node $env:nodejs_version x64
+  - npm install electron-forge
+  - npm install
+
+build_script:
+  - node --version
+  - npm --version
+  - npm run make
+
+test: off
