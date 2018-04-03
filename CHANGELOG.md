@@ -1,3 +1,7 @@
+2018-04-03: 0.3.1 Alpha
+-------------------------
+* Fixed a number of bugs caused by character IDs being inconsistently stored as strings/numbers (now forced to strings)
+
 2018-04-03: 0.3.0 Alpha
 -------------------------
 * Individual character pages added showing:

@@ -1,7 +1,7 @@
 {
   "name": "eve-cerebral",
   "productName": "Cerebral",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Character Manager for EVE Online",
   "main": "src/index.js",
   "scripts": {
