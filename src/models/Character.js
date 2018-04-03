@@ -195,7 +195,8 @@ class Character {
             this.refreshWallet(),
             this.refreshImplants(),
             this.refreshJumpClones(),
-            this.refreshLocation()
+            this.refreshLocation(),
+            this.refreshShip()
         ]);
     }
 
@@ -440,6 +441,21 @@ class Character {
 
             this.save();
             this.markRefreshed('location');
+        }
+    }
+
+    async refreshShip() {
+        if (this.shouldRefresh('ship')) {
+            let client = new EsiClient();
+
+            let authInfo = AuthorizedCharacter.get(this.id);
+            client.auth(await authInfo.getAccessToken());
+
+            this.ship = await client.get('characters/' + this.id + '/ship', 'v1');
+            this.ship.type = await TypeHelper.resolveType(this.ship.ship_type_id);
+
+            this.save();
+            this.markRefreshed('ship');
         }
     }
 

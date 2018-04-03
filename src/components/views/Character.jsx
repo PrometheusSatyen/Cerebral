@@ -50,7 +50,8 @@ export default class Character extends React.Component {
                                                 "Unknown Structure" :
                                                 "Undocked"
                                         )
-                                })
+                                })<br/>
+                                <strong>Current Ship:</strong> {CharacterModel.get(this.props.match.params.characterId).ship.ship_name} ({CharacterModel.get(this.props.match.params.characterId).ship.type.name})
                             </p>
 
                             <p>

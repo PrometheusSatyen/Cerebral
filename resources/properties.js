@@ -62,6 +62,7 @@ module.exports = {
         'wallet': 900,
         'implants': 900,
         'clones': 900,
-        'location': 300
+        'location': 300,
+        'ship': 300
     }
 };
