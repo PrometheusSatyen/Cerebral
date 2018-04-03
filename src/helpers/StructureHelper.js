@@ -107,8 +107,6 @@ export default class StructureHelper {
             if (things.hasOwnProperty(structureId)) {
                 if (things[structureId].hasOwnProperty('characterIdsAttempted')) {
                     const i = things[structureId].characterIdsAttempted.indexOf(characterId);
-                    console.log(characterId);
-                    console.log(i);
                     if (i !== -1) {
                         things[structureId].characterIdsAttempted.splice(i, 1);
                     }
