@@ -10,7 +10,7 @@ install:
   - ps: Install-Product node $env:nodejs_version
   - npm install -g npm@latest
   - npm install -g electron-forge@latest
-  - npm install electron-osx-sign@0.4.10
+  - npm install electron-osx-sign@0.4.10 # electron-forge is depending on broken electron-osx-sign@0.4.9, we force 0.4.10
   - npm install
 
 cache:
@@ -22,3 +22,7 @@ test_script:
 
 after_test:
   - npm run make
+
+artifacts:
+  - path: 'out\make\squirrel.windows\x64\*.exe'
+    name: 'Setup'
