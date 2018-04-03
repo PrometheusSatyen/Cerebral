@@ -122,7 +122,7 @@ export default class Character extends React.Component {
                     <Card style={styles.card}>
                         <CardHeader
                             title="Skill Queue"
-                            subtitle={CharacterModel.get(this.props.match.params.characterId).getCurrentSkill() !== undefined ? DateTimeHelper.timeUntil(new Date(CharacterModel.get(this.props.match.params.characterId).getCurrentSkill().finish_date)) : "0d 0h 0m 0s"}
+                            subtitle={CharacterModel.get(this.props.match.params.characterId).getCurrentSkill() !== undefined ? DateTimeHelper.timeUntil(new Date(CharacterModel.get(this.props.match.params.characterId).getLastSkill().finish_date)) : "0d 0h 0m 0s"}
                         />
                         <CardText>
                             {
