@@ -3,6 +3,7 @@ environment:
 
 install:
   - ps: Install-Product node $env:nodejs_version x64
+  - npm install npm -g
   - npm install electron-forge -g
   - npm install
 
