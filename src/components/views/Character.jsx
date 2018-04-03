@@ -6,7 +6,7 @@ import AuthorizedCharacter from '../../models/AuthorizedCharacter';
 import {Card, CardHeader, CardText} from 'material-ui/Card';
 import FontIcon from 'material-ui/FontIcon';
 import DateTimeHelper from '../../helpers/DateTimeHelper';
-import {red500, greenA200} from 'material-ui/styles/colors';
+import {red500, greenA200, grey500} from 'material-ui/styles/colors';
 
 const styles = {
     cardDiv: {
@@ -141,7 +141,7 @@ export default class Character extends React.Component {
                                 CharacterModel.get(this.props.match.params.characterId).getCurrentSkill() !== undefined ?
                                     CharacterModel.get(this.props.match.params.characterId).skillQueue.map(skill => {
                                         return(
-                                            <span key={skill.queue_position}>{skill.skill_name} {skill.finished_level}<br/></span>
+                                            <span key={skill.queue_position}>{skill.skill_name} {skill.finished_level} <span style={{color: grey500}}>{DateTimeHelper.skillLength(skill.start_date, skill.finish_date)}</span><br/></span>
                                         )
                                     }) :
                                     "No Skills in Queue"

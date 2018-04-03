@@ -2,7 +2,25 @@
 
 export default class DateTimeHelper {
     static timeUntil(futureDate) {
-        let delta = Math.abs(futureDate - new Date()) / 1000;
+        return DateTimeHelper.niceCountdown(futureDate - new Date());
+    }
+
+    static skillLength(startDate, endDate) {
+        startDate = new Date(startDate);
+        endDate = new Date(endDate);
+
+        if (startDate < new Date()) {
+            startDate = new Date();
+        }
+
+        const msDelta = Math.abs(endDate - startDate);
+
+        return DateTimeHelper.niceCountdown(msDelta);
+    }
+
+    static niceCountdown(millisecondsRemaining) {
+        let delta = millisecondsRemaining / 1000;
+
         const days = Math.floor(delta / 86400);
         delta -= days * 86400;
         const hours = Math.floor(delta / 3600) % 24;
