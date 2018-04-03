@@ -1,15 +1,23 @@
+build: off
+
+platform:
+  - x86
+
 environment:
   nodejs_version: "9"
 
 install:
-  - ps: Install-Product node $env:nodejs_version x64
-  - npm install npm -g
-  - npm install electron-forge -g
+  - ps: Install-Product node $env:nodejs_version
+  - npm install -g npm
   - npm install
+  - npm install -g electron-forge
 
-build_script:
+cache:
+  - node_modules
+
+test_script:
   - node --version
   - npm --version
-  - npm run make
 
-test: off
+after_test:
+  - npm run make
