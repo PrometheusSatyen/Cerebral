@@ -10,7 +10,7 @@ install:
   - ps: Install-Product node $env:nodejs_version
   - npm install -g npm@latest
   - npm install -g electron-forge@latest
-  - npm install -g electron-osx-sign@0.4.9
+  - npm install electron-osx-sign@0.4.10
   - npm install
 
 cache:
