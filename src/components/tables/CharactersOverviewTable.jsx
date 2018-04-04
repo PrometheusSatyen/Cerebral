@@ -68,40 +68,47 @@ export default class CharactersOverviewTable extends React.Component {
         return (
             <Table style={styles.charactersTable}>
                 <TableBody displayRowCheckbox={false}>
-                    {this.state.characters.map(character => {
-                        return (
-                            <TableRow key={character.id} selectable={false} onClick={(e) => this.handleClick(e, character.id)}>
-                                <TableRowColumn style={{width: '20px'}}>
-                                    <Avatar src={character.portraits.px128x128} style={{marginTop: "5px"}}/>
-                                </TableRowColumn>
-                                <TableRowColumn style={{width: '20px'}}>
-                                    <img
-                                        src={
-                                            character.isOmega() ?
-                                                './../resources/omega.png' :
-                                                (character.isOmega() === false ?
-                                                    './../resources/alpha.png' :
-                                                    '')
+                    {this.state.characters.map(char =>
+                        <TableRow key={char.id} selectable={false} onClick={(e) => this.handleClick(e, char.id)}>
+                            <TableRowColumn style={{width: '20px'}}>
+                                <Avatar src={char.portraits.px128x128} style={{marginTop: "5px"}}/>
+                            </TableRowColumn>
+
+                            <TableRowColumn style={{width: '20px'}}>
+                                <img
+                                    src={char.isOmega() ?
+                                        './../resources/omega.png' :
+                                        (
+                                            char.isOmega() === false ?
+                                                './../resources/alpha.png' :
+                                                ''
+                                        )
                                     }
-                                         style={styles.alphaOmegaIndicator}
-                                    />
-                                </TableRowColumn>
-                                <TableRowColumn>{character.name}</TableRowColumn>
-                                <TableRowColumn>
-                                    {character.corporation.name}<br/>
-                                    {character.alliance_id !== undefined ? character.alliance.name : "N/A"}
-                                </TableRowColumn>
-                                <TableRowColumn>
-                                    {character.balance.toLocaleString(navigator.language, { minimumFractionDigits: 2 })} ISK<br/>
-                                    {character.getTotalSp().toLocaleString(navigator.language, { minimumFractionDigits: 0 })} SP
-                                </TableRowColumn>
-                                <TableRowColumn>
-                                    {character.getCurrentSkill() !== undefined ? `${character.getCurrentSkill().skill_name} ${character.getCurrentSkill().finished_level}` : "Not Training"}<br/>
-                                    {character.getCurrentSkill() !== undefined ? DateTimeHelper.timeUntil(new Date(character.getCurrentSkill().finish_date)) : ""}
-                                </TableRowColumn>
-                            </TableRow>
-                        )
-                    })}
+                                    style={styles.alphaOmegaIndicator}
+                                />
+                            </TableRowColumn>
+
+                            <TableRowColumn>
+                                {char.name}<br/>
+                                {char.corporation.name} / {char.alliance_id !== undefined ? char.alliance.name : "N/A"}
+                            </TableRowColumn>
+
+                            <TableRowColumn>
+                                {char.balance.toLocaleString(navigator.language, { minimumFractionDigits: 2 })} ISK<br/>
+                                {char.getTotalSp().toLocaleString(navigator.language, { minimumFractionDigits: 0 })} SP
+                            </TableRowColumn>
+
+                            <TableRowColumn>
+                                {char.getCurrentSkill() !== undefined ?
+                                    `${char.getCurrentSkill().skill_name} ${char.getCurrentSkill().finished_level}` :
+                                    "Not Training"}<br/>
+
+                                {char.getCurrentSkill() !== undefined ?
+                                    DateTimeHelper.timeUntil(new Date(char.getCurrentSkill().finish_date)) :
+                                    ""}
+                            </TableRowColumn>
+                        </TableRow>
+                    )}
                 </TableBody>
             </Table>
         );
