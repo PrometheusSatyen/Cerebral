@@ -15,7 +15,7 @@ const styles = {
         height: '100%',
         width: '100%'
     },
-    alphaOmegaIndicator: {
+    omegaStatusIcon: {
         marginTop: '5px'
     }
 };
@@ -91,6 +91,18 @@ export default class SpFarmingTable extends React.Component {
                 <TableBody displayRowCheckbox={false}>
                     {this.state.characters.map(farmChar => {
                         const char = Character.get(farmChar.id);
+                        let omegaStatusIconPath = './../resources/';
+                        switch(char.isOmega()) {
+                            case true:
+                                omegaStatusIconPath += 'omega.png';
+                                break;
+                            case false:
+                                omegaStatusIconPath += 'alpha.png';
+                                break;
+                            default:
+                                omegaStatusIconPath = '';
+                        }
+                        const currentSkill = char.getCurrentSkill();
 
                         return (
                             <TableRow key={char.id} selectable={false} onClick={(e) => this.handleClick(e, char.id)}>
@@ -99,31 +111,24 @@ export default class SpFarmingTable extends React.Component {
                                 </TableRowColumn>
 
                                 <TableRowColumn style={{width: '20px'}}>
-                                    <img
-                                        src={char.isOmega() ?
-                                            './../resources/omega.png' :
-                                            (
-                                                char.isOmega() === false ?
-                                                    './../resources/alpha.png' :
-                                                    ''
-                                            )
-                                        }
-                                        style={styles.alphaOmegaIndicator}
-                                    />
+                                    <img src={omegaStatusIconPath} style={styles.omegaStatusIcon}/>
                                 </TableRowColumn>
 
                                 <TableRowColumn>{char.name}</TableRowColumn>
+
                                 <TableRowColumn>
-                                    {farmChar.baseSp.toLocaleString(navigator.language, { minimumFractionDigits: 0 })} SP<br/>
-                                    {char.getTotalSp().toLocaleString(navigator.language, { minimumFractionDigits: 0 })} SP
+                                    {farmChar.baseSp.toLocaleString(navigator.language, { maximumFractionDigits: 0 })} SP<br/>
+                                    {char.getTotalSp().toLocaleString(navigator.language, { maximumFractionDigits: 0 })} SP
                                 </TableRowColumn>
+
                                 <TableRowColumn>
                                     {char.getInjectorsReady(farmChar.baseSp)}<br/>
                                     {DateTimeHelper.timeUntil(char.getNextInjectorDate(farmChar.baseSp))}
                                 </TableRowColumn>
+
                                 <TableRowColumn>
-                                    {char.getCurrentSkill() !== undefined ? char.getCurrentSpPerHour() : "Not Training"}<br/>
-                                    {char.getCurrentSkill() !== undefined ? DateTimeHelper.timeUntil(new Date(char.getLastSkill().finish_date)) : ""}
+                                    {currentSkill !== undefined ? char.getCurrentSpPerHour() : "Not Training"}<br/>
+                                    {currentSkill !== undefined ? DateTimeHelper.timeUntil(new Date(char.getLastSkill().finish_date)) : ""}
                                 </TableRowColumn>
                             </TableRow>
                         )

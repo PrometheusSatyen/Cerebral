@@ -14,7 +14,7 @@ const styles = {
         height: '100%',
         width: '100%'
     },
-    alphaOmegaIndicator: {
+    omegaStatusIcon: {
         marginTop: '5px'
     }
 };
@@ -84,7 +84,7 @@ export default class CharactersOverviewTable extends React.Component {
                                                 ''
                                         )
                                     }
-                                    style={styles.alphaOmegaIndicator}
+                                    style={styles.omegaStatusIcon}
                                 />
                             </TableRowColumn>
 
