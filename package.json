@@ -3,6 +3,11 @@
   "productName": "Cerebral",
   "version": "0.3.2-dev",
   "description": "Character Manager for EVE Online",
+  "author": "Prometheus Satyen",
+  "license": "UNLICENSED",
+  "repository": "github:PrometheusSatyen/Cerebral",
+  "keywords": [],
+
   "main": "src/index.js",
   "scripts": {
     "start": "electron-forge start",
@@ -11,9 +16,7 @@
     "publish": "electron-forge publish",
     "lint": "eslint --cache --color --ext .jsx,.js src"
   },
-  "keywords": [],
-  "author": "Prometheus Satyen",
-  "license": "UNLICENSED",
+
   "config": {
     "forge": {
       "make_targets": {
@@ -49,6 +52,7 @@
       }
     }
   },
+
   "dependencies": {
     "electron-compile": "^6.4.2",
     "electron-devtools-installer": "^2.2.3",
@@ -62,6 +66,7 @@
     "request-promise-native": "^1.0.5",
     "winston": "^3.0.0-rc3"
   },
+
   "devDependencies": {
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-plugin-transform-es2015-classes": "^6.24.1",
