@@ -89,3 +89,8 @@ I have no desire to embed my real name into an application I'm distributing to t
 
 Node.js using Electron to allow it to run as a native application. (Same as Discord, Slack, etc.)  
 The UI is powered by React.js.
+
+Legal:
+-------------------------
+Copyright (c) 2018 Prometheus Satyen, prometheussatyen@gmail.com.  
+**All Rights Reserved.**
