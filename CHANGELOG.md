@@ -1,3 +1,10 @@
+2018-04-04: 0.3.2 Alpha
+-------------------------
+* Fixed major bug which prevented adding new characters
+* Moved corp/alliance under character name on overview page
+* Refactored a lot of code to be more efficient and easier to maintain
+* Removed unnecessary react hot loader package
+
 2018-04-03: 0.3.1 Alpha
 -------------------------
 * Fixed a number of bugs caused by character IDs being inconsistently stored as strings/numbers (now forced to strings)
