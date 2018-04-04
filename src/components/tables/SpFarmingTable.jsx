@@ -89,36 +89,41 @@ export default class SpFarmingTable extends React.Component {
                 </TableHeader>
 
                 <TableBody displayRowCheckbox={false}>
-                    {this.state.characters.map(character => {
+                    {this.state.characters.map(farmChar => {
+                        const char = Character.get(farmChar.id);
+
                         return (
-                            <TableRow key={character.id} selectable={false} onClick={(e) => this.handleClick(e, character.id)}>
+                            <TableRow key={char.id} selectable={false} onClick={(e) => this.handleClick(e, char.id)}>
                                 <TableRowColumn style={{width: '20px'}}>
-                                    <Avatar src={Character.get(character.id).portraits.px128x128} style={{marginTop: "5px"}}/>
+                                    <Avatar src={char.portraits.px128x128} style={{marginTop: "5px"}}/>
                                 </TableRowColumn>
+
                                 <TableRowColumn style={{width: '20px'}}>
                                     <img
-                                        src={
-                                            Character.get(character.id).isOmega() ?
-                                                './../resources/omega.png' :
-                                                (Character.get(character.id).isOmega() === false ?
+                                        src={char.isOmega() ?
+                                            './../resources/omega.png' :
+                                            (
+                                                char.isOmega() === false ?
                                                     './../resources/alpha.png' :
-                                                    '')
-                                    }
-                                         style={styles.alphaOmegaIndicator}
+                                                    ''
+                                            )
+                                        }
+                                        style={styles.alphaOmegaIndicator}
                                     />
                                 </TableRowColumn>
-                                <TableRowColumn>{Character.get(character.id).name}</TableRowColumn>
+
+                                <TableRowColumn>{char.name}</TableRowColumn>
                                 <TableRowColumn>
-                                    {character.baseSp.toLocaleString(navigator.language, { minimumFractionDigits: 0 })} SP<br/>
-                                    {Character.get(character.id).getTotalSp().toLocaleString(navigator.language, { minimumFractionDigits: 0 })} SP
+                                    {farmChar.baseSp.toLocaleString(navigator.language, { minimumFractionDigits: 0 })} SP<br/>
+                                    {char.getTotalSp().toLocaleString(navigator.language, { minimumFractionDigits: 0 })} SP
                                 </TableRowColumn>
                                 <TableRowColumn>
-                                    {Character.get(character.id).getInjectorsReady(character.baseSp)}<br/>
-                                    {DateTimeHelper.timeUntil(Character.get(character.id).getNextInjectorDate(character.baseSp))}
+                                    {char.getInjectorsReady(farmChar.baseSp)}<br/>
+                                    {DateTimeHelper.timeUntil(char.getNextInjectorDate(farmChar.baseSp))}
                                 </TableRowColumn>
                                 <TableRowColumn>
-                                    {Character.get(character.id).getCurrentSkill() !== undefined ? Character.get(character.id).getCurrentSpPerHour() : "Not Training"}<br/>
-                                    {Character.get(character.id).getCurrentSkill() !== undefined ? DateTimeHelper.timeUntil(new Date(Character.get(character.id).getLastSkill().finish_date)) : ""}
+                                    {char.getCurrentSkill() !== undefined ? char.getCurrentSpPerHour() : "Not Training"}<br/>
+                                    {char.getCurrentSkill() !== undefined ? DateTimeHelper.timeUntil(new Date(char.getLastSkill().finish_date)) : ""}
                                 </TableRowColumn>
                             </TableRow>
                         )
