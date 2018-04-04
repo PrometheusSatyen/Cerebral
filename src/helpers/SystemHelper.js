@@ -1,7 +1,8 @@
 'use strict';
 
-import EsiClient from './eve/EsiClient';
 import Store from 'electron-store';
+
+import EsiClient from './eve/EsiClient';
 
 let things = undefined;
 const thingsStore = new Store({

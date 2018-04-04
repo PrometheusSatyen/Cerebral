@@ -1,12 +1,12 @@
 'use strict';
 
-import StructureHelper from '../helpers/StructureHelper';
-
 const Store = require('electron-store');
 
+import StructureHelper from '../helpers/StructureHelper';
 import SsoClient from '../helpers/eve/SsoClient';
-import appProperties from '../../resources/properties';
 import Character from './Character';
+
+import appProperties from '../../resources/properties';
 
 let authorizedCharacters;
 const authorizedCharactersStore = new Store({

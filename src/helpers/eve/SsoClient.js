@@ -1,9 +1,9 @@
 'use strict';
 
-import AuthorizedCharacter from '../../models/AuthorizedCharacter';
+import rp from 'request-promise-native';
+import queryString from 'querystring';
 
-const querystring = require('querystring');
-const rp = require('request-promise-native');
+import AuthorizedCharacter from '../../models/AuthorizedCharacter';
 
 import appProperties from './../../../resources/properties';
 
@@ -110,7 +110,7 @@ export default class SsoClient {
         let trimmedEndpoint = SsoClient.trimSlashes(endpoint);
 
         if (query !== null) {
-            return baseUrl + '/' + trimmedEndpoint + '/?' + querystring.stringify(query);
+            return baseUrl + '/' + trimmedEndpoint + '/?' + queryString.stringify(query);
         } else {
             return baseUrl + '/' + trimmedEndpoint + '/';
         }

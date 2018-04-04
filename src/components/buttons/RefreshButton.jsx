@@ -1,6 +1,10 @@
+'use strict';
+
 import React from 'react';
+
 import RaisedButton from 'material-ui/RaisedButton';
 import FontIcon from 'material-ui/FontIcon';
+
 import Character from '../../models/Character';
 
 const styles = {

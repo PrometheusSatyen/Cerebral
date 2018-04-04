@@ -1,10 +1,10 @@
 'use strict';
 
-const rp = require('request-promise-native');
-
-import appProperties from './../../../resources/properties';
+import rp from 'request-promise-native';
 
 import logger from '../Logger';
+
+import appProperties from './../../../resources/properties';
 
 export default class EsiClient {
 

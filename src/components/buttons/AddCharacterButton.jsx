@@ -1,5 +1,9 @@
+'use strict';
+
 import React from 'react';
+
 import CharacterHelper from '../../helpers/CharacterHelper';
+
 import RaisedButton from 'material-ui/RaisedButton';
 import FontIcon from 'material-ui/FontIcon';
 

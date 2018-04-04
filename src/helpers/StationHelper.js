@@ -1,8 +1,8 @@
 'use strict';
 
-import EsiClient from './eve/EsiClient';
 import Store from 'electron-store';
 
+import EsiClient from './eve/EsiClient';
 import SystemHelper from './SystemHelper';
 import TypeHelper from './TypeHelper';
 

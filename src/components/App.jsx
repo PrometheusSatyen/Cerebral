@@ -1,5 +1,6 @@
-import React from 'react';
+'use strict';
 
+import React from 'react';
 import {Route} from 'react-router-dom';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';

@@ -1,3 +1,5 @@
+'use strict';
+
 import {app, BrowserWindow, Tray, Menu} from 'electron';
 import path from 'path';
 

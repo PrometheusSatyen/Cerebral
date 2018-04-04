@@ -1,4 +1,9 @@
+'use strict';
+
 import React from 'react';
+
+import Character from '../../models/Character';
+
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -6,7 +11,6 @@ import FarmHelper from '../../helpers/FarmHelper';
 import FontIcon from 'material-ui/FontIcon';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
-import Character from '../../models/Character';
 import TextField from 'material-ui/TextField';
 
 const styles = {

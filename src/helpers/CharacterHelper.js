@@ -1,9 +1,11 @@
 'use strict';
 
-import SsoClient from './eve/SsoClient';
-import appProperties from '../../resources/properties.js';
 import electron from 'electron';
+
+import SsoClient from './eve/SsoClient';
 import Character from '../models/Character';
+
+import appProperties from '../../resources/properties.js';
 
 let authWindow;
 

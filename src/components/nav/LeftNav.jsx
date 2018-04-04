@@ -1,11 +1,13 @@
 'use strict';
 
 import React from 'react';
+import {Redirect} from 'react-router';
+
+import Character from '../../models/Character';
+
 import Drawer from 'material-ui/Drawer';
 import Avatar from 'material-ui/Avatar';
 import {List, ListItem, makeSelectable} from 'material-ui/List';
-import {Redirect} from 'react-router';
-import Character from '../../models/Character';
 
 let SelectableList = makeSelectable(List);
 

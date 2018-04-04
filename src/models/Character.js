@@ -6,12 +6,11 @@ import EsiClient from '../helpers/eve/EsiClient';
 import TypeHelper from '../helpers/TypeHelper';
 import StationHelper from '../helpers/StationHelper';
 import StructureHelper from '../helpers/StructureHelper';
-
+import SystemHelper from '../helpers/SystemHelper';
 import AuthorizedCharacter from './AuthorizedCharacter';
 
-import alphaSkillSet from '../../resources/alpha_skill_set';
 import appProperties from '../../resources/properties';
-import SystemHelper from '../helpers/SystemHelper';
+import alphaSkillSet from '../../resources/alpha_skill_set';
 
 let subscribedComponents = [];
 let characters;

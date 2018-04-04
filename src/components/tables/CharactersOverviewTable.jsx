@@ -1,9 +1,13 @@
+'use strict';
+
 import React from 'react';
 import {Redirect} from 'react-router';
-import Avatar from 'material-ui/Avatar';
-import {Table, TableBody, TableRow, TableRowColumn} from 'material-ui/Table';
+
 import Character from '../../models/Character';
 import DateTimeHelper from '../../helpers/DateTimeHelper';
+
+import Avatar from 'material-ui/Avatar';
+import {Table, TableBody, TableRow, TableRowColumn} from 'material-ui/Table';
 
 const styles = {
     charactersTable: {
