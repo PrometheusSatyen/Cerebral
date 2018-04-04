@@ -1,6 +1,6 @@
 version: '{branch}b{build}'
 
-skip_non_tags: true # auto-build on tag push only
+skip_non_tags: false # build on any push
 
 platform:
   - x64
