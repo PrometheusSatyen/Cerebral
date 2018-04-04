@@ -24,6 +24,7 @@ class Character {
         if (id !== undefined) {
             id = id.toString();
         }
+        this.id = id;
         this.name = name;
         this.nextRefreshes = {};
     }
