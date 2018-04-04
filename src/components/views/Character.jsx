@@ -35,7 +35,7 @@ export default class Character extends React.Component {
                     <Card style={styles.card}>
                         <CardHeader
                             title={char.name}
-                            subtitle={char.getTotalSp().toLocaleString(navigator.language, { minimumFractionDigits: 0 }) + " SP"}
+                            subtitle={char.getTotalSp().toLocaleString(navigator.language, { minimumFractionDigits: 0 }) + ' SP'}
                             avatar={char.portraits.px128x128}
                         />
 
@@ -46,20 +46,15 @@ export default class Character extends React.Component {
                                 <strong>Security Status:</strong> {char.security_status.toLocaleString(navigator.language, { minimumFractionDigits: 2 })}<br/>
                                 <strong>Wallet Balance:</strong> {char.balance.toLocaleString(navigator.language, { minimumFractionDigits: 2 })} ISK<br/>
                                 <strong>Corporation:</strong> {char.corporation.name}<br/>
-                                <strong>Alliance:</strong> {char.alliance !== undefined ? char.alliance.name : "N/A"}<br/>
-                                <strong>Home Location:</strong> {
-                                    char.home_location.location !== undefined ?
-                                        `${char.home_location.location.name} (${char.home_location.location.type.name})` :
-                                        "Unknown Structure"
+                                <strong>Alliance:</strong> {char.alliance !== undefined ? char.alliance.name : 'N/A'}<br/>
+                                <strong>Home Location:</strong> {char.home_location.location !== undefined ?
+                                    `${char.home_location.location.name} (${char.home_location.location.type.name})` :
+                                    'Unknown Structure'
                                 }<br/>
                                 <strong>Current Location:</strong> {char.location.system.name} ({
                                     char.location.hasOwnProperty('location') ?
                                         `${char.location.location.name} (${char.location.location.type.name})` :
-                                        (
-                                            char.location.hasOwnProperty('structure_id') ?
-                                                "Unknown Structure" :
-                                                "Undocked"
-                                        )
+                                        (char.location.hasOwnProperty('structure_id') ? 'Unknown Structure' : 'Undocked')
                                 })<br/>
                                 <strong>Current Ship:</strong> {char.ship.ship_name} ({char.ship.type.name})
                             </p>
@@ -76,42 +71,28 @@ export default class Character extends React.Component {
                             </ul>
                             <p>
                                 <strong>Bonus Remaps:</strong> {char.attributes.bonus_remaps}<br/>
-                                <strong>Next Yearly Remap:</strong> {
-                                    char.getNextYearlyRemapDate() !== true ?
-                                        char.getNextYearlyRemapDate().toLocaleString(navigator.language) :
-                                        "Now"
+                                <strong>Next Yearly Remap:</strong> {char.getNextYearlyRemapDate() !== true ?
+                                    char.getNextYearlyRemapDate().toLocaleString(navigator.language) : 'Now'
                                 }
                             </p>
                         </CardText>
                     </Card>
 
                     <Card style={styles.card}>
-                        <CardHeader title="Jump Clones"/>
+                        <CardHeader title='Jump Clones'/>
                         <CardText>
                             {
                                 char.jumpClones.length > 0 ?
-                                    char.jumpClones.map(jumpClone => {
-                                        return(
-                                            <div key={jumpClone.jump_clone_id}>
-                                                <strong>Name:</strong> {jumpClone.name ? jumpClone.name : "N/A" }<br/>
-                                                {
-                                                    jumpClone.location !== undefined ?
-                                                        `${jumpClone.location.name} (${jumpClone.location.type.name})` :
-                                                        "Unknown Structure"
-                                                }
-                                                <ul>
-                                                    {
-                                                        jumpClone.implants.map(implant => {
-                                                            return (
-                                                                <li key={implant.id}>{implant.name}</li>
-                                                            )
-                                                        })
-                                                    }
-                                                </ul>
-                                            </div>
-                                        )
-                                    }) :
-                                    "No Jump Clones"
+                                    char.jumpClones.map(jumpClone =>
+                                        <div key={jumpClone.jump_clone_id}>
+                                            <strong>Name:</strong> {jumpClone.name ? jumpClone.name : 'N/A' }<br/>
+                                            {jumpClone.location !== undefined ? `${jumpClone.location.name} (${jumpClone.location.type.name})` : 'Unknown Structure'}
+                                            <ul>
+                                                {jumpClone.implants.map(implant => <li key={implant.id}>{implant.name}</li>)}
+                                            </ul>
+                                        </div>
+                                    ) :
+                                    'No Jump Clones'
                             }
                         </CardText>
                     </Card>
@@ -119,70 +100,63 @@ export default class Character extends React.Component {
 
                 <div style={styles.cardDiv}>
                     <Card style={styles.card}>
-                        <CardHeader title="Active Implants"/>
+                        <CardHeader title='Active Implants'/>
                         <CardText>
                             {
                                 char.implants.length > 0 ?
-                                    char.implants.map(implant => {
-                                        return(
-                                            <span key={implant.id}>{implant.name}<br/></span>
-                                        )
-                                    }) :
-                                    "No Active Implants"
+                                    char.implants.map(implant => <span key={implant.id}>{implant.name}<br/></span>) :
+                                    'No Active Implants'
                             }
                         </CardText>
                     </Card>
 
                     <Card style={styles.card}>
                         <CardHeader
-                            title="Skill Queue"
+                            title='Skill Queue'
                             subtitle={
                                 char.getCurrentSkill() !== undefined ?
                                     DateTimeHelper.timeUntil(new Date(char.getLastSkill().finish_date)) :
-                                    "0d 0h 0m 0s"
+                                    '0d 0h 0m 0s'
                             }
                         />
 
                         <CardText>
                             {
                                 char.getCurrentSkill() !== undefined ?
-                                    char.skillQueue.map(skill => {
-                                        return(
-                                            <span key={skill.queue_position}>
-                                                {skill.skill_name} {skill.finished_level}
+                                    char.skillQueue.map(skill =>
+                                        <span key={skill.queue_position}>
+                                            {skill.skill_name} {skill.finished_level}
 
-                                                <span style={{color: grey500}}>
-                                                    {DateTimeHelper.skillLength(skill.start_date, skill.finish_date)}
-                                                </span>
-                                                <br/>
+                                            <span style={{color: grey500}}>
+                                                {DateTimeHelper.skillLength(skill.start_date, skill.finish_date)}
                                             </span>
-                                        )
-                                    }) :
-                                    "No Skills in Queue"
+                                            <br/>
+                                        </span>
+                                    ) :
+                                    'No Skills in Queue'
                             }
                         </CardText>
                     </Card>
 
                     <Card style={styles.card}>
-                        <CardHeader title="Scopes Granted"/>
+                        <CardHeader title='Scopes Granted'/>
                         <CardText>
-                            <strong>Note:</strong> If you are missing any scopes, please simply use the Authorize Character button on the character overview and re-add this character.<br/>
-                            <br/>
+                            <strong>Note:</strong> If you are missing any scopes, please simply use the Authorize Character button on the character
+                            overview and re-add this character.<br/><br/>
+
                             {
                                 AuthorizedCharacter.get(this.props.match.params.characterId)
                                     .getScopeInfo()
-                                    .map(scope => {
-                                        return(
-                                            <span key={scope.name}>
-                                                <FontIcon
-                                                    style={styles.scopeIcons}
-                                                    className="material-icons"
-                                                    color={scope.isGranted ? greenA200 : red500}>
-                                                    {scope.isGranted ? "check" : "clear"}
-                                                </FontIcon> {scope.description}<br/>
-                                            </span>
-                                        )
-                                    })
+                                    .map(scope =>
+                                        <span key={scope.name}>
+                                            <FontIcon
+                                                style={styles.scopeIcons}
+                                                className='material-icons'
+                                                color={scope.isGranted ? greenA200 : red500}>
+                                                {scope.isGranted ? 'check' : 'clear'}
+                                            </FontIcon> {scope.description}<br/>
+                                        </span>
+                                    )
                             }
                         </CardText>
                     </Card>
