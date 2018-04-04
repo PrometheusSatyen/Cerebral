@@ -45,8 +45,8 @@ export default class Character extends React.Component {
                             <p style={{marginTop: 0}}>
                                 <strong>Character ID:</strong> {char.id}<br/>
                                 <strong>Date of Birth:</strong> {char.getDateOfBirth().toLocaleString(navigator.language)}<br/>
-                                <strong>Security Status:</strong> {char.security_status.toLocaleString(navigator.language, { minimumFractionDigits: 2 })}<br/>
-                                <strong>Wallet Balance:</strong> {char.balance.toLocaleString(navigator.language, { minimumFractionDigits: 2 })} ISK<br/>
+                                <strong>Security Status:</strong> {char.security_status.toLocaleString(navigator.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}<br/>
+                                <strong>Wallet Balance:</strong> {char.balance.toLocaleString(navigator.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ISK<br/>
                                 <strong>Corporation:</strong> {char.corporation.name}<br/>
                                 <strong>Alliance:</strong> {char.alliance !== undefined ? char.alliance.name : 'N/A'}<br/>
                                 <strong>Home Location:</strong> {char.home_location.location !== undefined ?
