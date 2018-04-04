@@ -32,18 +32,14 @@
 <script type="text/jsx">
     import React from 'react';
     import ReactDOM from 'react-dom';
-    import {AppContainer} from 'react-hot-loader';
     import {HashRouter} from 'react-router-dom';
 
     const render = () => {
         const App = require('./components/App').default;
-        ReactDOM.render(<AppContainer><HashRouter><App/></HashRouter></AppContainer>, document.getElementById('App'));
+        ReactDOM.render(<HashRouter><App/></HashRouter>, document.getElementById('App'));
     };
 
     render();
-    if (module.hot) {
-        module.hot.accept(render);
-    }
 </script>
 
 </html>
