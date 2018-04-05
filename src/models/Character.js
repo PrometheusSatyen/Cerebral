@@ -163,9 +163,12 @@ class Character {
         }
 
         // if they have any skills with a higher active level than the maximum alpha level, must be omega
-        if (this.skills.find(o =>
-                !alphaSkillSet.hasOwnProperty(o.name) ||
-                o.active_skill_level > alphaSkillSet[o.name]
+
+        if (this.skills.find(o => o.active_skill_level > 0 &&
+                (
+                    !alphaSkillSet.hasOwnProperty(o.skill_name) ||
+                    o.active_skill_level > alphaSkillSet[o.skill_name]
+                )
             ) !== undefined) {
             return true;
         }
