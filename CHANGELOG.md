@@ -1,6 +1,7 @@
 XXXX-XX-XX: 0.3.3-dev Alpha
 -------------------------
 * Bug fixed whereby some alpha characters would be incorrectly classified as omega.
+* Version number now included in application title.
 
 2018-04-04: 0.3.2 Alpha
 -------------------------

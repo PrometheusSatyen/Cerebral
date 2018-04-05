@@ -36,7 +36,7 @@ const createWindow = async () => {
     }
 
     mainWindow.loadURL(`file://${__dirname}/index.html`);
-
+    mainWindow.setTitle(`Cerebral ${process.env.npm_package_version}`);
     mainWindow.setMenu(null);
 
     let trayIcon = new Tray(iconPath);
@@ -49,24 +49,27 @@ const createWindow = async () => {
         }}
     ]);
     trayIcon.setContextMenu(contextMenu);
-    trayIcon.on('click', function () {
+    trayIcon.on('click', () => {
         mainWindow.show();
     });
 
-    mainWindow.on('minimize', function (event) {
-        event.preventDefault();
+    mainWindow.on('minimize', (e) => {
+        e.preventDefault();
         mainWindow.hide();
     });
-    mainWindow.on('close', (event) => {
+    mainWindow.on('close', (e) => {
         if (!app.isQuiting) {
-            event.preventDefault();
+            e.preventDefault();
             mainWindow.hide();
         }
 
         return false;
     });
-    mainWindow.on('show', function () {
+    mainWindow.on('show', () => {
         trayIcon.setHighlightMode('always')
+    });
+    mainWindow.on('page-title-updated', (e) => {
+        e.preventDefault();
     });
 };
 
