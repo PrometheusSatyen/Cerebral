@@ -1,6 +1,9 @@
 'use strict';
 
-module.exports = {
+export default {
+    'version': '0.3.4-dev',
+    'author_email': 'prometheussatyen@gmail.com',
+
     'eve_client_id': '537173a2901b47389695c27fbfa6f0b6',
     'eve_client_secret': 'rgGg6pJLl6khr8Dm0OSlFlqVDpi0T4KkQF08g4mI',
 

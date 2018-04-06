@@ -3,6 +3,8 @@
 import {app, BrowserWindow, Tray, Menu} from 'electron';
 import path from 'path';
 
+import appProperties from './../resources/properties';
+
 if (require('electron-squirrel-startup')) {
     app.quit();
 }
@@ -36,7 +38,7 @@ const createWindow = async () => {
     }
 
     mainWindow.loadURL(`file://${__dirname}/index.html`);
-    mainWindow.setTitle(`Cerebral ${process.env.npm_package_version}`);
+    mainWindow.setTitle(`Cerebral ${appProperties.version}`);
     mainWindow.setMenu(null);
 
     let trayIcon = new Tray(iconPath);

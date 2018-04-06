@@ -1,3 +1,8 @@
+XXXX-XX-XX: 0.3.4-dev Alpha
+-------------------------
+* Fixed bug where version number in title bar would display as undefined
+* Fixed bug where the user-agent string sent to CCP APIs when requesting data did not contain a valid version number
+
 2018-04-06: 0.3.3 Alpha
 -------------------------
 * Bug fixed whereby some alpha characters would be incorrectly classified as omega.

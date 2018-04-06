@@ -37,7 +37,7 @@ export default class EsiClient {
             uri: this.constructUrl(endpoint, version),
             qs: {},
             headers: {
-                'User-Agent': 'cerebral/' + process.env.npm_package_version + ' prometheussatyen@gmail.com',
+                'User-Agent': `cerebral/${appProperties.version} ${appProperties.author_email}`,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }

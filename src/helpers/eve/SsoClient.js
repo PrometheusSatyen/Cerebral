@@ -39,7 +39,7 @@ export default class SsoClient {
                 code: code
             },
             headers: {
-                'User-Agent': 'cerebral/' + process.env.npm_package_version + ' prometheussatyen@gmail.com',
+                'User-Agent': `cerebral/${appProperties.version} ${appProperties.author_email}`,
                 'Authorization': 'Basic ' + new Buffer(this.clientId + ":" + this.clientSecret).toString('base64')
             }
         };
@@ -67,7 +67,7 @@ export default class SsoClient {
             method: 'GET',
             uri: this.constructUrl('verify'),
             headers: {
-                'User-Agent': 'cerebral/' + process.env.npm_package_version + ' prometheussatyen@gmail.com',
+                'User-Agent': `cerebral/${appProperties.version} ${appProperties.author_email}`,
                 'Authorization': 'Bearer ' + accessToken
             }
         };
@@ -92,7 +92,7 @@ export default class SsoClient {
                 refresh_token: refreshToken
             },
             headers: {
-                'User-Agent': 'cerebral/' + process.env.npm_package_version + ' prometheussatyen@gmail.com',
+                'User-Agent': `cerebral/${appProperties.version} ${appProperties.author_email}`,
                 'Authorization': 'Basic ' + new Buffer(this.clientId + ":" + this.clientSecret).toString('base64')
             }
         };
