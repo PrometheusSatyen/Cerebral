@@ -1,7 +1,9 @@
-XXXX-XX-XX: 0.3.3-dev Alpha
+2018-04-06: 0.3.3 Alpha
 -------------------------
 * Bug fixed whereby some alpha characters would be incorrectly classified as omega.
 * Version number now included in application title.
+* Corporation icons are now displayed beside the omega status icon on the character overview/sp farming pages
+* Implant icons are now shown for active implants.
 
 2018-04-04: 0.3.2 Alpha
 -------------------------

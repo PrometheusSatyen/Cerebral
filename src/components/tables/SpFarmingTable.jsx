@@ -72,6 +72,7 @@ export default class SpFarmingTable extends React.Component {
                     <TableRow>
                         <TableHeaderColumn style={{width: '20px'}}/>
                         <TableHeaderColumn style={{width: '20px'}}/>
+                        <TableHeaderColumn style={{width: '20px'}}/>
                         <TableHeaderColumn>Character</TableHeaderColumn>
                         <TableHeaderColumn>
                             Base SP<br/>
@@ -107,11 +108,15 @@ export default class SpFarmingTable extends React.Component {
                         return (
                             <TableRow key={char.id} selectable={false} onClick={(e) => this.handleClick(e, char.id)}>
                                 <TableRowColumn style={{width: '20px'}}>
-                                    <Avatar src={char.portraits.px128x128} style={{marginTop: "5px"}}/>
+                                    <Avatar src={char.portraits.px128x128} style={{marginTop: 5}}/>
                                 </TableRowColumn>
 
                                 <TableRowColumn style={{width: '20px'}}>
-                                    <img src={omegaStatusIconPath} style={styles.omegaStatusIcon}/>
+                                    <img src={omegaStatusIconPath} style={{marginTop: 5}}/>
+                                </TableRowColumn>
+
+                                <TableRowColumn style={{width: '20px'}}>
+                                    <img src={`https://image.eveonline.com/Corporation/${char.corporation_id}_64.png`} width={35} style={{marginTop: 7}}/>
                                 </TableRowColumn>
 
                                 <TableRowColumn>{char.name}</TableRowColumn>

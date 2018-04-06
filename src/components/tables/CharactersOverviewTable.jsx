@@ -13,9 +13,6 @@ const styles = {
     charactersTable: {
         height: '100%',
         width: '100%'
-    },
-    omegaStatusIcon: {
-        marginTop: '5px'
     }
 };
 
@@ -85,11 +82,15 @@ export default class CharactersOverviewTable extends React.Component {
                         return (
                             <TableRow key={char.id} selectable={false} onClick={(e) => this.handleClick(e, char.id)}>
                                 <TableRowColumn style={{width: '20px'}}>
-                                    <Avatar src={char.portraits.px128x128} style={{marginTop: "5px"}}/>
+                                    <Avatar src={char.portraits.px128x128} style={{marginTop: 5}}/>
                                 </TableRowColumn>
 
                                 <TableRowColumn style={{width: '20px'}}>
-                                    <img src={omegaStatusIconPath} style={styles.omegaStatusIcon}/>
+                                    <img src={omegaStatusIconPath} style={{marginTop: 5}}/>
+                                </TableRowColumn>
+
+                                <TableRowColumn style={{width: '20px'}}>
+                                    <img src={`https://image.eveonline.com/Corporation/${char.corporation_id}_64.png`} width={35} style={{marginTop: 7}}/>
                                 </TableRowColumn>
 
                                 <TableRowColumn>

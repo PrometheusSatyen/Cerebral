@@ -58,6 +58,12 @@ Installation Instructions:
     **Note:** Windows SmartScreen might block the install, just click More Info --> Run anyway.
 3. Once installation is complete Cerebral will launch and you can start using it. A Start Menu/Desktop shortcut will be created automatically.
 
+Update Instructions:
+-------------------------
+Simply follow the installation instructions and install the new version on top of the old version.
+
+Automatic updates will be available in the first full release of Cerebral 1.0.0.
+
 Usage:
 -------------------------
 * Add your characters using the "Authorise Character" button.

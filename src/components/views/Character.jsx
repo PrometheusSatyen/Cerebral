@@ -106,7 +106,17 @@ export default class Character extends React.Component {
                         <CardText>
                             {
                                 char.implants.length > 0 ?
-                                    char.implants.map(implant => <span key={implant.id}>{implant.name}<br/></span>) :
+                                    <table cellPadding={0}>
+                                        {
+                                            char.implants.map(implant =>
+                                                <tr key={implant.id}>
+                                                    <td width={30}><img width={24} src={`https://image.eveonline.com/Type/${implant.id}_32.png`}/></td>
+                                                    <td>{implant.name}</td>
+                                                </tr>
+                                            )
+                                        }
+
+                                    </table> :
                                     'No Active Implants'
                             }
                         </CardText>
