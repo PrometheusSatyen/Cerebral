@@ -55,16 +55,16 @@ export default {
     'eve_default_data_source': 'tranquility',
 
     'refresh_intervals': {
-        'character_info': 43200,
-        'portrait': 43200,
-        'corporation': 43200,
-        'alliance': 43200,
-        'skills': 900,
-        'skill_queue': 900,
+        'character_info': 21600,
+        'portrait': 21600,
+        'corporation': 21600,
+        'alliance': 21600,
         'attributes': 3600,
         'wallet': 900,
         'implants': 900,
         'clones': 900,
+        'skills': 900,
+        'skill_queue': 900,
         'location': 300,
         'ship': 300
     }
