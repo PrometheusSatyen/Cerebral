@@ -11,6 +11,7 @@ import AuthorizedCharacter from './AuthorizedCharacter';
 
 import appProperties from '../../resources/properties';
 import alphaSkillSet from '../../resources/alpha_skill_set';
+import DateTimeHelper from '../helpers/DateTimeHelper';
 
 let subscribedComponents = [];
 let characters;
@@ -488,6 +489,37 @@ class Character {
         };
     }
 
+    getDataRefreshInfo() {
+        let info = [];
+
+        const translations = {
+            "character_info": "Character Info",
+            "attributes": "Attributes and Remaps",
+            "wallet": "Wallet",
+            "implants": "Active Implants",
+            "clones": "Jump Clones",
+            "skills": "Skills",
+            "skill_queue": "Skill Queue",
+            "location": "Current Location",
+            "ship": "Active Ship",
+        };
+
+        for(const key in translations) {
+            if ((this.nextRefreshes.hasOwnProperty(key)) && (translations.hasOwnProperty(key))) {
+                const last = new Date(this.nextRefreshes[key].last);
+                const next = new Date(this.nextRefreshes[key].do);
+
+                info.push({
+                    type: translations[key],
+                    lastRefresh: (last.getTime() + 5000 < new Date().getTime()) ? DateTimeHelper.timeSince(last) + " ago" : "Just now",
+                    nextRefresh: (next > new Date()) ? DateTimeHelper.timeUntil(next) : "Due"
+                });
+            }
+        }
+
+        return info;
+    }
+
     static markCharacterForForceRefresh(characterId) {
         characterId = characterId.toString();
 
@@ -602,6 +634,6 @@ class Character {
 
 Character.load();
 
-setInterval(Character.build, 60000);
+setInterval(Character.build, 15000);
 
 export default Character;

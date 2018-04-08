@@ -5,6 +5,10 @@ export default class DateTimeHelper {
         return DateTimeHelper.niceCountdown(futureDate - new Date());
     }
 
+    static timeSince(pastDate) {
+        return DateTimeHelper.niceCountdown(new Date() - pastDate);
+    }
+
     static skillLength(startDate, endDate) {
         startDate = new Date(startDate);
         endDate = new Date(endDate);

@@ -172,6 +172,29 @@ export default class Character extends React.Component {
                             }
                         </CardText>
                     </Card>
+
+                    <Card style={styles.card}>
+                        <CardHeader title='Data Refresh'/>
+                        <CardText>
+                            <table width='100%' style={{textAlign: 'right'}}>
+                                <tr>
+                                    <th/>
+                                    <th>Last</th>
+                                    <th>Next</th>
+                                </tr>
+
+                                {
+                                    char.getDataRefreshInfo().map(o =>
+                                        <tr>
+                                            <td>{o.type}</td>
+                                            <td>{o.lastRefresh}</td>
+                                            <td>{o.nextRefresh}</td>
+                                        </tr>
+                                    )
+                                }
+                            </table>
+                        </CardText>
+                    </Card>
                 </div>
             </div>
         );
