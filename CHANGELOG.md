@@ -4,6 +4,7 @@ XXXX-XX-XX: 0.4.0-dev Alpha
 * Removed refresh button from character overview, all refreshing is handled automatically.
 * Fixed bug where version number in title bar would display as undefined.
 * Fixed bug where the user-agent string sent to CCP APIs when requesting data did not contain a valid version number.
+* Fixed bug where skills that were already finished would appear in the skill queue on character pages.
 
 2018-04-06: 0.3.3 Alpha
 -------------------------

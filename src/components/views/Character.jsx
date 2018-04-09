@@ -135,16 +135,22 @@ export default class Character extends React.Component {
                         <CardText>
                             {
                                 char.getCurrentSkill() !== undefined ?
-                                    char.skillQueue.map(skill =>
-                                        <span key={skill.queue_position}>
-                                            {skill.skill_name} {skill.finished_level}&nbsp;
+                                    char.skillQueue.map(skill => {
+                                        if (new Date(skill.finish_date) < new Date()) {
+                                            return undefined;
+                                        } else {
+                                            return (
+                                                <span key={skill.queue_position}>
+                                                    {skill.skill_name} {skill.finished_level}&nbsp;
 
-                                            <span style={{color: grey500}}>
-                                                {DateTimeHelper.skillLength(skill.start_date, skill.finish_date)}
-                                            </span>
-                                            <br/>
-                                        </span>
-                                    ) :
+                                                    <span style={{color: grey500}}>
+                                                        {DateTimeHelper.skillLength(skill.start_date, skill.finish_date)}
+                                                    </span>
+                                                    <br/>
+                                                </span>
+                                            );
+                                        }
+                                    }) :
                                     'No Skills in Queue'
                             }
                         </CardText>
