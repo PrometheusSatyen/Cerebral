@@ -73,6 +73,7 @@ export default class Character extends React.Component {
                                 <li>Charisma: {char.attributes.charisma}</li>
                             </ul>
                             <p>
+                                <strong>Unallocated SP:</strong> {char.unallocated_sp !== undefined ? char.unallocated_sp.toLocaleString(navigator.language) : '0'}<br/>
                                 <strong>Bonus Remaps:</strong> {char.attributes.bonus_remaps}<br/>
                                 <strong>Next Yearly Remap:</strong> {char.getNextYearlyRemapDate() !== true ?
                                     char.getNextYearlyRemapDate().toLocaleString(navigator.language) : 'Now'

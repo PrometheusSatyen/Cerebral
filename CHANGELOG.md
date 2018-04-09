@@ -1,3 +1,7 @@
+XXXX-XX-XX: 0.4.1-dev Alpha
+-------------------------
+* Added unallocated SP to character pages
+
 2018-04-09: 0.4.0 Alpha
 -------------------------
 * Added a new panel to the character pages showing information on when each type of data was last refreshed, and when it will next be refreshed.

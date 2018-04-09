@@ -1,7 +1,7 @@
 {
   "name": "eve-cerebral",
   "productName": "Cerebral",
-  "version": "0.4.0",
+  "version": "0.4.1-dev",
   "description": "Character Manager for EVE Online",
   "author": "Prometheus Satyen",
   "license": "UNLICENSED",
