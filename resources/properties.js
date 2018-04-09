@@ -67,5 +67,7 @@ export default {
         'skill_queue': 900,
         'location': 300,
         'ship': 300
-    }
+    },
+
+    'keytar_service_name': 'cerebral',
 };

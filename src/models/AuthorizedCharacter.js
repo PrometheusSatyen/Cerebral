@@ -1,5 +1,6 @@
 'use strict';
 
+import keytar from 'keytar';
 const Store = require('electron-store');
 
 import StructureHelper from '../helpers/StructureHelper';
@@ -17,11 +18,18 @@ class AuthorizedCharacter {
     constructor(id, accessToken, accessTokenExpiry, refreshToken, ownerHash, scopes) {
         if (id !== undefined) {
             id = id.toString();
+            this.id = id;
+
+            if (accessToken !== undefined) {
+                this.setAccessToken(accessToken);
+            }
+
+            if (refreshToken !== undefined) {
+                this.setRefreshToken(refreshToken);
+            }
         }
-        this.id = id;
-        this.accessToken = accessToken;
+
         this.accessTokenExpiry = accessTokenExpiry;
-        this.refreshToken = refreshToken;
         this.ownerHash = ownerHash;
         this.scopes = scopes;
     }
@@ -38,13 +46,50 @@ class AuthorizedCharacter {
         return this.accessToken;
     }
 
+    async setAccessToken(token) {
+        this.accessToken = token;
+
+        try {
+            await keytar.setPassword(appProperties.keytar_service_name, `character-${this.id}-access-token`, token);
+        } catch(err) {
+            throw err;
+        }
+    }
+
+    async setRefreshToken(token) {
+        this.refreshToken = token;
+
+        try {
+            await keytar.setPassword(appProperties.keytar_service_name, `character-${this.id}-refresh-token`, token);
+        } catch(err) {
+            throw err;
+        }
+    }
+
+    async loadTokensFromSecureStorage() {
+        const service = appProperties.keytar_service_name;
+
+        if (this.accessToken === undefined) {
+            try {
+                const res = await keytar.getPassword(service, `character-${this.id}-access-token`);
+                this.accessToken = (res !== null) ? res : undefined;
+            } catch(err) {}
+        }
+
+        if (this.refreshToken === undefined) {
+            try {
+                const res = await keytar.getPassword(service, `character-${this.id}-refresh-token`);
+                this.refreshToken = (res !== null) ? res : undefined;
+            } catch(err) {}
+        }
+    }
+
     async refresh() {
         let client = new SsoClient();
         let res = await client.refresh(this.refreshToken);
 
-        this.accessToken = res.accessToken;
         this.accessTokenExpiry = res.accessTokenExpiry;
-
+        await this.setAccessToken(res.accessToken);
         this.save();
 
         return this.accessToken;
@@ -79,9 +124,24 @@ class AuthorizedCharacter {
 
             if (rawCharacters !== undefined) {
                 Object.keys(rawCharacters).map(id => {
-                    newCharacters[id.toString()] = new AuthorizedCharacter();
-                    Object.assign(newCharacters[id.toString()], rawCharacters[id]);
-                    newCharacters[id.toString()].id = id.toString()
+                    let fileCharacter = rawCharacters[id];              // character from file
+                    let newCharacter = new AuthorizedCharacter();       // build a new character object
+
+                    // if there are tokens in the file character then we need to migrate to secure storage
+                    const service = appProperties.keytar_service_name;
+                    if (fileCharacter.hasOwnProperty('accessToken')) {
+                        keytar.setPassword(service, `character-${id}-access-token`, fileCharacter.accessToken);
+                    }
+                    if (fileCharacter.hasOwnProperty('refreshToken')) {
+                        keytar.setPassword(service, `character-${id}-refresh-token`, fileCharacter.refreshToken);
+                    }
+
+                    Object.assign(newCharacter, fileCharacter);         // copy properties
+                    newCharacter.id = id.toString();                    // force string for id
+
+                    newCharacter.loadTokensFromSecureStorage();         // load tokens from secure storage
+
+                    newCharacters[newCharacter.id] = newCharacter;
                 });
             }
 
@@ -89,10 +149,24 @@ class AuthorizedCharacter {
         }
     }
 
-    save() {
+    async save() {
         if (authorizedCharacters !== undefined) {
             authorizedCharacters[this.id] = this;
-            authorizedCharactersStore.set('authorizedCharacters', authorizedCharacters);
+
+            // we have to strip tokens from the objects before flushing them to (unencrypted) disk storage
+            let tokensStripped = {};
+            for(const id in authorizedCharacters) {
+                if (authorizedCharacters.hasOwnProperty(id)) {
+                    let char = {};
+                    Object.assign(char, authorizedCharacters[id]);
+                    delete char.accessToken;
+                    delete char.refreshToken;
+
+                    tokensStripped[id] = char;
+                }
+            }
+
+            authorizedCharactersStore.set('authorizedCharacters', tokensStripped);
         }
 
         // when a save is triggered, we can assume that a new token+scopes was just granted
