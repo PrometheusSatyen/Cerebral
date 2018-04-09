@@ -44,24 +44,26 @@ export default class AddFarmDialog extends React.Component {
         this.setState({open: true});
     };
 
-    handleCancel(e) {
-        this.setState({open: false});
+    handleClose(e) {
+        this.setState({
+            open: false,
+            characterValue: 0,
+            baseSpValue: 5000000
+        });
     };
 
     handleAdd(e) {
-        this.setState({open: false});
-
-        if ((typeof this.state.characterValue !== 'string') || (this.state.characterValue === '')) {
-            alert("Failed to add/update/delete farm, please ensure you filled out the form correctly and try again");
+        if ((typeof this.state.characterValue !== 'string') || (this.state.characterValue === '') || (this.state.baseSpValue === '')) {
+            alert("Failed to add/update farm, please ensure you filled out the form correctly and try again");
         } else {
-            if ((typeof this.state.baseSpValue === 'string') && (this.state.baseSpValue === '')) {
-                FarmHelper.deleteFarm(this.state.characterValue);
-            } else if (typeof this.state.baseSpValue === 'string') {
+            if (typeof this.state.baseSpValue === 'string') {
                 FarmHelper.addFarm(this.state.characterValue, parseInt(this.state.baseSpValue));
+                this.handleClose(e);
             } else if (typeof this.state.baseSpValue === 'number') {
                 FarmHelper.addFarm(this.state.characterValue, this.state.baseSpValue);
+                this.handleClose(e);
             } else {
-                alert("Failed to add/update/delete farm, please ensure you filled out the form correctly and try again");
+                alert("Failed to add/update farm, please ensure you filled out the form correctly and try again");
             }
         }
     };
@@ -71,7 +73,7 @@ export default class AddFarmDialog extends React.Component {
             <FlatButton
                 label="Cancel"
                 primary={true}
-                onClick={(e) => this.handleCancel(e)}
+                onClick={(e) => this.handleClose(e)}
             />,
             <FlatButton
                 label="Add"
@@ -83,7 +85,7 @@ export default class AddFarmDialog extends React.Component {
         return (
             <div>
                 <RaisedButton
-                    label="Add Farm"
+                    label="Add/Update Farm"
                     secondary={true}
                     onClick={(e) => this.handleOpen(e)}
                     style={styles.addFarmButton}
@@ -95,7 +97,7 @@ export default class AddFarmDialog extends React.Component {
                     actions={actions}
                     modal={false}
                     open={this.state.open}
-                    onRequestClose={(e) => this.handleCancel(e)}
+                    onRequestClose={(e) => this.handleClose(e)}
                     contentStyle={styles.addFarmDialog}
                 >
 

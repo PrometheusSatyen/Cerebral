@@ -5,10 +5,14 @@ import {Redirect} from 'react-router';
 
 import Character from '../../models/Character';
 import FarmCharacter from '../../models/FarmCharacter';
+import FarmHelper from '../../helpers/FarmHelper';
 import DateTimeHelper from '../../helpers/DateTimeHelper';
 
 import Avatar from 'material-ui/Avatar';
 import {Table, TableHeader, TableHeaderColumn, TableBody, TableRow, TableRowColumn} from 'material-ui/Table';
+import IconButton from 'material-ui/IconButton';
+import FontIcon from 'material-ui/FontIcon';
+import {red500} from 'material-ui/styles/colors';
 
 const styles = {
     charactersTable: {
@@ -59,6 +63,12 @@ export default class SpFarmingTable extends React.Component {
         });
     }
 
+    handleDelete(e, characterId) {
+        FarmHelper.deleteFarm(characterId);
+
+        this.forceUpdate();
+    };
+
     render() {
         if (this.state.redirectPath !== undefined) {
             this.setState({redirectPath: undefined});
@@ -86,6 +96,7 @@ export default class SpFarmingTable extends React.Component {
                             Current SP/hour<br/>
                             Queue Length
                         </TableHeaderColumn>
+                        <TableHeaderColumn style={{width: 20}}/>
                     </TableRow>
                 </TableHeader>
 
@@ -106,7 +117,7 @@ export default class SpFarmingTable extends React.Component {
                         const currentSkill = char.getCurrentSkill();
 
                         return (
-                            <TableRow key={char.id} selectable={false} onClick={(e) => this.handleClick(e, char.id)}>
+                            <TableRow key={char.id} selectable={false}>
                                 <TableRowColumn style={{width: '20px'}}>
                                     <Avatar src={char.portraits.px128x128} style={{marginTop: 5}}/>
                                 </TableRowColumn>
@@ -119,7 +130,7 @@ export default class SpFarmingTable extends React.Component {
                                     <img src={`https://image.eveonline.com/Corporation/${char.corporation_id}_64.png`} width={35} style={{marginTop: 7}}/>
                                 </TableRowColumn>
 
-                                <TableRowColumn>{char.name}</TableRowColumn>
+                                <TableRowColumn><a onClick={e => this.handleClick(e, char.id)}>{char.name}</a></TableRowColumn>
 
                                 <TableRowColumn>
                                     {farmChar.baseSp.toLocaleString(navigator.language, { maximumFractionDigits: 0 })} SP<br/>
@@ -134,6 +145,12 @@ export default class SpFarmingTable extends React.Component {
                                 <TableRowColumn>
                                     {currentSkill !== undefined ? char.getCurrentSpPerHour() : "Not Training"}<br/>
                                     {currentSkill !== undefined ? DateTimeHelper.timeUntil(new Date(char.getLastSkill().finish_date)) : ""}
+                                </TableRowColumn>
+
+                                <TableRowColumn style={{width: 20, textAlign: 'right', paddingRight: 40}}>
+                                    <IconButton color={red500} onClick={e => this.handleDelete(e, char.id)}>
+                                        <FontIcon className="material-icons">delete</FontIcon>
+                                    </IconButton>
                                 </TableRowColumn>
                             </TableRow>
                         )
