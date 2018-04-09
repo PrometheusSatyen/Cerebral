@@ -99,6 +99,32 @@ export default class Character extends React.Component {
                             }
                         </CardText>
                     </Card>
+
+                    {
+                        char.loyalty_points !== undefined ?
+                            <Card style={styles.card}>
+                                <CardHeader title='Loyalty Points'/>
+                                <CardText>
+                                    {
+                                        char.loyalty_points.length > 0 ?
+                                            <table width='100%'>
+                                                <tbody>
+                                                {
+                                                    char.loyalty_points.map(o =>
+                                                        <tr key={o.corporation_id}>
+                                                            <td style={{textAlign: 'left'}}>{o.corporation.name}</td>
+                                                            <td style={{textAlign: 'right'}}>{o.loyalty_points.toLocaleString(navigator.language)}</td>
+                                                        </tr>
+                                                    )
+                                                }
+                                                </tbody>
+                                            </table> :
+                                            'No Loyalty Points'
+                                    }
+                                </CardText>
+                            </Card> :
+                            ''
+                    }
                 </div>
 
                 <div style={styles.cardDiv}>

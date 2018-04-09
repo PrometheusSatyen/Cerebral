@@ -2,6 +2,7 @@
 -------------------------
 * Added a new panel to the character pages showing information on when each type of data was last refreshed, and when it will next be refreshed.
 * Added a new panel to the character pages showing jump fatigue information.
+* Added a new panel to the character pages showing loyalty points.
 * Removed refresh button from character overview, all refreshing is handled automatically.
 * Started requesting scopes for fatigue, loyalty points and character contracts.
 * Various backend changes to the code to allow for selective scope granting in the future, and to prevent errors on characters added before a scope was requested by the application.

@@ -518,13 +518,19 @@ class Character {
             await client.authChar(AuthorizedCharacter.get(this.id));
 
             try {
-                this.loyalty_points = await client.get('characters/' + this.id + '/loyalty/points', 'v1',
+                const data = await client.get('characters/' + this.id + '/loyalty/points', 'v1',
                     'esi-characters.read_loyalty.v1'
                 );
 
-                for(let o of this.loyalty_points) {
-                    o.corporation = await client.get('corporations/' + o.corporation_id, 'v4');
+                this.loyalty_points = [];
+                for(let o of data) {
+                    if (o.loyalty_points > 0) {
+                        o.corporation = await client.get('corporations/' + o.corporation_id, 'v4');
+                        this.loyalty_points.push(o);
+                    }
                 }
+
+                this.loyalty_points.sort((a, b) => a.corporation.name.localeCompare(b.corporation.name));
 
                 this.markRefreshed('loyalty_points');
             } catch (err) {
