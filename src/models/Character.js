@@ -233,6 +233,7 @@ class Character {
             this.refreshLocation(),
             this.refreshShip(),
             this.refreshFatigue(),
+            this.refreshLoyaltyPoints(),
         ]);
     }
 
@@ -511,6 +512,31 @@ class Character {
         }
     }
 
+    async refreshLoyaltyPoints() {
+        if (this.shouldRefresh('loyalty_points')) {
+            let client = new EsiClient();
+            await client.authChar(AuthorizedCharacter.get(this.id));
+
+            try {
+                this.loyalty_points = await client.get('characters/' + this.id + '/loyalty/points', 'v1',
+                    'esi-characters.read_loyalty.v1'
+                );
+
+                for(let o of this.loyalty_points) {
+                    o.corporation = await client.get('corporations/' + o.corporation_id, 'v4');
+                }
+
+                this.markRefreshed('loyalty_points');
+            } catch (err) {
+                if (err === 'Scope missing') {
+                    this.markFailedNoScope('loyalty_points');
+                }
+            }
+
+            this.save();
+        }
+    }
+
     shouldRefresh(type) {
         return (!this.nextRefreshes.hasOwnProperty(type)) || (new Date(this.nextRefreshes[type].do) < new Date());
     }
@@ -536,6 +562,7 @@ class Character {
         const translations = {
             "character_info": "Character Info",
             "attributes": "Attributes and Remaps",
+            "loyalty_points": "Loyalty Points",
             "wallet": "Wallet",
             "implants": "Active Implants",
             "clones": "Jump Clones",
