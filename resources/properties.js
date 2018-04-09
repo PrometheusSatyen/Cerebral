@@ -78,6 +78,7 @@ export default {
         'clones': 900,
         'skills': 900,
         'skill_queue': 900,
+        'contracts': 300,
         'location': 300,
         'ship': 300,
         'fatigue': 300,

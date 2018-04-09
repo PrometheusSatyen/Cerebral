@@ -11,6 +11,7 @@ import {lightBlue200} from 'material-ui/styles/colors';
 import LeftNav from './nav/LeftNav';
 import Overview from './views/Overview';
 import SpFarming from './views/SpFarming';
+import Contracts from './views/Contracts';
 import Character from './views/Character';
 
 const muiTheme = getMuiTheme(darkBaseTheme, {
@@ -41,6 +42,7 @@ export default class App extends React.Component {
                     <div style={styles.mainDiv}>
                         <Route exact path="/" component={Overview} />
                         <Route path="/sp-farming" component={SpFarming} />
+                        <Route path="/contracts" component={Contracts} />
                         <Route path="/characters/:characterId" component={Character} />
                     </div>
                 </div>

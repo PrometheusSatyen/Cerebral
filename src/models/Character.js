@@ -12,6 +12,7 @@ import AuthorizedCharacter from './AuthorizedCharacter';
 import appProperties from '../../resources/properties';
 import alphaSkillSet from '../../resources/alpha_skill_set';
 import DateTimeHelper from '../helpers/DateTimeHelper';
+import PublicCharacterHelper from '../helpers/PublicCharacterHelper';
 
 let subscribedComponents = [];
 let characters;
@@ -234,6 +235,7 @@ class Character {
             this.refreshShip(),
             this.refreshFatigue(),
             this.refreshLoyaltyPoints(),
+            this.refreshContracts(),
         ]);
     }
 
@@ -543,6 +545,35 @@ class Character {
         }
     }
 
+    async refreshContracts() {
+        if (this.shouldRefresh('contracts')) {
+            let client = new EsiClient();
+            await client.authChar(AuthorizedCharacter.get(this.id));
+
+            try {
+                this.contracts = await client.get('characters/' + this.id + '/contracts', 'v1',
+                    'esi-contracts.read_character_contracts.v1'
+                );
+
+                for(let contract of this.contracts) {
+                    contract.issuer = await PublicCharacterHelper.resolveCharacter(contract.issuer_id);
+                    if (contract.availability === 'personal') {
+                        contract.assignee = await PublicCharacterHelper.resolveCharacter(contract.assignee_id);
+                    }
+                    contract.acceptor = await PublicCharacterHelper.resolveCharacter(contract.acceptor_id);
+                }
+
+                this.markRefreshed('contracts');
+            } catch (err) {
+                if (err === 'Scope missing') {
+                    this.markFailedNoScope('contracts');
+                }
+            }
+
+            this.save();
+        }
+    }
+
     shouldRefresh(type) {
         return (!this.nextRefreshes.hasOwnProperty(type)) || (new Date(this.nextRefreshes[type].do) < new Date());
     }
@@ -574,6 +605,7 @@ class Character {
             "clones": "Jump Clones",
             "skills": "Skills",
             "skill_queue": "Skill Queue",
+            "contracts": "Contracts",
             "location": "Current Location",
             "ship": "Active Ship",
             "fatigue": "Jump Fatigue",
@@ -647,6 +679,26 @@ class Character {
 
     static getAll() {
         return characters;
+    }
+
+    static getAllContracts() {
+        let contracts = [];
+        let contractIds = [];
+
+        for(const id in characters) {
+            if (characters.hasOwnProperty(id)) {
+                if (characters[id].hasOwnProperty('contracts') && characters[id].contracts !== undefined) {
+                    for(const contract of characters[id].contracts) {
+                        if (!contractIds.includes(contract.contract_id)) {
+                            contracts.push(contract);
+                            contractIds.push(contract.contract_id);
+                        }
+                    }
+                }
+            }
+        }
+
+        return contracts;
     }
 
     static get(id) {
