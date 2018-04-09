@@ -17,7 +17,7 @@ export default class TypeHelper {
 
         if (!types.hasOwnProperty(id)) {
             let client = new EsiClient();
-            types[id] = await client.get('universe/types/' + id, 'v3', {}, false, false);
+            types[id] = await client.get('universe/types/' + id, 'v3');
             TypeHelper.save();
         }
 

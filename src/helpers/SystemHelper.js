@@ -17,7 +17,7 @@ export default class SystemHelper {
 
         if (!things.hasOwnProperty(id)) {
             let client = new EsiClient();
-            things[id] = await client.get('universe/systems/' + id, 'v3', {}, false, false);
+            things[id] = await client.get('universe/systems/' + id, 'v3');
             SystemHelper.save();
         }
 

@@ -19,7 +19,7 @@ export default class StationHelper {
 
         if (!things.hasOwnProperty(id)) {
             let client = new EsiClient();
-            things[id] = await client.get('universe/stations/' + id, 'v2', {}, false, false);
+            things[id] = await client.get('universe/stations/' + id, 'v2');
             things[id].system = await SystemHelper.resolveSystem(things[id].system_id);
             things[id].type = await TypeHelper.resolveType(things[id].type_id);
             delete things[id].type.dogma_attributes;
