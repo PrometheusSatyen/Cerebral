@@ -24,8 +24,9 @@ class Character {
     constructor(id, name) {
         if (id !== undefined) {
             id = id.toString();
+            this.id = id;
         }
-        this.id = id;
+
         this.name = name;
         this.nextRefreshes = {};
     }

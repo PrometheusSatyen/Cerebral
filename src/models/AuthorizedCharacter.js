@@ -17,8 +17,9 @@ class AuthorizedCharacter {
     constructor(id, accessToken, accessTokenExpiry, refreshToken, ownerHash, scopes) {
         if (id !== undefined) {
             id = id.toString();
+            this.id = id;
         }
-        this.id = id;
+
         this.accessToken = accessToken;
         this.accessTokenExpiry = accessTokenExpiry;
         this.refreshToken = refreshToken;
