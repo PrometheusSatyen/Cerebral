@@ -4,7 +4,7 @@ import React from 'react';
 
 import {Card, CardHeader, CardText} from 'material-ui/Card';
 import FontIcon from 'material-ui/FontIcon';
-import {red500, greenA200, grey500} from 'material-ui/styles/colors';
+import {red500, greenA200, grey500, deepOrange400, lightBlue400} from 'material-ui/styles/colors';
 
 import CharacterModel from '../../models/Character';
 import AuthorizedCharacter from '../../models/AuthorizedCharacter';
@@ -30,6 +30,7 @@ export default class Character extends React.Component {
 
     render() {
         const char = CharacterModel.get(this.props.match.params.characterId);
+        const fatigue = char.getFatigueInfo();
 
         return (
             <div style={{width: '100%', overflow: 'hidden'}}>
@@ -101,6 +102,47 @@ export default class Character extends React.Component {
                 </div>
 
                 <div style={styles.cardDiv}>
+                    {
+                        fatigue !== undefined ?
+                            <Card style={styles.card}>
+                                <CardHeader title='Jump Fatigue'/>
+                                <CardText>
+                                    <table width='100%' style={{textAlign: 'left'}}>
+                                        <tbody>
+                                            <tr>
+                                                <th>Last Jump:</th>
+                                                <td>{fatigue.last_jump.relative}</td>
+                                                <td>{fatigue.last_jump.date.toLocaleString(navigator.language)}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Red Timer:</th>
+                                                <td style={{color: deepOrange400}}>{fatigue.red_timer_expiry.relative}</td>
+                                                <td>
+                                                    {
+                                                        fatigue.red_timer_expiry.relative !== 'None' ?
+                                                            fatigue.red_timer_expiry.date.toLocaleString(navigator.language) :
+                                                            ''
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Blue Timer:</th>
+                                                <td style={{color: lightBlue400}}>{fatigue.blue_timer_expiry.relative}</td>
+                                                <td>
+                                                    {
+                                                        fatigue.blue_timer_expiry.relative !== 'None' ?
+                                                            fatigue.blue_timer_expiry.date.toLocaleString(navigator.language) :
+                                                            ''
+                                                    }
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </CardText>
+                            </Card> :
+                            ''
+                    }
+
                     <Card style={styles.card}>
                         <CardHeader title='Active Implants'/>
                         <CardText>

@@ -1,7 +1,9 @@
 XXXX-XX-XX: 0.4.0-dev Alpha
 -------------------------
 * Added a new panel to the character pages showing information on when each type of data was last refreshed, and when it will next be refreshed.
+* Added a new panel to the character pages showing jump fatigue information.
 * Removed refresh button from character overview, all refreshing is handled automatically.
+* Started requesting scopes for fatigue, loyalty points and character contracts.
 * Fixed bug where version number in title bar would display as undefined.
 * Fixed bug where the user-agent string sent to CCP APIs when requesting data did not contain a valid version number.
 * Fixed bug where skills that were already finished would appear in the skill queue on character pages.

@@ -187,6 +187,34 @@ class Character {
         return undefined;
     }
 
+    getFatigueInfo() {
+        if (this.fatigue === undefined) {
+            return undefined;
+        }
+
+        const lastJumpDate = new Date(this.fatigue.last_jump_date);
+        const blueTimerExpiryDate = new Date(this.fatigue.jump_fatigue_expire_date);
+        const redTimerExpiryDate = new Date(this.fatigue.last_update_date);
+        const curDate = new Date();
+
+        return {
+            last_jump: {
+                date: lastJumpDate,
+                relative: `${DateTimeHelper.timeSince(lastJumpDate)} ago `,
+            },
+
+            blue_timer_expiry: {
+                date: blueTimerExpiryDate,
+                relative: (blueTimerExpiryDate > curDate) ? DateTimeHelper.timeUntil(blueTimerExpiryDate) : 'None',
+            },
+
+            red_timer_expiry: {
+                date: redTimerExpiryDate,
+                relative: (redTimerExpiryDate > curDate) ? DateTimeHelper.timeUntil(redTimerExpiryDate) : 'None',
+            },
+        };
+    }
+
     async refreshAll() {
         // first refresh basic info which will be needed for the rest of the calls
         await this.refreshInfo();
@@ -203,7 +231,8 @@ class Character {
             this.refreshImplants(),
             this.refreshJumpClones(),
             this.refreshLocation(),
-            this.refreshShip()
+            this.refreshShip(),
+            this.refreshFatigue(),
         ]);
     }
 
@@ -479,6 +508,19 @@ class Character {
         }
     }
 
+    async refreshFatigue() {
+        if (this.shouldRefresh('fatigue')) {
+            let client = new EsiClient();
+
+            let authInfo = AuthorizedCharacter.get(this.id);
+            client.auth(await authInfo.getAccessToken());
+
+            this.fatigue = await client.get('characters/' + this.id + '/fatigue', 'v1');
+            this.save();
+            this.markRefreshed('fatigue');
+        }
+    }
+
     shouldRefresh(type) {
         return (!this.nextRefreshes.hasOwnProperty(type)) || (new Date(this.nextRefreshes[type].do) < new Date());
     }
@@ -503,6 +545,7 @@ class Character {
             "skill_queue": "Skill Queue",
             "location": "Current Location",
             "ship": "Active Ship",
+            "fatigue": "Jump Fatigue",
         };
 
         for(const key in translations) {

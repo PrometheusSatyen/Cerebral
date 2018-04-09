@@ -49,6 +49,18 @@ export default {
             'name': 'esi-universe.read_structures.v1',
             'description': 'Read Dockable Structure Information'
         },
+        {
+            'name': 'esi-characters.read_fatigue.v1',
+            'description': 'Read Jump Fatigue'
+        },
+        {
+            'name': 'esi-characters.read_loyalty.v1',
+            'description': 'Read Loyalty Points'
+        },
+        {
+            'name': 'esi-contracts.read_character_contracts.v1',
+            'description': 'Read Contracts'
+        },
     ],
 
     'eve_esi_url': 'https://esi.tech.ccp.is',
@@ -66,6 +78,7 @@ export default {
         'skills': 900,
         'skill_queue': 900,
         'location': 300,
-        'ship': 300
-    }
+        'ship': 300,
+        'fatigue': 300,
+    },
 };
