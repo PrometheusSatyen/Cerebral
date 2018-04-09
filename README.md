@@ -77,12 +77,7 @@ FAQ:
 -------------------------
 **Where are my tokens stored?**
 
-Your tokens are stored securely using OS-dependent credential management:
-    * On Windows your tokens are stored using Credential Manager and encrypted using your user account password.
-    * On macOS your tokens are stored in the Keychain and encrypted using your user account password.
-    * On Linux your tokens are stored using GNOME Keychain and encrypted using your user account password.
-    
-In a future version you will be able to export/import a backup of your tokens inside the application.
+Your tokens are stored in your user account folder in <YourUserFolder>/AppData/Roaming/Cerebral/authorized-characters.json. You can back this file up after adding your characters and restore it if needed. Do not allow this file to fall into malicious hands as the contents allow anyone to query your data from CCP.
 
 The application only communicates with the CCP servers, no token data will ever leave your machine for any other destination.
 
