@@ -19,15 +19,31 @@ export default class EsiClient {
         this.token = undefined;
     }
 
-    auth(token) {
-        this.token = token;
+    async authChar(authorizedCharacter) {
+        this.token = await authorizedCharacter.getAccessToken();
+        this.scopes = authorizedCharacter.scopes;
     }
 
-    async get(endpoint, version, options) {
-        return await this.request('GET', endpoint, version, options);
+    async get(endpoint, version, requiredScopes, options) {
+        return await this.request('GET', endpoint, version, requiredScopes, options);
     }
 
-    async request(method, endpoint, version, options) {
+    async request(method, endpoint, version, requiredScopes, options) {
+        if (requiredScopes === undefined) {
+            requiredScopes = [];
+        } else if (typeof requiredScopes === 'string') {
+            requiredScopes = [requiredScopes];
+        }
+
+        if (requiredScopes.length > 0) {
+            for(const scope of requiredScopes) {
+                if (!this.scopes.includes(scope)) {
+                    logger.log('info', `SKIPPING ${method} ${endpoint}.${version}, scope missing from auth.`);
+                    throw 'Scope missing';
+                }
+            }
+        }
+
         if (options === undefined) {
             options = {};
         }
@@ -79,7 +95,9 @@ export default class EsiClient {
         let trimmedEndpoint = EsiClient.trimSlashes(endpoint);
         let trimmedVersion = EsiClient.trimSlashes(version);
 
-        return baseUrl + '/' + trimmedVersion + '/' + trimmedEndpoint;
+        return (trimmedVersion !== '') ?
+            baseUrl + '/' + trimmedVersion + '/' + trimmedEndpoint :
+            baseUrl + '/' + trimmedEndpoint;
     }
 
     static trimSlashes(str) {

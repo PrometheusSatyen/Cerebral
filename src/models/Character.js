@@ -188,7 +188,7 @@ class Character {
     }
 
     getFatigueInfo() {
-        if (this.fatigue === undefined) {
+        if ((this.fatigue === undefined) || (this.fatigue.last_jump_date === undefined)) {
             return undefined;
         }
 
@@ -287,9 +287,7 @@ class Character {
     async refreshSkills() {
         if (this.shouldRefresh('skills')) {
             let client = new EsiClient();
-
-            let authInfo = AuthorizedCharacter.get(this.id);
-            client.auth(await authInfo.getAccessToken());
+            await client.authChar(AuthorizedCharacter.get(this.id));
 
             let skillData = await client.get('characters/' + this.id + '/skills', 'v4');
             Object.assign(this, skillData);
@@ -311,9 +309,7 @@ class Character {
     async refreshSkillQueue() {
         if (this.shouldRefresh('skill_queue')) {
             let client = new EsiClient();
-
-            let authInfo = AuthorizedCharacter.get(this.id);
-            client.auth(await authInfo.getAccessToken());
+            await client.authChar(AuthorizedCharacter.get(this.id));
 
             this.skillQueue = await client.get('characters/' + this.id + '/skillqueue', 'v2');
 
@@ -334,9 +330,7 @@ class Character {
     async refreshAttributes() {
         if (this.shouldRefresh('attributes')) {
             let client = new EsiClient();
-
-            let authInfo = AuthorizedCharacter.get(this.id);
-            client.auth(await authInfo.getAccessToken());
+            await client.authChar(AuthorizedCharacter.get(this.id));
 
             this.attributes = await client.get('characters/' + this.id + '/attributes', 'v1');
             this.save();
@@ -347,9 +341,7 @@ class Character {
     async refreshImplants() {
         if (this.shouldRefresh('implants')) {
             let client = new EsiClient();
-
-            let authInfo = AuthorizedCharacter.get(this.id);
-            client.auth(await authInfo.getAccessToken());
+            await client.authChar(AuthorizedCharacter.get(this.id));
 
             let implantIds = await client.get('characters/' + this.id + '/implants', 'v1');
             this.implants = [];
@@ -375,9 +367,7 @@ class Character {
     async refreshJumpClones() {
         if (this.shouldRefresh('clones')) {
             let client = new EsiClient();
-
-            let authInfo = AuthorizedCharacter.get(this.id);
-            client.auth(await authInfo.getAccessToken());
+            await client.authChar(AuthorizedCharacter.get(this.id));
 
             let cloneData = await client.get('characters/' + this.id + '/clones', 'v3');
 
@@ -421,6 +411,7 @@ class Character {
             }
 
             // resolve locations
+            const that = this;
             Array.prototype.push.apply(promises, this.jumpClones.map((o) => {
                 if (o.location_type === "station") {
                     return StationHelper.resolveStation(o.location_id).then(station => {
@@ -429,7 +420,7 @@ class Character {
                         return o;
                     });
                 } else if (o.location_type === "structure") {
-                    return StructureHelper.resolveStructure(o.location_id, client, authInfo.id).then(structure => {
+                    return StructureHelper.resolveStructure(o.location_id, client, that.id).then(structure => {
                         if (structure !== undefined) {
                             delete structure.system.planets;
                             o.location = structure;
@@ -451,9 +442,7 @@ class Character {
     async refreshLocation() {
         if (this.shouldRefresh('location')) {
             let client = new EsiClient();
-
-            let authInfo = AuthorizedCharacter.get(this.id);
-            client.auth(await authInfo.getAccessToken());
+            await client.authChar(AuthorizedCharacter.get(this.id));
 
             this.location = await client.get('characters/' + this.id + '/location', 'v1');
 
@@ -483,9 +472,7 @@ class Character {
     async refreshShip() {
         if (this.shouldRefresh('ship')) {
             let client = new EsiClient();
-
-            let authInfo = AuthorizedCharacter.get(this.id);
-            client.auth(await authInfo.getAccessToken());
+            await client.authChar(AuthorizedCharacter.get(this.id));
 
             this.ship = await client.get('characters/' + this.id + '/ship', 'v1');
             this.ship.type = await TypeHelper.resolveType(this.ship.ship_type_id);
@@ -498,9 +485,7 @@ class Character {
     async refreshWallet() {
         if (this.shouldRefresh('wallet')) {
             let client = new EsiClient();
-
-            let authInfo = AuthorizedCharacter.get(this.id);
-            client.auth(await authInfo.getAccessToken());
+            await client.authChar(AuthorizedCharacter.get(this.id));
 
             this.balance = await client.get('characters/' + this.id + '/wallet', 'v1');
             this.save();
@@ -511,13 +496,18 @@ class Character {
     async refreshFatigue() {
         if (this.shouldRefresh('fatigue')) {
             let client = new EsiClient();
+            await client.authChar(AuthorizedCharacter.get(this.id));
 
-            let authInfo = AuthorizedCharacter.get(this.id);
-            client.auth(await authInfo.getAccessToken());
+            try {
+                this.fatigue = await client.get('characters/' + this.id + '/fatigue', 'v1', 'esi-characters.read_fatigue.v1');
+                this.markRefreshed('fatigue');
+            } catch (err) {
+                if (err === 'Scope missing') {
+                    this.markFailedNoScope('fatigue');
+                }
+            }
 
-            this.fatigue = await client.get('characters/' + this.id + '/fatigue', 'v1');
             this.save();
-            this.markRefreshed('fatigue');
         }
     }
 
@@ -529,6 +519,14 @@ class Character {
         this.nextRefreshes[type] = {
             last: new Date(),
             do: new Date(new Date().getTime() + appProperties.refresh_intervals[type] * 1000)
+        };
+    }
+
+    markFailedNoScope(type) {
+        this.nextRefreshes[type] = {
+            last: new Date(),
+            no_scope: true,
+            do: undefined
         };
     }
 
@@ -548,15 +546,30 @@ class Character {
             "fatigue": "Jump Fatigue",
         };
 
+        // TODO: clean this up jfc
         for(const key in translations) {
             if ((this.nextRefreshes.hasOwnProperty(key)) && (translations.hasOwnProperty(key))) {
-                const last = new Date(this.nextRefreshes[key].last);
-                const next = new Date(this.nextRefreshes[key].do);
+                let las;
+                if (this.nextRefreshes[key].no_scope !== true) {
+                    const lastDate = new Date(this.nextRefreshes[key].last);
+                    las = (lastDate.getTime() + 5000 < new Date().getTime()) ?
+                        DateTimeHelper.timeSince(lastDate) + " ago" : "Just now";
+                } else {
+                    las = 'No Scope';
+                }
+
+                let nex;
+                if (this.nextRefreshes[key].do !== undefined) {
+                    const nextDate = new Date(this.nextRefreshes[key].do);
+                    nex = (nextDate > new Date()) ? DateTimeHelper.timeUntil(nextDate) : "Due";
+                } else {
+                    nex = 'Never';
+                }
 
                 info.push({
                     type: translations[key],
-                    lastRefresh: (last.getTime() + 5000 < new Date().getTime()) ? DateTimeHelper.timeSince(last) + " ago" : "Just now",
-                    nextRefresh: (next > new Date()) ? DateTimeHelper.timeUntil(next) : "Due"
+                    lastRefresh: las,
+                    nextRefresh: nex
                 });
             }
         }
