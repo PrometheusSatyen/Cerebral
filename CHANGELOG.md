@@ -1,7 +1,12 @@
-XXXX-XX-XX: 0.3.4-dev Alpha
+XXXX-XX-XX: 0.4.0-dev Alpha
 -------------------------
-* Fixed bug where version number in title bar would display as undefined
-* Fixed bug where the user-agent string sent to CCP APIs when requesting data did not contain a valid version number
+* SSO access and refresh tokens are now stored using OS-dependent encrypted credential management (Windows = Credential Manager, macOS = Keychain, Linux = GNOME Keychain).
+    * On first launch of this new version, your tokens will be stored securely and then be wiped from the previously unencrypted location in which they were stored.
+    * You are advised to back up ~/AppData/Roaming/Cerebral/authorized-characters.json before taking this update.
+* Added a new panel to the character pages showing information on when each type of data was last refreshed, and when it will next be refreshed.
+* Removed refresh button from character overview, all refreshing is handled automatically.
+* Fixed bug where version number in title bar would display as undefined.
+* Fixed bug where the user-agent string sent to CCP APIs when requesting data did not contain a valid version number.
 
 2018-04-06: 0.3.3 Alpha
 -------------------------
