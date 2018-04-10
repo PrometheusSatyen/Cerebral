@@ -218,7 +218,7 @@ class Character {
 
     getCloneJumpAvailable() {
         const synchro = this.skills.find(o => o.skill_name === 'Infomorph Synchronizing');
-        const millisecReduction = synchro.active_skill_level * 3600 * 1000;
+        const millisecReduction = (synchro !== undefined) ? synchro.active_skill_level * 3600 * 1000 : 0;
 
         const lastJumpDate = new Date(this.last_clone_jump_date);
         const nextJumpDate = new Date(lastJumpDate.getTime() + (24 * 3600 * 1000) - millisecReduction);
