@@ -2,18 +2,9 @@
 
 import React from 'react';
 
-import DateTimeHelper from '../../helpers/DateTimeHelper';
 import Character from '../../models/Character';
 
-import {Table, TableHeader, TableHeaderColumn, TableBody, TableRow, TableRowColumn} from 'material-ui/Table';
 import ReactTable from "react-table";
-
-const styles = {
-    contractsTable: {
-        height: '100%',
-        width: '100%'
-    }
-};
 
 export default class ContractsTable extends React.Component {
     constructor(props) {
@@ -53,6 +44,7 @@ export default class ContractsTable extends React.Component {
                 ]}
                 showPagination={false}
                 defaultPageSize={contracts.length}
+                filterable={true}
             />
         );
     }
