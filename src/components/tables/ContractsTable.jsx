@@ -6,6 +6,7 @@ import DateTimeHelper from '../../helpers/DateTimeHelper';
 import Character from '../../models/Character';
 
 import {Table, TableHeader, TableHeaderColumn, TableBody, TableRow, TableRowColumn} from 'material-ui/Table';
+import ReactTable from "react-table";
 
 const styles = {
     contractsTable: {
@@ -23,33 +24,36 @@ export default class ContractsTable extends React.Component {
         const contracts = Character.getAllContracts();
 
         return (
-            <Table style={styles.contractsTable}>
-                <TableHeader displaySelectAll={false} adjustForCheckbox={false} enableSelectAll={false}>
-                    <TableRow>
-                        <TableHeaderColumn>Type</TableHeaderColumn>
-                        <TableHeaderColumn>Status</TableHeaderColumn>
-                        <TableHeaderColumn>Issuer</TableHeaderColumn>
-                        <TableHeaderColumn>Assignee</TableHeaderColumn>
-                        <TableHeaderColumn>Issued</TableHeaderColumn>
-                        <TableHeaderColumn>Completed</TableHeaderColumn>
-                    </TableRow>
-                </TableHeader>
-
-                <TableBody displayRowCheckbox={false}>
+            <ReactTable
+                style={{color: '#fff'}}
+                data={contracts}
+                columns={[
                     {
-                        contracts.map(contract =>
-                            <TableRow key={contract.contract_id} selectable={false}>
-                                <TableRowColumn>{contract.type}</TableRowColumn>
-                                <TableRowColumn>{contract.status}</TableRowColumn>
-                                <TableRowColumn>{contract.issuer !== undefined ? contract.issuer.name : contract.issuer_id}</TableRowColumn>
-                                <TableRowColumn>{contract.assignee !== undefined ? contract.assignee.name : contract.assignee_id}</TableRowColumn>
-                                <TableRowColumn>{contract.date_issued}</TableRowColumn>
-                                <TableRowColumn>{contract.date_completed}</TableRowColumn>
-                            </TableRow>
-                        )
-                    }
-                </TableBody>
-            </Table>
+                        Header: "Type",
+                        accessor: "type"
+                    },
+                    {
+                        Header: "Status",
+                        accessor: "status"
+                    },
+                    {
+                        Header: "Issuer",
+                        id: "issuer_id",
+                        accessor: c => c.issuer !== undefined ? c.issuer.name : c.issuer_id
+                    },
+                    {
+                        Header: "Assignee",
+                        id: "assignee_id",
+                        accessor: c => c.assignee !== undefined ? c.assignee.name : c.assignee_id
+                    },
+                    {
+                        Header: "Date Issued",
+                        accessor: "date_issued"
+                    },
+                ]}
+                showPagination={false}
+                defaultPageSize={contracts.length}
+            />
         );
     }
 }
