@@ -84,7 +84,7 @@ export default class Character extends React.Component {
                     </Card>
 
                     <Card style={styles.card}>
-                        <CardHeader title='Jump Clones'/>
+                        <CardHeader title={`Jump Clones (${char.jumpClones.length}/${char.getMaxClones()})`}/>
                         <CardText>
                             <p style={{marginTop: 0}}>
                                 <strong>Clone Jump Available:</strong> {cloneJumpAvailable.relative} {cloneJumpAvailable.relative !== 'Now' ? `(${cloneJumpAvailable.date.toLocaleString(navigator.language)})` : ''}

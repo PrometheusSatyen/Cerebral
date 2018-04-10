@@ -229,6 +229,19 @@ class Character {
         };
     }
 
+    getMaxClones() {
+        const psycho = this.skills.find(o => o.skill_name === 'Infomorph Psychology');
+        const advPsycho = this.skills.find(o => o.skill_name === 'Advanced Infomorph Psychology');
+
+        if (advPsycho !== undefined) {
+            return psycho.active_skill_level + advPsycho.active_skill_level;
+        } else if (psycho !== undefined) {
+            return psycho.active_skill_level;
+        } else {
+            return 0;
+        }
+    }
+
     async refreshAll() {
         // first refresh basic info which will be needed for the rest of the calls
         await this.refreshInfo();
