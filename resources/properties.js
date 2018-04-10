@@ -72,7 +72,7 @@ export default {
         'corporation': 21600,
         'alliance': 21600,
         'attributes': 7200,
-        'loyalty_points': 7200,
+        'loyalty_points': 3600,
         'wallet': 900,
         'implants': 900,
         'clones': 900,

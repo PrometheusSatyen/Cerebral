@@ -216,6 +216,19 @@ class Character {
         };
     }
 
+    getCloneJumpAvailable() {
+        const synchro = this.skills.find(o => o.skill_name === 'Infomorph Synchronizing');
+        const millisecReduction = synchro.active_skill_level * 3600 * 1000;
+
+        const lastJumpDate = new Date(this.last_clone_jump_date);
+        const nextJumpDate = new Date(lastJumpDate.getTime() + (24 * 3600 * 1000) - millisecReduction);
+
+        return {
+            date: nextJumpDate,
+            relative: (nextJumpDate > new Date()) ? DateTimeHelper.timeUntil(nextJumpDate) : 'Now'
+        };
+    }
+
     async refreshAll() {
         // first refresh basic info which will be needed for the rest of the calls
         await this.refreshInfo();
@@ -373,6 +386,9 @@ class Character {
             await client.authChar(AuthorizedCharacter.get(this.id));
 
             let cloneData = await client.get('characters/' + this.id + '/clones', 'v3');
+
+            // last jump
+            this.last_clone_jump_date = cloneData.last_clone_jump_date;
 
             // home location
             this.home_location = cloneData.home_location;

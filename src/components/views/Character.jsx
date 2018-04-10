@@ -32,6 +32,7 @@ export default class Character extends React.Component {
         const char = CharacterModel.get(this.props.match.params.characterId);
         const fatigue = char.getFatigueInfo();
 
+        const cloneJumpAvailable = char.getCloneJumpAvailable();
         return (
             <div style={{width: '100%', overflow: 'hidden'}}>
                 <div style={styles.cardDiv}>
@@ -85,6 +86,10 @@ export default class Character extends React.Component {
                     <Card style={styles.card}>
                         <CardHeader title='Jump Clones'/>
                         <CardText>
+                            <p style={{marginTop: 0}}>
+                                <strong>Clone Jump Available:</strong> {cloneJumpAvailable.relative} {cloneJumpAvailable.relative !== 'Now' ? `(${cloneJumpAvailable.date.toLocaleString(navigator.language)})` : ''}
+                            </p>
+
                             {
                                 char.jumpClones.length > 0 ?
                                     char.jumpClones.map(jumpClone =>
