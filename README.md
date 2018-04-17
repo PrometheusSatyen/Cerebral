@@ -31,19 +31,22 @@ Current Functionality:
     * Shows contract type, status, title, issuer, assignee/acceptor, date issued and date completed.
     * For courier contracts, shows the origin, destination and volume.
     * Contracts are broken into two table, one for pending/in-progress/otherwise "active" contracts and another for completed contracts (which includes deleted, reversed, etc.)
-* Individual character pages showing:
-    * Basic character information: date of birth, security status, SP, wallet balance
-    * Home location, current location, active ship
-    * Attributes and remap information
-    * Active implants
-    * Skill queue
-    * Jump clones
-    * Scopes granted
+* Individual character pages with several tabs showing different information:
+    * Summary tab:
+        * Basic character information: date of birth, security status, SP, wallet balance
+        * Home location, current location, active ship
+        * Attributes and remap information
+        * Active implants
+        * Skill queue
+        * Jump clones
+        * Scopes granted
+    * Skills tab: trained skills by skill group, total SP in skills/skill groups, shows partially trained skills
+    * Contracts tab: pending/completed contracts involving the character
 
 Planned Functionality:
 -------------------------
 * Ability to click on contracts to open them and show full details including contents.
-* More information on the individual character pages, with tabs for a detailed overview of the skill queue, contracts, mails, etc.
+* More information on the individual character pages, with tabs for a detailed overview of the skill queue, mails, etc.
 * Skill Planner, replicating EVEMon's skill planning functionality, including remaps, implants, etc.
 * Configurable alerts (training stopped, character lapsed to alpha, ready for extraction, etc.)
 * Skill Extraction Planner, experiment with extracting skills from your character to see how much ISK you would get.

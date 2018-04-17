@@ -18,7 +18,7 @@ export default class AddCharacterButton extends React.Component {
         return (
             <RaisedButton
                 label="Authorize Character"
-                secondary={true}
+                backgroundColor="#616161"
                 onClick={CharacterHelper.addCharacter}
                 style={styles.addCharacterButton}
                 icon={<FontIcon className="material-icons">person_add</FontIcon>}

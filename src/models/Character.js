@@ -31,6 +31,7 @@ class Character {
 
         this.name = name;
         this.skillQueue = [];
+        this.skillTree = [];
         this.nextRefreshes = {};
     }
 
@@ -244,6 +245,36 @@ class Character {
         }
     }
 
+    buildSkillTree() {
+        let groups = {};
+
+        for(const skill of this.skills) {
+            if (!groups.hasOwnProperty(skill.skill_group_name)) {
+                groups[skill.skill_group_name] = [];
+            }
+
+            groups[skill.skill_group_name].push(skill);
+        }
+
+        let groupsArray = [];
+        for(const groupName in groups) {
+            if (groups.hasOwnProperty(groupName)) {
+                let skills = groups[groupName];
+                skills.sort((a, b) => a.skill_name.localeCompare(b.skill_name));
+
+                groupsArray.push({
+                    name: groupName,
+                    skills: skills,
+                    total_sp: skills.reduce((total, skill) => total + skill.skillpoints_in_skill, 0)
+                });
+            }
+        }
+
+        groupsArray.sort((a, b) => a.name.localeCompare(b.name));
+
+        this.skillTree = groupsArray;
+    }
+
     async refreshAll() {
         // first refresh basic info which will be needed for the rest of the calls
         await this.refreshInfo();
@@ -323,14 +354,29 @@ class Character {
             let skillData = await client.get('characters/' + this.id + '/skills', 'v4');
             Object.assign(this, skillData);
 
+            const spRequirements = {};
+            spRequirements[0] = [0];
+            for(const a of [1, 2, 3, 4, 5]) {
+                spRequirements[a] = [];
+                for(const b of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]) {
+                    const x = Math.round(250 * b * Math.pow(Math.sqrt(32), a - 1));
+                    spRequirements[a].push(x);
+                    spRequirements[a].push(x + 1);
+                }
+            }
+
             let promises = this.skills.map((o) => {
                 return TypeHelper.resolveType(o.skill_id).then(res => {
                     o.skill_name = res.name;
+                    o.skill_group_name = res.group.name;
+                    o.half_trained = !spRequirements[parseInt(o.trained_skill_level)].includes(o.skillpoints_in_skill);
                     return o;
                 });
             });
 
             await Promise.all(promises);
+
+            this.buildSkillTree();
 
             this.save();
             this.markRefreshed('skills');

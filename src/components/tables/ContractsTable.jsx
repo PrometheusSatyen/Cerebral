@@ -2,8 +2,6 @@
 
 import React from 'react';
 
-import Character from '../../models/Character';
-
 import ReactTable from "react-table";
 
 export default class ContractsTable extends React.Component {
@@ -12,7 +10,7 @@ export default class ContractsTable extends React.Component {
     }
 
     render() {
-        const contracts = Character.getAllContracts(this.props.complete);
+        const contracts = this.props.contracts;
 
         let columns = [
             {
@@ -25,7 +23,7 @@ export default class ContractsTable extends React.Component {
                 style: {
                     textTransform: 'capitalize'
                 },
-                maxWidth: 100
+                maxWidth: 120
             },
             {
                 Header: "Status",
@@ -37,7 +35,7 @@ export default class ContractsTable extends React.Component {
                 style: {
                     textTransform: 'capitalize'
                 },
-                maxWidth: 80
+                maxWidth: 120
             },
             {
                 Header: "Details",
@@ -67,7 +65,7 @@ export default class ContractsTable extends React.Component {
                 },
                 id: "issuer_id",
                 accessor: c => c.for_corporation === true ? c.issuer_corporation.name : c.issuer.name,
-                maxWidth: 130
+                maxWidth: 140
             },
             {
                 Header: "To",
@@ -84,7 +82,7 @@ export default class ContractsTable extends React.Component {
                         return 'Public';
                     }
                 },
-                maxWidth: 130
+                maxWidth: 140
             },
             {
                 Header: "Issued",
@@ -94,7 +92,7 @@ export default class ContractsTable extends React.Component {
                 accessor: "date_issued",
                 Cell: row => <span>{new Date(row.value).toLocaleDateString(navigator.language)}</span>,
                 sortMethod: (a, b) => new Date(a).getTime() > new Date(b).getTime() ? 1 : -1,
-                maxWidth: 90
+                maxWidth: 100
             },
         ];
 
@@ -117,7 +115,7 @@ export default class ContractsTable extends React.Component {
                 <ReactTable
                     style={{
                         color: '#fff',
-                        fontSize: '9pt',
+                        fontSize: '10pt',
                     }}
                     data={contracts}
                     columns={columns}

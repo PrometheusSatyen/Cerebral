@@ -86,10 +86,10 @@ export default class AddFarmDialog extends React.Component {
             <div>
                 <RaisedButton
                     label="Add/Update Farm"
-                    secondary={true}
+                    backgroundColor="#616161"
                     onClick={(e) => this.handleOpen(e)}
                     style={styles.addFarmButton}
-                    icon={<FontIcon className="material-icons">add</FontIcon>}
+                    icon={<FontIcon className="material-icons">note_add</FontIcon>}
                 />
 
                 <Dialog

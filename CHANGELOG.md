@@ -7,6 +7,11 @@ XXXX-XX-XX: 0.5.0-dev Alpha
 * Added unallocated SP to character pages.
 * Added an indicator to the jump clones tab showing jump clones used and maximum jump clones available.
 * Added delete buttons to SP Farming page to delete SP Farms from the list.
+* Added tabs to character pages, there are now tabs to view the following for each character:
+    * Summary (main page as seen previously)
+    * Skills (trained skills by groups in ABC order)
+    * Contracts (looks same as the new global Contracts page except just shows contracts for that character)
+* Standardised all buttons to a single grey colour which is a bit less obnoxious than the previous light blue.
 * Cleaned up the code/UX for SP Farming.
 
 2018-04-09: 0.4.0 Alpha
