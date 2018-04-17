@@ -55,18 +55,21 @@ export default class Character extends React.Component {
             <div style={{width: '100%', overflow: 'hidden'}}>
                 <div style={styles.buttonDiv}>
                     <RaisedButton label="Summary"
+                                  disabled={this.state.currentPage === 'summary'}
                                   backgroundColor="#616161"
                                   style={styles.button}
                                   icon={<FontIcon className="material-icons">assessment</FontIcon>}
                                   onClick={e => this.switchPage('summary')}/>
 
                     <RaisedButton label="Skills"
+                                  disabled={this.state.currentPage === 'skills'}
                                   backgroundColor="#616161"
                                   style={styles.button}
                                   icon={<FontIcon className="material-icons">library_books</FontIcon>}
                                   onClick={e => this.switchPage('skills')}/>
 
                     <RaisedButton label="Contracts"
+                                  disabled={this.state.currentPage === 'contracts'}
                                   backgroundColor="#616161"
                                   style={styles.button}
                                   icon={<FontIcon className="material-icons">assignment</FontIcon>}
