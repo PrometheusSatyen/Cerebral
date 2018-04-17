@@ -1,6 +1,13 @@
-XXXX-XX-XX: 0.4.1-dev Alpha
+XXXX-XX-XX: 0.5.0-dev Alpha
 -------------------------
-* Added unallocated SP to character pages
+* Added a new tab "Contracts" showing contracts across all your characters.
+    * Shows contract type, status, title, issuer, assignee/acceptor, date issued and date completed.
+    * For courier contracts, shows origin; destination and volume.
+    * Contracts are broken into two table, one for pending/in-progress/otherwise "active" contracts and another for completed contracts (which includes deleted, reversed, etc.)
+* Added unallocated SP to character pages.
+* Added an indicator to the jump clones tab showing jump clones used and maximum jump clones available.
+* Added delete buttons to SP Farming page to delete SP Farms from the list.
+* Cleaned up the code/UX for SP Farming.
 
 2018-04-09: 0.4.0 Alpha
 -------------------------

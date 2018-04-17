@@ -27,6 +27,10 @@ Current Functionality:
     * Time until next injector is ready to extract
     * Total time left in training queue
     * Current SP/hour
+* Contracts page showing contracts across all your characters, updated every 5 minutes:
+    * Shows contract type, status, title, issuer, assignee/acceptor, date issued and date completed.
+    * For courier contracts, shows the origin, destination and volume.
+    * Contracts are broken into two table, one for pending/in-progress/otherwise "active" contracts and another for completed contracts (which includes deleted, reversed, etc.)
 * Individual character pages showing:
     * Basic character information: date of birth, security status, SP, wallet balance
     * Home location, current location, active ship
@@ -38,6 +42,7 @@ Current Functionality:
 
 Planned Functionality:
 -------------------------
+* Ability to click on contracts to open them and show full details including contents.
 * More information on the individual character pages, with tabs for a detailed overview of the skill queue, contracts, mails, etc.
 * Skill Planner, replicating EVEMon's skill planning functionality, including remaps, implants, etc.
 * Configurable alerts (training stopped, character lapsed to alpha, ready for extraction, etc.)

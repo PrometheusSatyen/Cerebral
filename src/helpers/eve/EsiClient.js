@@ -28,6 +28,10 @@ export default class EsiClient {
         return await this.request('GET', endpoint, version, requiredScopes, options);
     }
 
+    async post(endpoint, version, requiredScopes, options) {
+        return await this.request('POST', endpoint, version, requiredScopes, options);
+    }
+
     async request(method, endpoint, version, requiredScopes, options) {
         if (requiredScopes === undefined) {
             requiredScopes = [];
@@ -77,12 +81,12 @@ export default class EsiClient {
         try {
             logger.log('verbose', `Firing ${method} ${endpoint}.${version}...`);
             let body = await rp(requestOptions);
-            return JSON.parse(body);
+            return (typeof body === 'string') ? JSON.parse(body) : body;
         } catch(err) {
             logger.log('info', `FAILED ${method} ${endpoint}.${version}, retrying...`);
             try {
                 let body = await rp(requestOptions);
-                return JSON.parse(body);
+                return (typeof body === 'string') ? JSON.parse(body) : body;
             } catch(err) {
                 logger.log('info', `FAILED x2 ${method} ${endpoint}.${version}, throwing error.`);
                 throw err;
@@ -96,8 +100,8 @@ export default class EsiClient {
         let trimmedVersion = EsiClient.trimSlashes(version);
 
         return (trimmedVersion !== '') ?
-            baseUrl + '/' + trimmedVersion + '/' + trimmedEndpoint :
-            baseUrl + '/' + trimmedEndpoint;
+            baseUrl + '/' + trimmedVersion + '/' + trimmedEndpoint  + '/':
+            baseUrl + '/' + trimmedEndpoint + '/';
     }
 
     static trimSlashes(str) {

@@ -12,7 +12,8 @@ import AuthorizedCharacter from './AuthorizedCharacter';
 import appProperties from '../../resources/properties';
 import alphaSkillSet from '../../resources/alpha_skill_set';
 import DateTimeHelper from '../helpers/DateTimeHelper';
-import PublicCharacterHelper from '../helpers/PublicCharacterHelper';
+import BulkIdResolver from '../helpers/BulkIdResolver';
+import LocationHelper from '../helpers/LocationHelper';
 
 let subscribedComponents = [];
 let characters;
@@ -29,6 +30,7 @@ class Character {
         }
 
         this.name = name;
+        this.skillQueue = [];
         this.nextRefreshes = {};
     }
 
@@ -584,12 +586,33 @@ class Character {
                     'esi-contracts.read_character_contracts.v1'
                 );
 
+                let resolver = new BulkIdResolver();
                 for(let contract of this.contracts) {
-                    contract.issuer = await PublicCharacterHelper.resolveCharacter(contract.issuer_id);
-                    if (contract.availability === 'personal') {
-                        contract.assignee = await PublicCharacterHelper.resolveCharacter(contract.assignee_id);
+                    resolver.addId(contract.issuer_id);
+                    resolver.addId(contract.issuer_corporation_id);
+                    resolver.addId(contract.assignee_id);
+                    resolver.addId(contract.acceptor_id);
+                }
+
+                await resolver.resolve();
+
+                for(let contract of this.contracts) {
+                    contract.issuer = resolver.get(contract.issuer_id);
+                    contract.issuer_corporation = resolver.get(contract.issuer_corporation_id);
+                    contract.assignee = resolver.get(contract.assignee_id);
+                    contract.acceptor = resolver.get(contract.acceptor_id);
+
+                    // start+end locations
+                    if (contract.start_location_id !== undefined) {
+                        contract.start_location = await LocationHelper.resolveLocation(
+                            contract.start_location_id, client, this.id
+                        );
                     }
-                    contract.acceptor = await PublicCharacterHelper.resolveCharacter(contract.acceptor_id);
+                    if (contract.end_location_id !== undefined) {
+                        contract.end_location = await LocationHelper.resolveLocation(
+                            contract.end_location_id, client, this.id
+                        );
+                    }
                 }
 
                 this.markRefreshed('contracts');
@@ -710,7 +733,7 @@ class Character {
         return characters;
     }
 
-    static getAllContracts() {
+    static getAllContracts(complete) {
         let contracts = [];
         let contractIds = [];
 
@@ -718,6 +741,14 @@ class Character {
             if (characters.hasOwnProperty(id)) {
                 if (characters[id].hasOwnProperty('contracts') && characters[id].contracts !== undefined) {
                     for(const contract of characters[id].contracts) {
+                        if (complete !== undefined) {
+                            if ((complete === true) && (!appProperties.contract_completed_statuses.includes(contract.status))) {
+                                continue;
+                            } else if ((complete === false) && (appProperties.contract_completed_statuses.includes(contract.status))) {
+                                continue;
+                            }
+                        }
+
                         if (!contractIds.includes(contract.contract_id)) {
                             contracts.push(contract);
                             contractIds.push(contract.contract_id);
