@@ -2,6 +2,7 @@
 
 [![version](https://img.shields.io/github/release/prometheussatyen/cerebral.svg)](https://github.com/PrometheusSatyen/Cerebral/releases) 
 [![appveyor build status](https://ci.appveyor.com/api/projects/status/github/prometheussatyen/cerebral?svg=true)](https://ci.appveyor.com/project/PrometheusSatyen/cerebral)
+[![license: AGPL v3](https://img.shields.io/badge/license-AGPL%20v3-red.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
 In May 2018, the EVE XML/CREST APIs will shutdown and take EVEMon and many other legacy tools with them to the grave.
 
