@@ -1,6 +1,6 @@
 'use strict';
 
-import {app, BrowserWindow, Tray, Menu} from 'electron';
+import {app, BrowserWindow, Tray, Menu, shell} from 'electron';
 import path from 'path';
 
 import appProperties from './../resources/properties';
@@ -72,6 +72,10 @@ const createWindow = async () => {
     });
     mainWindow.on('page-title-updated', (e) => {
         e.preventDefault();
+    });
+    mainWindow.webContents.on('new-window', function(event, url){
+        event.preventDefault();
+        shell.openExternal(url);
     });
 };
 

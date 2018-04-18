@@ -46,6 +46,22 @@ export default class CharacterHelper {
             handleCallback(newUrl);
         });
 
+        authWindow.webContents.on('did-finish-load', function(event, url) {
+            authWindow.webContents.findInPage('error');
+        });
+
+        authWindow.webContents.on('did-navigate', function(event, url) {
+            authWindow.webContents.findInPage('error');
+        });
+
+        authWindow.webContents.on('found-in-page', function(event, res) {
+            authWindow.webContents.stopFindInPage('clearSelection');
+            if (res.matches > 0) {
+                authWindow.destroy();
+                alert("Failed to authorize your character, your EVE API credentials are invalid or you did not correctly configure the application on the EVE developer site. Please go to the Settings page and correct the issue.")
+            }
+        });
+
         authWindow.on('close', function () {
             authWindow = null;
         }, false);

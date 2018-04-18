@@ -1,3 +1,7 @@
+XXXX-XX-XX: 0.6.0-dev
+-------------------------
+* Users are now required to create an EVE Developer account and input credentials into Cerebral on first-start.
+
 2018-04-18: 0.5.0 Alpha
 -------------------------
 * Added a new tab "Contracts" showing contracts across all your characters.

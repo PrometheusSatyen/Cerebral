@@ -13,6 +13,7 @@ import Overview from './views/Overview';
 import SpFarming from './views/SpFarming';
 import Contracts from './views/Contracts';
 import Character from './views/Character';
+import Settings from './views/Settings';
 
 const muiTheme = getMuiTheme(darkBaseTheme, {
     palette: {
@@ -43,6 +44,7 @@ export default class App extends React.Component {
                         <Route exact path="/" component={Overview} />
                         <Route path="/sp-farming" component={SpFarming} />
                         <Route path="/contracts" component={Contracts} />
+                        <Route path="/settings" component={Settings} />
                         <Route path="/characters/:characterId" component={Character} />
                     </div>
                 </div>

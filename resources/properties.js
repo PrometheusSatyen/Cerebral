@@ -1,13 +1,12 @@
 'use strict';
 
 export default {
-    'version': '0.5.0',
+    'version': '0.6.0-dev',
     'author_email': 'prometheussatyen@gmail.com',
 
-    'eve_client_id': '537173a2901b47389695c27fbfa6f0b6',
-    'eve_client_secret': 'rgGg6pJLl6khr8Dm0OSlFlqVDpi0T4KkQF08g4mI',
-
     'eve_sso_url': 'https://login.eveonline.com/oauth',
+    'eve_sso_url_no_oauth': 'https://login.eveonline.com',
+
     'scopes': [
         {
             'name': 'esi-location.read_location.v1',

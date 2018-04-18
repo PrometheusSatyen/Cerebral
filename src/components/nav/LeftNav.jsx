@@ -36,6 +36,10 @@ export default class LeftNav extends React.Component {
         input = input.replace(/<(?:.|\n)*?>/gm, '');
 
         switch(input) {
+            case 'Settings':
+                path = '/settings';
+                value = 4;
+                break;
             case 'Contracts':
                 path = '/contracts';
                 value = 3;
@@ -72,6 +76,7 @@ export default class LeftNav extends React.Component {
                     <ListItem value={1} primaryText="Character Overview" onClick={(e) => this.handleClick(e)}/>
                     <ListItem value={2} primaryText="SP Farming" onClick={(e) => this.handleClick(e)}/>
                     <ListItem value={3} primaryText="Contracts" onClick={(e) => this.handleClick(e)}/>
+                    <ListItem value={4} primaryText="Settings" onClick={(e) => this.handleClick(e)}/>
 
                     <br/>
 
