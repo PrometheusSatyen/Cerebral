@@ -25,6 +25,15 @@ export default class Skills extends React.Component {
     render() {
         const char = CharacterModel.get(this.props.characterId);
 
+        if ((char.skillTree === undefined) || (char.skillTree.length === 0)) {
+            return (
+                <Card style={styles.card}>
+                    <CardHeader title="Skills"/>
+                    <CardText>Sorry, could not find this character's skill sheet, please try again after the next skills refresh occurs (~15 minutes max).</CardText>
+                </Card>
+            );
+        }
+
         return (
             <div>
                 {

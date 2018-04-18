@@ -94,4 +94,12 @@ export default {
         'deleted',
         'reversed'
     ],
+
+    'cache_policies': {
+        'types': {
+            'base': 2592000,
+            'deviation': 604800,
+            'invalid_before': 1524052913,
+        },
+    }
 };
