@@ -44,7 +44,7 @@ export default class Skills extends React.Component {
                                             group.skills.map(skill =>
                                                 <tr key={skill.skill_id}>
                                                     <td width={300}>{skill.skill_name}</td>
-                                                    <td width={120}> /* TODO: this shit is slow as fuck and needs rewriting with performance in mind */
+                                                    <td width={120}>
                                                         {
                                                             [...Array(skill.trained_skill_level)].map((o, i) =>
                                                                 <img key={i} style={styles.squares} src="./../resources/filled-square.png"/>

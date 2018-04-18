@@ -35,7 +35,7 @@ export default class ContractsTable extends React.Component {
                 style: {
                     textTransform: 'capitalize'
                 },
-                maxWidth: 120
+                maxWidth: 100
             },
             {
                 Header: "Details",
@@ -65,7 +65,7 @@ export default class ContractsTable extends React.Component {
                 },
                 id: "issuer_id",
                 accessor: c => c.for_corporation === true ? c.issuer_corporation.name : c.issuer.name,
-                maxWidth: 140
+                maxWidth: 120
             },
             {
                 Header: "To",
@@ -82,7 +82,7 @@ export default class ContractsTable extends React.Component {
                         return 'Public';
                     }
                 },
-                maxWidth: 140
+                maxWidth: 120
             },
             {
                 Header: "Issued",
@@ -92,7 +92,7 @@ export default class ContractsTable extends React.Component {
                 accessor: "date_issued",
                 Cell: row => <span>{new Date(row.value).toLocaleDateString(navigator.language)}</span>,
                 sortMethod: (a, b) => new Date(a).getTime() > new Date(b).getTime() ? 1 : -1,
-                maxWidth: 100
+                maxWidth: 80
             },
         ];
 
@@ -106,7 +106,7 @@ export default class ContractsTable extends React.Component {
                 accessor: c => c.date_completed !== undefined ? c.date_completed : c.date_issued,
                 Cell: row => <span>{new Date(row.value).toLocaleDateString(navigator.language)}</span>,
                 sortMethod: (a, b) => new Date(a).getTime() > new Date(b).getTime() ? 1 : -1,
-                maxWidth: 90
+                maxWidth: 80
             });
         }
 
@@ -115,7 +115,7 @@ export default class ContractsTable extends React.Component {
                 <ReactTable
                     style={{
                         color: '#fff',
-                        fontSize: '10pt',
+                        fontSize: '9pt',
                     }}
                     data={contracts}
                     columns={columns}

@@ -37,7 +37,10 @@ export default class Contracts extends React.Component {
                     <CardHeader title="Completed Contracts"/>
 
                     <CardText>
-                        <ContractsTable contracts={contracts.filter(c => appProperties.contract_completed_statuses.includes(c.status))}/>
+                        <ContractsTable
+                            contracts={contracts.filter(c => appProperties.contract_completed_statuses.includes(c.status))}
+                            complete={true}
+                        />
                     </CardText>
                 </Card>
             </div>

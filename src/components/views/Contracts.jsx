@@ -29,7 +29,10 @@ export default class Contracts extends React.Component {
                     <CardHeader title="Completed Contracts"/>
 
                     <CardText>
-                        <ContractsTable contracts={Character.getAllContracts(true)}/>
+                        <ContractsTable
+                            contracts={Character.getAllContracts(true)}
+                            complete={true}
+                        />
                     </CardText>
                 </Card>
             </div>
