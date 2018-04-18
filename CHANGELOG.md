@@ -1,4 +1,4 @@
-XXXX-XX-XX: 0.5.0-dev Alpha
+2018-04-18: 0.5.0 Alpha
 -------------------------
 * Added a new tab "Contracts" showing contracts across all your characters.
     * Shows contract type, status, title, issuer, assignee/acceptor, date issued and date completed.
@@ -13,6 +13,7 @@ XXXX-XX-XX: 0.5.0-dev Alpha
     * Contracts (looks same as the new global Contracts page except just shows contracts for that character)
 * Standardised all buttons to a single grey colour which is a bit less obnoxious than the previous light blue.
 * Cleaned up the code/UX for SP Farming.
+* Upgrades to the internal type caching system to ensure seamless upgrades of data.
 
 2018-04-09: 0.4.0 Alpha
 -------------------------

@@ -1,7 +1,7 @@
 'use strict';
 
 export default {
-    'version': '0.5.0-dev',
+    'version': '0.5.0',
     'author_email': 'prometheussatyen@gmail.com',
 
     'eve_client_id': '537173a2901b47389695c27fbfa6f0b6',

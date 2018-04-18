@@ -53,11 +53,15 @@ Planned Functionality:
 
 Screenshots:
 -------------------------
-![character overview](https://prom.gaydar.space/2018-04-03_18-03-04_3ULjJZE6Vh9DWVQzglZvOM6FfwYpjo.png)
+![character overview](https://prom.gaydar.space/2018-04-18_12-34-54_yN4TAyf8G9MzxZif1k9tht6arR5lTB.png)
 
-![sp-farming](https://prom.gaydar.space/2018-04-03_18-03-04_btXXy0WCslQmpiJkqajmVfKin9I2Wn.png)
+![sp-farming](https://prom.gaydar.space/2018-04-18_12-35-03_WLpFbKvcAgj22eE0t6Ayo1jJ25HUcj.png)
 
-![character-page](https://prom.gaydar.space/2018-04-03_18-03-04_fnvC20LNuvTldThgQPHqlVUsfExq1B.png)
+![contracts](https://prom.gaydar.space/2018-04-18_12-35-17_suf4c19ixNkOZSAerRLqXzaUMVcWDW.png)
+
+![character-summary](https://prom.gaydar.space/2018-04-18_12-35-46_3Q0RooNx1DrA8nEPRG9NEp8lBtKAh7.png)
+
+![character-skills](https://prom.gaydar.space/2018-04-18_12-36-07_OdUQKJO7eLHtQ8zMqnGx3LMpIDHFGv.png)
 
 Installation Instructions:
 -------------------------
