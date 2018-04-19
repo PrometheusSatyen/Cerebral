@@ -118,7 +118,7 @@ export default class SsoClient {
             throw undefined;
         }
 
-        let body = response.body;
+        let body = res.body;
         if (typeof body === 'string') {
             body = JSON.parse(body);
         }
