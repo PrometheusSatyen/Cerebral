@@ -89,6 +89,13 @@ export default class SsoClient {
         };
     }
 
+    /**
+     * Request a new access token using a refresh token
+     *
+     * @param {string} refreshToken - previously issued
+     * @returns {Promise<{accessToken: string, accessTokenExpiry: Date}>}
+     * @throws {string} error string from https://tools.ietf.org/html/rfc6749#section-5.2 or undefined if request failed entirely
+     */
     async refresh(refreshToken) {
         let options = {
             method: 'POST',
@@ -100,17 +107,45 @@ export default class SsoClient {
             headers: {
                 'User-Agent': `cerebral/${appProperties.version} ${appProperties.author_email}`,
                 'Authorization': 'Basic ' + new Buffer(this.clientId + ":" + this.clientSecret).toString('base64')
+            },
+            resolveWithFullResponse: true
+        };
+
+        let res;
+        try {
+            res = await rp(options);
+        } catch(err) {
+            throw undefined;
+        }
+
+        let body = response.body;
+        if (typeof body === 'string') {
+            body = JSON.parse(body);
+        }
+
+        if (res.statusCode === 200) {
+            return {
+                accessToken: body.access_token,
+                accessTokenExpiry: new Date(new Date().getTime() + (body.expires_in * 1000)),
+            };
+        } else if ((res.statusCode >= 400) && (res.statusCode <= 499)) {
+            if ((body.hasOwnProperty('error')) && (body.error !== undefined) && (body.error !== '')) {
+                throw body.error;
+            } else {
+                throw undefined;
             }
-        };
-
-        let body = JSON.parse(await rp(options));
-
-        return {
-            accessToken: body.access_token,
-            accessTokenExpiry: new Date(new Date().getTime() + (body.expires_in * 1000)),
-        };
+        } else {
+            throw undefined;
+        }
     }
 
+    /**
+     * Construct an sso request url from an endpoint and query parameters
+     *
+     * @param {string} endpoint - endpoint name, e.g. authorize
+     * @param {object} query - query string parameters
+     * @returns {string} request url
+     */
     constructUrl(endpoint, query) {
         let baseUrl = SsoClient.trimSlashes(this.ssoBaseUrl);
         let trimmedEndpoint = SsoClient.trimSlashes(endpoint);
@@ -122,13 +157,18 @@ export default class SsoClient {
         }
     }
 
+    /**
+     * Trim leading and trailing slashes from a string
+     *
+     * @param {string} str - string to trim
+     * @return {string} trimmed string
+     */
     static trimSlashes(str) {
         return str.replace(/^\/+|\/+$/g, '');
     }
 
     /**
-     * Unused method which will be used when ccp fulfils
-     * https://github.com/ccpgames/sso-issues/issues/26
+     * Unused method which may be used when ccp fulfils https://github.com/ccpgames/sso-issues/issues/26
      */
     async testClientCredentials() {
         let options = {
