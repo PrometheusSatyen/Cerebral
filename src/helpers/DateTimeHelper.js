@@ -9,6 +9,14 @@ export default class DateTimeHelper {
         return DateTimeHelper.niceCountdown(new Date() - pastDate);
     }
 
+    static relativeTimeString(date) {
+        if (date > new Date()) {
+            return DateTimeHelper.timeUntil(date);
+        } else {
+            return `${DateTimeHelper.timeSince(date)} ago`;
+        }
+    }
+
     static skillLength(startDate, endDate) {
         startDate = new Date(startDate);
         endDate = new Date(endDate);

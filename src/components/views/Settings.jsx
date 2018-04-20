@@ -3,6 +3,7 @@
 import React from 'react';
 
 import {Card, CardHeader, CardText} from 'material-ui/Card';
+import {deepOrange400} from 'material-ui/styles/colors';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import {FontIcon} from 'material-ui';
@@ -63,6 +64,10 @@ export default class Settings extends React.Component {
                             Please visit this page and follow the instructions to create a Client ID/Secret Key:<br/>
                             <a href="https://github.com/PrometheusSatyen/Cerebral/blob/master/docs/API-SETUP.md" target="_blank" style={{color: '#fff'}}>API Setup Instructions</a><br/>
                             Please read the instructions <strong>very carefully</strong> as it is important that you follow them <strong>exactly</strong>.
+                        </p>
+
+                        <p style={{color: deepOrange400}}>
+                            <strong>Warning:</strong> After changing your client credentials, all of your characters will lose authorization within 20 minutes, and must be re-authorized before new data will be pulled.
                         </p>
 
                         <TextField

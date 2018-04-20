@@ -30,6 +30,7 @@ class Character {
         }
 
         this.name = name;
+        this.skills = [];
         this.skillQueue = [];
         this.skillTree = [];
         this.nextRefreshes = {};

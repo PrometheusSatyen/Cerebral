@@ -53,9 +53,23 @@ class AuthorizedCharacter {
             throw this.lastRefresh.error;
         }
 
-        let client = new SsoClient();
-
         this.lastRefresh.date = new Date();
+
+        let client;
+        try {
+            client = new SsoClient();
+        } catch(err) {
+            this.lastRefresh.success = false;
+            this.lastRefresh.error = {
+                error: 'invalid_client',
+                error_description: 'No client credentials provided.'
+            };
+            this.lastRefresh.shouldRetry = false;
+            this.save();
+
+            Character.get(this.id).markFailed('client');
+            throw err;
+        }
 
         let res;
         try {
@@ -63,7 +77,6 @@ class AuthorizedCharacter {
         } catch(error) {
             this.lastRefresh.success = false;
             this.lastRefresh.error = error;
-            this.save();
 
             switch(error.error) {
                 // Failures due to revoked refresh tokens/belongs to bad client
@@ -92,6 +105,8 @@ class AuthorizedCharacter {
                     Character.get(this.id).markFailed('error', true);
                     break;
             }
+
+            this.save();
 
             throw error;
         }

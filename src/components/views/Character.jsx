@@ -8,6 +8,7 @@ import {FontIcon} from 'material-ui';
 import Summary from './Character/Summary';
 import Skills from './Character/Skills';
 import Contracts from './Character/Contracts';
+import Api from './Character/Api';
 
 const styles = {
     button: {
@@ -47,6 +48,9 @@ export default class Character extends React.Component {
             case 'contracts':
                 component = <Contracts characterId={characterId}/>;
                 break;
+            case 'api':
+                component = <Api characterId={characterId}/>;
+                break;
             default:
                 component = <Summary characterId={characterId}/>;
         }
@@ -74,6 +78,13 @@ export default class Character extends React.Component {
                                   style={styles.button}
                                   icon={<FontIcon className="material-icons">assignment</FontIcon>}
                                   onClick={e => this.switchPage('contracts')} />
+
+                    <RaisedButton label="API"
+                                  disabled={this.state.currentPage === 'api'}
+                                  backgroundColor="#616161"
+                                  style={styles.button}
+                                  icon={<FontIcon className="material-icons">file_download</FontIcon>}
+                                  onClick={e => this.switchPage('api')} />
                 </div>
 
                 {component}

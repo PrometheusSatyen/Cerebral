@@ -30,6 +30,8 @@ export default class Summary extends React.Component {
 
     render() {
         const char = CharacterModel.get(this.props.characterId);
+        const auth = AuthorizedCharacter.get(this.props.characterId);
+        const authStatus = (auth.lastRefresh.success !== false) || (auth.lastRefresh.shouldRetry !== false);
         const fatigue = char.getFatigueInfo();
 
         const cloneJumpAvailable = char.getCloneJumpAvailable();
@@ -106,32 +108,6 @@ export default class Summary extends React.Component {
                             }
                         </CardText>
                     </Card>
-
-                    {
-                        char.loyalty_points !== undefined ?
-                            <Card style={styles.card}>
-                                <CardHeader title='Loyalty Points'/>
-                                <CardText>
-                                    {
-                                        char.loyalty_points.length > 0 ?
-                                            <table width='100%'>
-                                                <tbody>
-                                                {
-                                                    char.loyalty_points.map(o =>
-                                                        <tr key={o.corporation_id}>
-                                                            <td style={{textAlign: 'left'}}>{o.corporation.name}</td>
-                                                            <td style={{textAlign: 'right'}}>{o.loyalty_points.toLocaleString(navigator.language)}</td>
-                                                        </tr>
-                                                    )
-                                                }
-                                                </tbody>
-                                            </table> :
-                                            'No Loyalty Points'
-                                    }
-                                </CardText>
-                            </Card> :
-                            ''
-                    }
                 </div>
 
                 <div style={styles.cardDiv}>
@@ -231,55 +207,31 @@ export default class Summary extends React.Component {
                         </CardText>
                     </Card>
 
-                    <Card style={styles.card}>
-                        <CardHeader title='Scopes Granted'/>
-                        <CardText>
-                            <strong>Note:</strong> If you are missing any scopes, please simply use the Authorize Character button on the character
-                            overview and re-add this character.<br/><br/>
-
-                            {
-                                AuthorizedCharacter.get(this.props.characterId)
-                                    .getScopeInfo()
-                                    .map(scope =>
-                                        <span key={scope.name}>
-                                            <FontIcon
-                                                style={styles.scopeIcons}
-                                                className='material-icons'
-                                                color={scope.isGranted ? greenA200 : red500}>
-                                                {scope.isGranted ? 'check' : 'clear'}
-                                            </FontIcon> {scope.description}<br/>
-                                        </span>
-                                    )
-                            }
-                        </CardText>
-                    </Card>
-
-                    <Card style={styles.card}>
-                        <CardHeader title='Data Refresh'/>
-                        <CardText>
-                            <table width='100%' style={{textAlign: 'right'}}>
-                                <thead>
-                                    <tr>
-                                        <th/>
-                                        <th>Last</th>
-                                        <th>Next</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
+                    {
+                        char.loyalty_points !== undefined ?
+                            <Card style={styles.card}>
+                                <CardHeader title='Loyalty Points'/>
+                                <CardText>
                                     {
-                                        char.getDataRefreshInfo().map(o =>
-                                            <tr key={o.type}>
-                                                <td>{o.type}</td>
-                                                <td>{o.lastRefresh}</td>
-                                                <td>{o.nextRefresh}</td>
-                                            </tr>
-                                        )
+                                        char.loyalty_points.length > 0 ?
+                                            <table width='100%'>
+                                                <tbody>
+                                                {
+                                                    char.loyalty_points.map(o =>
+                                                        <tr key={o.corporation_id}>
+                                                            <td style={{textAlign: 'left'}}>{o.corporation.name}</td>
+                                                            <td style={{textAlign: 'right'}}>{o.loyalty_points.toLocaleString(navigator.language)}</td>
+                                                        </tr>
+                                                    )
+                                                }
+                                                </tbody>
+                                            </table> :
+                                            'No Loyalty Points'
                                     }
-                                </tbody>
-                            </table>
-                        </CardText>
-                    </Card>
+                                </CardText>
+                            </Card> :
+                            ''
+                    }
                 </div>
             </div>
         );
