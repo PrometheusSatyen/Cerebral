@@ -1,5 +1,7 @@
 'use strict';
 
+import CharacterHelper from '../helpers/CharacterHelper';
+
 const Store = require('electron-store');
 
 import StructureHelper from '../helpers/StructureHelper';
@@ -25,30 +27,79 @@ class AuthorizedCharacter {
         this.refreshToken = refreshToken;
         this.ownerHash = ownerHash;
         this.scopes = scopes;
+        this.lastRefresh = {};
     }
 
     async getAccessToken() {
         if (new Date(this.accessTokenExpiry).getTime() <= new Date().getTime() + 30000) { // at least 30 seconds of validity
-            try {
-                await this.refresh();
-            } catch(err) {
-                // should do something here i guess
-            }
+            await this.refresh();
         }
 
         return this.accessToken;
     }
 
-    async refresh() {
-        let client = new SsoClient();
-        let res = await client.refresh(this.refreshToken);
+    refreshBlocked() {
+        return (
+            (this.lastRefresh.success === false) && // if last refresh was bad and
+            (
+                (this.lastRefresh.shouldRetry === false) || // we're never supposed to retry
+                (new Date(this.lastRefresh.date) > new Date(new Date().getTime() - 300000)) // or we tried in last 5 min
+            )
+        );
+    }
 
+    async refresh() {
+        if (this.refreshBlocked()) {
+            throw this.lastRefresh.error;
+        }
+
+        let client = new SsoClient();
+
+        this.lastRefresh.date = new Date();
+
+        let res;
+        try {
+            res = await client.refresh(this.refreshToken);
+        } catch(error) {
+            this.lastRefresh.success = false;
+            this.lastRefresh.error = error;
+            this.save();
+
+            switch(error.error) {
+                // Failures due to revoked refresh tokens/belongs to bad client
+                case 'invalid_grant':
+                    this.lastRefresh.shouldRetry = false;
+                    Character.get(this.id).markFailed('token');
+                    break;
+
+                // Failures due to bad client
+                case 'invalid_client':
+                case 'unauthorized_client':
+                    this.lastRefresh.shouldRetry = false;
+                    Character.get(this.id).markFailed('client');
+                    break;
+
+                // CCP's other weird responses
+                case 'invalid_token':
+                    if (error.error_description === 'The refresh token does not match the client specified.') {
+                        this.lastRefresh.shouldRetry = false;
+                        Character.get(this.id).markFailed('client');
+                    }
+                    break;
+
+                // Some sort of other error, we'll delay refreshes temporarily
+                default:
+                    Character.get(this.id).markFailed('error', true);
+                    break;
+            }
+
+            throw error;
+        }
+
+        this.lastRefresh.success = true;
         this.accessToken = res.accessToken;
         this.accessTokenExpiry = res.accessTokenExpiry;
-
         this.save();
-
-        return this.accessToken;
     }
 
     getScopeInfo() {

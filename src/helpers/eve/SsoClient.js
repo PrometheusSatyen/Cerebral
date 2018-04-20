@@ -94,7 +94,8 @@ export default class SsoClient {
      *
      * @param {string} refreshToken - previously issued
      * @returns {Promise<{accessToken: string, accessTokenExpiry: Date}>}
-     * @throws {string} error string from https://tools.ietf.org/html/rfc6749#section-5.2 or undefined if request failed entirely
+     * @throws {{error: string, error_description: string, error_uri: string}} error body as defined in
+     * https://tools.ietf.org/html/rfc6749#section-5.2 or undefined if an unknown error occured
      */
     async refresh(refreshToken) {
         let options = {
@@ -108,7 +109,8 @@ export default class SsoClient {
                 'User-Agent': `cerebral/${appProperties.version} ${appProperties.author_email}`,
                 'Authorization': 'Basic ' + new Buffer(this.clientId + ":" + this.clientSecret).toString('base64')
             },
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
+            simple: false
         };
 
         let res;
@@ -119,23 +121,27 @@ export default class SsoClient {
         }
 
         let body = res.body;
-        if (typeof body === 'string') {
+        if ((typeof body === 'string') && (body !== '')) {
             body = JSON.parse(body);
         }
 
-        if (res.statusCode === 200) {
-            return {
-                accessToken: body.access_token,
-                accessTokenExpiry: new Date(new Date().getTime() + (body.expires_in * 1000)),
-            };
-        } else if ((res.statusCode >= 400) && (res.statusCode <= 499)) {
-            if ((body.hasOwnProperty('error')) && (body.error !== undefined) && (body.error !== '')) {
-                throw body.error;
-            } else {
+        switch(res.statusCode) {
+            case 200:
+                return {
+                    accessToken: body.access_token,
+                    accessTokenExpiry: new Date(new Date().getTime() + (body.expires_in * 1000)),
+                };
+            case 400:
+            case 401:
+            case 403:
+                if ((body.hasOwnProperty('error')) && (body.error !== undefined) && (body.error !== '')) {
+                    throw body;
+                } else {
+                    throw undefined;
+                }
+            default:
                 throw undefined;
-            }
-        } else {
-            throw undefined;
+
         }
     }
 
@@ -165,56 +171,5 @@ export default class SsoClient {
      */
     static trimSlashes(str) {
         return str.replace(/^\/+|\/+$/g, '');
-    }
-
-    /**
-     * Unused method which may be used when ccp fulfils https://github.com/ccpgames/sso-issues/issues/26
-     */
-    async testClientCredentials() {
-        let options = {
-            method: 'GET',
-            uri: this.constructUrl('authorize'),
-            qs: {
-                response_type: 'code',
-                redirect_uri: 'eveauth-cerebral://callback',
-                client_id: this.clientId,
-                scope: appProperties.scopes.map(a => a.name).join(' '),
-                state: 'login'
-            },
-            headers: {
-                'User-Agent': `cerebral/${appProperties.version} ${appProperties.author_email}`
-            },
-            resolveWithFullResponse: true
-        };
-
-        try {
-            let res = await rp(options);
-
-            if (res.body.includes('<h1>Log in to your account</h1>')) {
-                console.log(res.body);
-                return 'Must log in';
-            } else if (res.statusCode === 200) {
-                return true;
-            } else {
-                let body = response.body;
-                if (typeof body === 'string') {
-                    body = JSON.parse(body);
-                }
-
-                switch(body.error) {
-                    case 'invalid_client':
-                        return 'Failed, invalid client id, please double check your client id.';
-                    case 'invalid_scope':
-                        return 'Failed, the application does not have the permissions, please ensure you granted all permissions and try again.'
-                    case 'invalid_request':
-                        return 'Failed, you did not enter the callback URL correctly, please update the application on the EVE developers site and ensure you enter the following callback URL: eveauth-cerebral://callback'
-                }
-
-                return 'Failed, unknown error.';
-            }
-
-        } catch(err) {
-            return 'Failed, unknown error.';
-        }
     }
 }

@@ -683,12 +683,40 @@ class Character {
         };
     }
 
-    markFailedNoScope(type) {
+    /**
+     * Mark a type of data refresh as a failure and that further refresh attempts should not be attempted
+     *
+     * @param {string} type - data type string, e.g. skills, see properties.js
+     * @param {string} reason - failure reason: 'scope', 'token', 'client', 'error'
+     * @param {boolean} temporary - if true, failure is expected to only be temporary
+     */
+    markTypeFailed(type, reason, temporary=false) {
         this.nextRefreshes[type] = {
             last: new Date(),
-            no_scope: true,
-            do: undefined
+            do: temporary ? new Date(new Date().getTime() + (300 * 1000)) : undefined,
+            error: reason
         };
+    }
+
+    /**
+     * Mark data refresh for all data types as a failure and that further refresh attempts should not be attempted
+     *
+     * @param {string} reason - failure reason: 'scope', 'token', 'client', 'error'
+     * @param {boolean} temporary - if true, failure is expected to only be temporary
+     */
+    markFailed(reason, temporary=false) {
+        for(const type in this.nextRefreshes) {
+            if (this.nextRefreshes.hasOwnProperty(type)) {
+                this.markTypeFailed(type, reason, temporary);
+            }
+        }
+    }
+
+    /**
+     * @deprecated use markTypeFailed(type, 'scope') instead
+     */
+    markFailedNoScope(type) {
+        this.markTypeFailed(type, 'scope');
     }
 
     getDataRefreshInfo() {
@@ -713,12 +741,24 @@ class Character {
         for(const key in translations) {
             if ((this.nextRefreshes.hasOwnProperty(key)) && (translations.hasOwnProperty(key))) {
                 let las;
-                if (this.nextRefreshes[key].no_scope !== true) {
+                if (this.nextRefreshes[key].error === undefined) {
                     const lastDate = new Date(this.nextRefreshes[key].last);
                     las = (lastDate.getTime() + 5000 < new Date().getTime()) ?
                         DateTimeHelper.timeSince(lastDate) + " ago" : "Just now";
                 } else {
-                    las = 'No Scope';
+                    switch(this.nextRefreshes[key].error) {
+                        case 'scope':
+                            las = 'No Scope';
+                            break;
+                        case 'token':
+                            las = 'Token Invalid';
+                            break;
+                        case 'client':
+                            las = 'Client Invalid';
+                            break;
+                        default:
+                            las = 'Error';
+                    }
                 }
 
                 let nex;
@@ -747,7 +787,7 @@ class Character {
             let character = characters[characterId];
             for (const key in character.nextRefreshes) {
                 if (character.nextRefreshes.hasOwnProperty(key)) {
-                    character.nextRefreshes[key].do = new Date(0); // 1970
+                    character.nextRefreshes[key].do = new Date();
                     character.save();
                 }
             }
@@ -770,7 +810,9 @@ class Character {
             }
         });
 
-        await Promise.all(promises);
+        try {
+            await Promise.all(promises);
+        } catch(err) {}
 
         Character.pushToSubscribers();
     }
