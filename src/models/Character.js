@@ -34,6 +34,7 @@ class Character {
         this.skillQueue = [];
         this.skillTree = [];
         this.nextRefreshes = {};
+        this.contractSlotsUsed = 0;
     }
 
     getCurrentSkill() {
@@ -243,6 +244,16 @@ class Character {
             return psycho.active_skill_level;
         } else {
             return 0;
+        }
+    }
+
+    getMaxContracts() {
+        const contracting = this.skills.find(o => o.skill_name === 'Contracting');
+
+        if (contracting !== undefined) {
+            return 1 + (contracting.active_skill_level * 4)
+        } else {
+            return 1;
         }
     }
 
@@ -639,6 +650,16 @@ class Character {
                     resolver.addId(contract.issuer_corporation_id);
                     resolver.addId(contract.assignee_id);
                     resolver.addId(contract.acceptor_id);
+
+                    // build used contracts value
+                    if (
+                        (appProperties.contract_completed_statuses.includes(contract.status)) &&
+                        (contract.issuer_id === this.id) &&
+                        (contract.for_corporation === false) &&
+                        (contract.availability !== 'corporation')
+                    ) {
+                        this.contractSlotsUsed++;
+                    }
                 }
 
                 await resolver.resolve();

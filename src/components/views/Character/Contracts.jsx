@@ -21,12 +21,13 @@ export default class Contracts extends React.Component {
     }
 
     render() {
-        const contracts = CharacterModel.get(this.props.characterId).contracts;
+        const char = CharacterModel.get(this.props.characterId);
+        const contracts = char.contracts;
 
         return (
             <div>
                 <Card style={styles.card}>
-                    <CardHeader title="Pending Contracts"/>
+                    <CardHeader title={`Pending Contracts (${char.contractSlotsUsed}/${char.getMaxContracts()})`}/>
 
                     <CardText>
                         <ContractsTable contracts={contracts.filter(c => !appProperties.contract_completed_statuses.includes(c.status))}/>
