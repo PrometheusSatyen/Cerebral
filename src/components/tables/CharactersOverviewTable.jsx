@@ -8,6 +8,9 @@ import DateTimeHelper from '../../helpers/DateTimeHelper';
 
 import Avatar from 'material-ui/Avatar';
 import {Table, TableBody, TableRow, TableRowColumn} from 'material-ui/Table';
+import FontIcon from 'material-ui/FontIcon';
+import {red500, greenA200} from 'material-ui/styles/colors';
+import AuthorizedCharacter from '../../models/AuthorizedCharacter';
 
 const styles = {
     charactersTable: {
@@ -78,11 +81,19 @@ export default class CharactersOverviewTable extends React.Component {
                                 omegaStatusIconPath = '';
                         }
                         const currentSkill = char.getCurrentSkill();
+                        const auth = AuthorizedCharacter.get(char.id);
 
                         return (
                             <TableRow key={char.id} selectable={false} onClick={(e) => this.handleClick(e, char.id)}>
+
                                 <TableRowColumn style={{width: '20px'}}>
                                     <Avatar src={char.portraits.px128x128} style={{marginTop: 5}}/>
+                                </TableRowColumn>
+
+                                <TableRowColumn style={{width: 25, paddingLeft: 20, paddingRight: 0}}>
+                                    <FontIcon className="material-icons" color={auth.lastRefresh.success !== false ? greenA200 : red500} style={{marginTop: 5}}>
+                                        {auth.lastRefresh.success !== false ? 'check_circle' : 'warning'}
+                                    </FontIcon>
                                 </TableRowColumn>
 
                                 <TableRowColumn style={{width: '20px'}}>
@@ -98,7 +109,7 @@ export default class CharactersOverviewTable extends React.Component {
                                     {char.corporation.name} / {char.alliance_id !== undefined ? char.alliance.name : "N/A"}
                                 </TableRowColumn>
 
-                                <TableRowColumn>
+                                <TableRowColumn style={{width: 120}}>
                                     {char.balance.toLocaleString(navigator.language, {maximumFractionDigits: 2})} ISK<br/>
                                     {char.getTotalSp().toLocaleString(navigator.language, {maximumFractionDigits: 0})} SP
                                 </TableRowColumn>
