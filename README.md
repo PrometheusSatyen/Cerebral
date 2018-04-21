@@ -57,6 +57,8 @@ Screenshots:
 
 ![contracts](https://prom.gaydar.space/2018-04-18_12-35-17_suf4c19ixNkOZSAerRLqXzaUMVcWDW.png)
 
+![setting](https://prom.gaydar.space/2018-04-21_17-37-14_eHCUBlPheXMwOkz5AdjfGMH5tv6QnN.png)
+
 ![character-summary](https://prom.gaydar.space/2018-04-21_17-38-05_eytGdToL1qcNdBWOPIiKzipZT0RtKR.png)
 
 ![character-skills](https://prom.gaydar.space/2018-04-21_17-38-34_9LBjt9ygMukaLkbWGHhKshOHGv9Jnd.png)
