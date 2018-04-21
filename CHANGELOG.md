@@ -1,6 +1,14 @@
-XXXX-XX-XX: 0.6.0-dev
+2018-04-21: 0.6.0
 -------------------------
-* Users are now required to create an EVE Developer account and input credentials into Cerebral on first-start.
+* Cerebral is now licensed under the AGPL v3.0.
+* Users are now required to create an EVE Developer account and input credentials into Cerebral.
+    * A markdown guide has been added in /docs/API-SETUP.md giving instructions on creating an application on the EVE Developers site.
+    * All characters must be re-authorized after inputting their new credentials.
+    * Markers have been added on the character overview page showing a green tick/red warning symbol depending on whether the character needs to be re-authorized.
+    * The currently baked in credentials in 0.5.0 and previous versions will be revoked 21/04/2018 21:00 UTC, at this time all versions of Cerebral prior to 0.6.0 will cease to function.
+* Split the API info into a new tab on the character page showing granted scopes, data refresh timers and a health check on the character's tokens.
+* The contracts page for characters now shows an indicator of used and available character contract slots.
+* SSO client/refresh token handling has been improved to better handle failing refresh tokens.
 
 2018-04-18: 0.5.0 Alpha
 -------------------------

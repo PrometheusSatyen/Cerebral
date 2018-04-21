@@ -1,7 +1,7 @@
 'use strict';
 
 export default {
-    'version': '0.6.0-dev',
+    'version': '0.6.0',
     'author_email': 'prometheussatyen@gmail.com',
 
     'eve_sso_url': 'https://login.eveonline.com/oauth',

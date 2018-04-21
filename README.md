@@ -17,12 +17,7 @@ Cerebral is currently in alpha testing! That means:
 Current Functionality:
 -------------------------
 * Add your characters using the EVE SSO.
-* See an overview of all your characters including:
-    * Alpha/Omega Status
-    * Corp/Alliance
-    * ISK
-    * SP - This is the actual amount of SP your character has, which you would normally have to login and pause/unpause your queue to see.
-    * Current skill in training and time remaining
+* See an overview of all your characters including: Alpha/Omega Status, Corp/Alliance, ISK, SP, Current skill in training and time remaining
 * SP Farming overview which allows you to add characters as an SP farm, specifying the base SP that character will keep (unextractable), you can then see:
     * Number of injectors ready to extract
     * Time until next injector is ready to extract
@@ -40,9 +35,11 @@ Current Functionality:
         * Active implants
         * Skill queue
         * Jump clones
-        * Scopes granted
+        * Jump fatigue
+        * Loyalty points
     * Skills tab: trained skills by skill group, total SP in skills/skill groups, shows partially trained skills
     * Contracts tab: pending/completed contracts involving the character
+    * API tab: shows information on the authorized API token including scopes granted, data refresh intervals and token health
 
 Planned Functionality:
 -------------------------
@@ -54,15 +51,17 @@ Planned Functionality:
 
 Screenshots:
 -------------------------
-![character overview](https://prom.gaydar.space/2018-04-18_12-34-54_yN4TAyf8G9MzxZif1k9tht6arR5lTB.png)
+![character overview](https://prom.gaydar.space/2018-04-21_17-37-43_tt82j9SmzY8sxzNZwNbEutSEiHz7bF.png)
 
 ![sp-farming](https://prom.gaydar.space/2018-04-18_12-35-03_WLpFbKvcAgj22eE0t6Ayo1jJ25HUcj.png)
 
 ![contracts](https://prom.gaydar.space/2018-04-18_12-35-17_suf4c19ixNkOZSAerRLqXzaUMVcWDW.png)
 
-![character-summary](https://prom.gaydar.space/2018-04-18_12-35-46_3Q0RooNx1DrA8nEPRG9NEp8lBtKAh7.png)
+![character-summary](https://prom.gaydar.space/2018-04-21_17-38-05_eytGdToL1qcNdBWOPIiKzipZT0RtKR.png)
 
-![character-skills](https://prom.gaydar.space/2018-04-18_12-36-07_OdUQKJO7eLHtQ8zMqnGx3LMpIDHFGv.png)
+![character-skills](https://prom.gaydar.space/2018-04-21_17-38-34_9LBjt9ygMukaLkbWGHhKshOHGv9Jnd.png)
+
+![character-api](https://prom.gaydar.space/2018-04-21_17-38-48_0esisqZl3KJMzJv9laisY4Lqtrh11F.png)
 
 Installation Instructions:
 -------------------------
