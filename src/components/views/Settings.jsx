@@ -37,7 +37,7 @@ export default class Settings extends React.Component {
 
     handleChange(event, value) {
         let change = {};
-        change[event.target.id] = event.target.value;
+        change[event.target.id] = event.target.value.trim();
         this.setState(change);
     };
 
