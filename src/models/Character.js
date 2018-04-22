@@ -645,6 +645,7 @@ class Character {
                 );
 
                 let resolver = new BulkIdResolver();
+                this.contractSlotsUsed = 0;
                 for(let contract of this.contracts) {
                     resolver.addId(contract.issuer_id);
                     resolver.addId(contract.issuer_corporation_id);
@@ -653,8 +654,8 @@ class Character {
 
                     // build used contracts value
                     if (
-                        (appProperties.contract_completed_statuses.includes(contract.status)) &&
-                        (contract.issuer_id === this.id) &&
+                        (!appProperties.contract_completed_statuses.includes(contract.status)) &&
+                        (contract.issuer_id.toString() === this.id) &&
                         (contract.for_corporation === false) &&
                         (contract.availability !== 'corporation')
                     ) {

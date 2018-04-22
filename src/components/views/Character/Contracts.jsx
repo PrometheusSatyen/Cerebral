@@ -27,7 +27,10 @@ export default class Contracts extends React.Component {
         return (
             <div>
                 <Card style={styles.card}>
-                    <CardHeader title={`Pending Contracts (${char.contractSlotsUsed}/${char.getMaxContracts()})`}/>
+                    <CardHeader
+                        title={`Incomplete Contracts (${char.contractSlotsUsed}/${char.getMaxContracts()})`}
+                        subtitle={`Last Update: ${char.getDataRefreshInfo().find(c => c.type === 'Contracts').lastRefresh}`}
+                    />
 
                     <CardText>
                         <ContractsTable contracts={contracts.filter(c => !appProperties.contract_completed_statuses.includes(c.status))}/>
