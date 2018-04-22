@@ -55,6 +55,6 @@ export default class DateTimeHelper {
             string += seconds + 's ';
         }
 
-        return string;
+        return string.trim();
     }
 }

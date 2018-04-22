@@ -3,16 +3,41 @@
 import React from 'react';
 
 import ReactTable from "react-table";
+import ContractInfoDialog from '../dialogs/ContractInfoDialog';
+import {FontIcon, IconButton} from 'material-ui';
+
+const styles = {
+    iconButton: {
+        padding: '0px 0px 0px 0px',
+        margin: '6px 3px 0px 0px',
+        height: 24,
+        width: 24,
+    },
+    fontIcon: {
+        padding: '0 0 0 0',
+        margin: '0 0 0 0',
+    }
+};
 
 export default class ContractsTable extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            openedContract: undefined
+        }
     }
 
     render() {
         const contracts = this.props.contracts;
 
         let columns = [
+            {
+                Header: "ID",
+                id: "contract_id",
+                accessor: 'contract_id',
+                show: false
+            },
             {
                 Header: "Type",
                 headerStyle: {
@@ -110,24 +135,45 @@ export default class ContractsTable extends React.Component {
             });
         }
 
+        columns.push({
+            Header: "",
+            accessor: "contract_id",
+            style: {
+                textAlign: 'right',
+                height: 32,
+                margin: '0 0 0 0',
+                padding: '0 0 0 0'
+            },
+            Cell: row => (
+                <IconButton style={styles.iconButton} onClick={e => this.setState({openedContract: contracts.find(c => c.contract_id === row.value)})}>
+                    <FontIcon className="material-icons">navigate_next</FontIcon>
+                </IconButton>
+            ),
+            width: 30
+        });
+
         if (contracts.length > 0) {
             return (
-                <ReactTable
-                    style={{
-                        color: '#fff',
-                        fontSize: '9pt',
-                    }}
-                    data={contracts}
-                    columns={columns}
-                    showPagination={false}
-                    defaultPageSize={contracts.length}
-                    defaultSorted={[
-                        {
-                            id: this.props.complete === true ? 'date_completed' : 'date_issued',
-                            desc: true
-                        }
-                    ]}
-                />
+                <div>
+                    <ContractInfoDialog contract={this.state.openedContract}/>
+
+                    <ReactTable
+                        style={{
+                            color: '#fff',
+                            fontSize: '9pt',
+                        }}
+                        data={contracts}
+                        columns={columns}
+                        showPagination={false}
+                        defaultPageSize={contracts.length}
+                        defaultSorted={[
+                            {
+                                id: this.props.complete === true ? 'date_completed' : 'date_issued',
+                                desc: true
+                            }
+                        ]}
+                    />
+                </div>
             );
         } else {
             return (
