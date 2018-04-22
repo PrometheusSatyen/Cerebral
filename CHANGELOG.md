@@ -1,3 +1,9 @@
+XXXX-XX-XX: 0.6.1-dev
+-------------------------
+* Fixed bug causing utilized contract slots for characters to always show as 0.
+* Renamed pending contracts to incomplete contracts.
+* Added an indicator of the last refresh to the character contracts pages.
+
 2018-04-21: 0.6.0
 -------------------------
 * Cerebral is now licensed under the AGPL v3.0.
