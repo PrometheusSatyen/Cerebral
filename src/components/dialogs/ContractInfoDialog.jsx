@@ -93,7 +93,7 @@ export default class ContractInfoDialog extends React.Component {
                 typeSpecific =
                     <table cellPadding={0} style={styles.table}>
                         <tr>
-                            <th style={styles.th}>You Will {contract.price >= 0 ? 'Pay' : 'Get'}:</th>
+                            <th style={styles.th}>Buyer Will {contract.price >= 0 ? 'Pay' : 'Get'}:</th>
                             <td style={{color: contract.price >= 0 ? red500 : greenA200, fontWeight: 'bold'}}>
                                 {(contract.price >= 0 ? contract.price : (contract.price * -1)).toLocaleString(navigator.language)} ISK
                             </td>
