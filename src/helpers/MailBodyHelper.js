@@ -46,19 +46,21 @@ export default class MailBodyHelper {
                 mailbodies[id].links = [];
 
                 // extract links and replace a tags with text
-                mailBody = mailBody.replace(/<a href="(https?:.+)">(.+)<\/a>/g, (m, m1, m2) => {
-                        mailbodies[id].links.push(m1);
-                        return `${m2} { ${mailbodies[id].links.length} } `;
+                mailBody = mailBody.replace(/<a href="(https?:.+?)">(.+?)<\/a>/g, (m, m1, m2) => {
+                        mailbodies[id].links.push(m1.replace(/&amp;/g, '&'));
+                        return `${m2} {${mailbodies[id].links.length}} `;
                     });
+                
                 // clear empty a tags, leftover from showinfo links
                 mailBody = mailBody.replace(/<a>/g, '');
                 mailBody = mailBody.replace(/<\/a>/g, '');
 
                 // extract non-hyperlinked links, skip the ones we already gutted
-                mailBody = mailBody.replace(/(https?:\S+)\s+[^{]+/g, (m, m1) => {
-                    mailbodies[id].links.push(m1);
-                    return `${m1} { ${mailbodies[id].links.length} } `;
+                mailBody = mailBody.replace(/(https?:\S+)(\s[^{]|$)/g, (m, m1, m2) => {
+                    mailbodies[id].links.push(m1.replace(/&amp;/g, '&'));
+                    return `${m1} {${mailbodies[id].links.length}} ${m2}`;
                 });
+
 
                 // cleanup of escaped chars commonly found in evemails
                 mailBody = mailBody.replace(/&amp;/g, '&');
