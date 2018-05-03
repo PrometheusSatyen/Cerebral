@@ -38,14 +38,18 @@ export default class LeftNav extends React.Component {
         switch(input) {
             case 'Settings':
                 path = '/settings';
-                value = 4;
+                value = 5;
                 break;
             case 'Contracts':
                 path = '/contracts';
-                value = 3;
+                value = 4;
                 break;
             case 'SP Farming':
                 path = '/sp-farming';
+                value = 3;
+                break;
+            case 'Skill Browser':
+                path = '/skill-browser';
                 value = 2;
                 break;
             case 'Character Overview':
@@ -74,9 +78,10 @@ export default class LeftNav extends React.Component {
             <Drawer width={270}>
                 <SelectableList value={this.state.currentSelect}>
                     <ListItem value={1} primaryText="Character Overview" onClick={(e) => this.handleClick(e)}/>
-                    <ListItem value={2} primaryText="SP Farming" onClick={(e) => this.handleClick(e)}/>
-                    <ListItem value={3} primaryText="Contracts" onClick={(e) => this.handleClick(e)}/>
-                    <ListItem value={4} primaryText="Settings" onClick={(e) => this.handleClick(e)}/>
+                    <ListItem value={2} primaryText="Skill Browser" onClick={(e) => this.handleClick(e)}/>
+                    <ListItem value={3} primaryText="SP Farming" onClick={(e) => this.handleClick(e)}/>
+                    <ListItem value={4} primaryText="Contracts" onClick={(e) => this.handleClick(e)}/>
+                    <ListItem value={5} primaryText="Settings" onClick={(e) => this.handleClick(e)}/>
 
                     <br/>
 
