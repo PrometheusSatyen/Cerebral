@@ -5,8 +5,11 @@ import React from 'react';
 import { red500, green600 } from 'material-ui/styles/colors';
 import SortableTree from 'react-sortable-tree';
 
-import CharacterModel from '../../models/Character';
+
 import AllSkills from '../../../resources/all_skills';
+import CharacterModel from '../../models/Character';
+import DateHelper from '../../helpers/DateTimeHelper';
+import PlanCharacter from '../../models/PlanCharacter';
 
 export default class SkillTree extends React.Component {
     constructor(props) {
@@ -19,7 +22,10 @@ export default class SkillTree extends React.Component {
 
         if (this.props.characterId !== undefined && this.props.characterId !== 0) {
             this.character = CharacterModel.get(this.props.characterId);
+            this.planCharacter = new PlanCharacter(this.props.characterId);
         }
+
+        
     }
 
     componentWillReceiveProps(nextProps) {
@@ -27,6 +33,7 @@ export default class SkillTree extends React.Component {
             if (nextProps.characterId !== undefined && nextProps.characterId !== 0) {
                 const skillTree = [];
                 this.character = CharacterModel.get(nextProps.characterId);
+                this.planCharacter = new PlanCharacter(nextProps.characterId);
 
                 if (this.props.selectedType !== undefined && this.props.selectedType !== 0) {
                     skillTree.push(this.getTreeNode(this.props.selectedType));
@@ -43,6 +50,8 @@ export default class SkillTree extends React.Component {
     getTreeNode(typeId, lvl) {
         const children = [];
         const skill = AllSkills.skills[typeId];
+
+        let title = skill.name;
 
         let subtitle = '';
         if (lvl !== undefined && lvl > 0) {
@@ -62,16 +71,23 @@ export default class SkillTree extends React.Component {
                     subtitle = <span style={{ color: green600 }}> Trained Level: {charskill[0].trained_skill_level}</span>;
                 // not trained high enough -> red
                 } else {
-                    subtitle = <span style={{ color: red500 }}>{subtitle} Trained Level: {charskill[0].trained_skill_level}</span>;
+                    this.planCharacter.planSkill(typeId, lvl, 0);
+                    const time = DateHelper.niceCountdown(this.planCharacter.time);
+                    this.planCharacter.reset();
+                    subtitle = <span style={{ color: red500 }}>{subtitle} Trained Level: {charskill[0].trained_skill_level} ({time})</span>;
                 }
             // char did not inject the skill -> red
             } else {
-                subtitle = <span style={{ color: red500 }}>{subtitle} Trained Level: 0</span>;
+                const tlvl = lvl !== undefined && lvl > 0 ? lvl : 1;
+                this.planCharacter.planSkill(typeId, tlvl, 0);
+                const time = DateHelper.niceCountdown(this.planCharacter.time);
+                this.planCharacter.reset();
+                subtitle = <span style={{ color: red500 }}>{subtitle} Trained Level: 0  ({time})</span>;
             }
         }
 
         const item = {
-            title: skill.name,
+            title: title,
             subtitle: subtitle,
             expanded: true,
             noDragging: true,

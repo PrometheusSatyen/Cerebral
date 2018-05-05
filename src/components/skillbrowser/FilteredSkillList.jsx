@@ -26,7 +26,7 @@ const romanNumerals = {
     3: 'Ⅲ',
     4: 'Ⅳ',
     5: 'Ⅴ',
-}
+};
 
 export class SkillListSearchBar extends React.Component {
     constructor(props) {
