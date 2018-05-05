@@ -167,53 +167,53 @@ class PlanCharacter {
         const skill = this.skills[typeId];
 
         if (skill !== undefined && ((skill.trained_skill_level < lvl && skill.planned_skill_level < lvl) || lvl === 0)) {
-                const currentLvl = skill.trained_skill_level > skill.planned_skill_level ? skill.trained_skill_level : skill.planned_skill_level;
-                const l = [];
+            const currentLvl = skill.trained_skill_level > skill.planned_skill_level ? skill.trained_skill_level : skill.planned_skill_level;
+            const l = [];
 
-                // add each level individually
-                for (let i = currentLvl + 1; i <= lvl; i += 1) {
-                    const spForLevel = 250 * skill.training_time_multiplier * (Math.sqrt(32) ** (i - 1));
-                    const currentSP = skill.skillpoints_in_skill > skill.planned_skillpoints_in_skill ? skill.skillpoints_in_skill : skill.planned_skillpoints_in_skill;
-                    const missingSPforLevel = spForLevel - currentSP;
+            // any required skills to train?
+            if (skill.required_skills.length > 0) {
+                for (const requiredSkill of skill.required_skills) {
+                    // should we train to min lvl or a different level?
+                    const targetLvl = preReqLvl === undefined && preReqLvl > requiredSkill.level ? preReqLvl : requiredSkill.level;
+                    this.planSkill(requiredSkill.id, targetLvl, preReqLvl);
+                }
+            }
 
-                    const pri = this.attributes.hasOwnProperty(skill.primary_attribute) ? this.attributes[skill.primary_attribute] : 0;
-                    const sec = this.attributes.hasOwnProperty(skill.secondary_attribute) ? this.attributes[skill.secondary_attribute] : 0;
+            // add each level individually
+            for (let i = currentLvl + 1; i <= lvl; i += 1) {
+                const spForLevel = 250 * skill.training_time_multiplier * (Math.sqrt(32) ** (i - 1));
+                const currentSP = skill.skillpoints_in_skill > skill.planned_skillpoints_in_skill ? skill.skillpoints_in_skill : skill.planned_skillpoints_in_skill;
+                const missingSPforLevel = spForLevel - currentSP;
 
-                    const spPerHour = (pri + (sec / 2)) * 60;
+                const pri = this.attributes.hasOwnProperty(skill.primary_attribute) ? this.attributes[skill.primary_attribute] : 0;
+                const sec = this.attributes.hasOwnProperty(skill.secondary_attribute) ? this.attributes[skill.secondary_attribute] : 0;
 
-                    let time = 0;
-                    if (this.isOmega) {
-                        time = missingSPforLevel / (pri + (sec / 2)) * 60 * 1000;
-                    } else {
-                        time = missingSPforLevel / (pri + (sec / 2)) * 60 * 2 * 1000;
-                    }
+                const spPerHour = (pri + (sec / 2)) * 60;
 
-                    this.time += time;
-
-                    skill.planned_skill_level = i;
-                    skill.planned_skillpoints_in_skill = spForLevel;
-
-                    l.push({
-                        id: typeId,
-                        lvl: i,
-                        sp: missingSPforLevel,
-                        spTotal: spForLevel,
-                        name: skill.name,
-                        spHour: spPerHour,
-                        time: time,
-                    });
+                let time = 0;
+                if (this.isOmega) {
+                    time = missingSPforLevel / (pri + (sec / 2)) * 60 * 1000;
+                } else {
+                    time = missingSPforLevel / (pri + (sec / 2)) * 60 * 2 * 1000;
                 }
 
-                this.queue = l.concat(this.queue);
+                this.time += time;
 
-                // any required skills to train?
-                if (skill.required_skills.length > 0) {
-                    for (const requiredSkill of skill.required_skills) {
-                        // should we train to min lvl or a different level?
-                        const targetLvl = preReqLvl === undefined && preReqLvl > requiredSkill.level ? preReqLvl : requiredSkill.level;
-                        this.planSkill(requiredSkill.id, targetLvl, preReqLvl);
-                    }
-                }
+                skill.planned_skill_level = i;
+                skill.planned_skillpoints_in_skill = spForLevel;
+
+                l.push({
+                    id: typeId,
+                    lvl: i,
+                    sp: missingSPforLevel,
+                    spTotal: spForLevel,
+                    name: skill.name,
+                    spHour: spPerHour,
+                    time: time,
+                });
+            }
+
+        this.queue = this.queue.concat(l);
         }
     }
 
