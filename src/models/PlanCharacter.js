@@ -64,156 +64,164 @@ class PlanCharacter {
         }
     }
 
-
     /**
-     * Returns duration of a skill train.
+     * Verifies if the skill in position oldIndex can be moved to newIndex.
      *
-     * Gets the duration of a skill training at the current state of the plan without modifying it. Does not resolve prerequisit skills and will not include them in the training time estimate.
-     *
-     *
-     * @param {number}   typeId     EVE Type ID of the skill to check.
-     * @param {number}   lvl        Desired level of the skill.
-     * 
-     * @return {number} Remaining training time in seconds.
+     * @param {number} oldIndex     Current position of the skill in queue
+     * @param {number} newIndex     Desired position of the skill in queue
+     * @returns {boolean} Valid move without violating prereqs
      */
-    peekDuration(typeId, lvl) {
-        const skill = this.skills[typeId];
-        const l = [];
-        let totalTime = 0;
+    canMoveSkillToPosition(oldIndex, newIndex) {
+        const skillToMove = this.queue[oldIndex];
+        let illegalMove = false;
 
-        if (skill !== undefined && skill.trained_skill_level < lvl && skill.planned_skill_level < lvl) {
-                const currentLvl = skill.trained_skill_level > skill.planned_skill_level ? skill.trained_skill_level : skill.planned_skill_level;
-                let currentSP = skill.skillpoints_in_skill > skill.planned_skillpoints_in_skill ? skill.skillpoints_in_skill : skill.planned_skillpoints_in_skill;
-
-                // add each level individually
-                for (let i = currentLvl + 1; i <= lvl; i += 1) {
-                    const spForLevel = 250 * skill.training_time_multiplier * (Math.sqrt(32) ** (i - 1));
-                    
-                    const missingSPforLevel = spForLevel - currentSP;
-
-                    const pri = this.attributes.hasOwnProperty(skill.primary_attribute) ? this.attributes[skill.primary_attribute] : 0;
-                    const sec = this.attributes.hasOwnProperty(skill.secondary_attribute) ? this.attributes[skill.secondary_attribute] : 0;
-
-                    let time = 0;
-                    if (this.isOmega) {
-                        time = missingSPforLevel / (pri + (sec / 2)) * 60 * 1000;
-                    } else {
-                        time = missingSPforLevel / (pri + (sec / 2)) * 60 * 2 * 1000;
-                    }
-
-                    currentSP = spForLevel;
-                    totalTime += time;
+        // going down in the list?
+        if (oldIndex < newIndex) {
+            const queueSubset = this.queue.slice(oldIndex + 1, newIndex + 1);
+            // do we have to rebuild the whole queue?
+            illegalMove = queueSubset.some((skill) => {
+                // same skill but higher level? can't move past it
+                if (skill.id === skillToMove.id && skill.level > skillToMove.level) {
+                    return true;
                 }
+
+                // any skill that requires this one? can't move past that one either
+                if (skill.required_skills.length > 0 &&
+                    skill.required_skills.some(
+                        req => req.id === skillToMove.id && req.level >= skillToMove.level
+                    )) {
+                        return true;
+                }
+                return false;
+            });
+        // going up, need to check the "to be moved" skill prereqs against those
+        } else {
+            const queueSubset = this.queue.slice(newIndex, oldIndex).reverse();
+            illegalMove = queueSubset.some((skill) => {
+                // same skill but lower level? can't move past it
+                if (skillToMove.id === skill.id && skill.level < skillToMove.level) {
+                    return true;
+                }
+
+                // are any of those a prereq for this one? can't move past
+                if (skillToMove.required_skills.length > 0
+                    && skillToMove.required_skills.some(
+                        req => req.id === skill.id && skill.level <= req.level)
+                    ) {
+                    return true;
+                }
+                return false;
+            });
         }
-        return totalTime;
+        return !illegalMove;
     }
 
-    /**
-     * Returns duration of a single level of skill train.
+     /**
+     * Tries to move a skill in the current queue
      *
-     * Gets the duration of a skill training at the current state of the plan without modifying it. Does not resolve prerequisit skills or prerequisit levels and will not include them in the training time estimate.
+     * Attempt to move the skill in position oldIndex to newIndex.
+     * To force a move and allow other skills to be reorderd use forceMoveByRebuild.
+     * Forced moves will still honor prereqs.
      *
      *
-     * @param {number}   typeId     EVE Type ID of the skill to check.
-     * @param {number}   lvl        Desired level of the skill.
-     * 
-     * @return {number} Remaining training time in milliseconds.
+     * @param {number}   oldIndex     Current position of the skill in queue
+     * @param {number}   newIndex     Desired position of the skill in queue
+     * @param {boolean}  forceMoveByRebuild Rebuild queue to force a reorder if nessessacy
+     *
      */
-    peekSingleLevelDuration(typeId, lvl) {
-        const skill = this.skills[typeId];
-        const l = [];
-        let totalTime = 0;
+    moveQueuedSkillByPosition(oldIndex, newIndex, forceMoveByRebuild) {
+        const canMove = this.canMoveSkillToPosition(oldIndex, newIndex);
 
-        if (skill !== undefined && skill.trained_skill_level < lvl && skill.planned_skill_level < lvl) {
-                const currentLvl = skill.trained_skill_level > skill.planned_skill_level ? skill.trained_skill_level : skill.planned_skill_level;
-                let currentSP = skill.skillpoints_in_skill > skill.planned_skillpoints_in_skill ? skill.skillpoints_in_skill : skill.planned_skillpoints_in_skill;
-
-                // add each level individually
-                for (let i = currentLvl + 1; i <= lvl; i += 1) {
-                    const spForLevel = 250 * skill.training_time_multiplier * (Math.sqrt(32) ** (i - 1));
-                    
-                    const missingSPforLevel = spForLevel - currentSP;
-
-                    const pri = this.attributes.hasOwnProperty(skill.primary_attribute) ? this.attributes[skill.primary_attribute] : 0;
-                    const sec = this.attributes.hasOwnProperty(skill.secondary_attribute) ? this.attributes[skill.secondary_attribute] : 0;
-
-                    let time = 0;
-                    if (this.isOmega) {
-                        time = missingSPforLevel / (pri + (sec / 2)) * 60 * 1000;
-                    } else {
-                        time = missingSPforLevel / (pri + (sec / 2)) * 60 * 2 * 1000;
-                    }
-
-                    currentSP = spForLevel;
-                    // we only care about this one
-                    totalTime = time;
+        if (canMove) {
+            if (newIndex >= this.queue.length) {
+                let k = newIndex - this.queue.length;
+                while (k + 1) {
+                    k -= 1;
+                    this.queue.push(undefined);
                 }
+            }
+            this.queue.splice(newIndex, 0, this.queue.splice(oldIndex, 1)[0]);
+        // reset the queue and readd all skills
+        } else if (forceMoveByRebuild) {
+            const oldQueue = this.queue.slice(0);
+            if (newIndex >= oldQueue.length) {
+                let k = newIndex - oldQueue.length;
+                while (k + 1) {
+                    k -= 1;
+                    oldQueue.push(undefined);
+                }
+              }
+              oldQueue.splice(newIndex, 0, oldQueue.splice(oldIndex, 1)[0]);
+
+            this.reset();
+            for (const s of oldQueue) {
+                this.planSkill(s.id, s.level);
+            }
         }
-        return totalTime;
     }
 
     /**
      * Adds a skill to the queue.
      *
-     * Resolves the skill and all prerequisite skills and adds them to the plan queue. Optionally 
+     * Resolves the skill and all prerequisite skills and adds them to the plan queue.
+     * Optionally plan prerequisite skills to at least preReqLvl.
      *
      *
-     * @param {number}   typeId     EVE Type ID of the skill to check.
-     * @param {number}   lvl        Desired level of the skill.
-     * @param {number}   [preReqLvl]  Desired level of any prerequisite skill. Ignored if below the actual unlock level.
-     * 
+     * @param {number}   typeId       EVE Type ID of the skill to check.
+     * @param {number}   lvl          Desired level of the skill.
+     * @param {number}   [preReqLvl]  Desired level of any prerequisite skill.
+     *                                Ignored if below the actual unlock level.
+     *
      */
     planSkill(typeId, lvl, preReqLvl) {
         const skill = this.skills[typeId];
 
-        if (skill !== undefined && ((skill.trained_skill_level < lvl && skill.planned_skill_level < lvl) || lvl === 0)) {
+        if (skill !== undefined
+            && ((skill.trained_skill_level < lvl && skill.planned_skill_level < lvl) || lvl === 0)) {
             const currentLvl = skill.trained_skill_level > skill.planned_skill_level ? skill.trained_skill_level : skill.planned_skill_level;
-            const l = [];
 
             // any required skills to train?
             if (skill.required_skills.length > 0) {
                 for (const requiredSkill of skill.required_skills) {
                     // should we train to min lvl or a different level?
-                    const targetLvl = preReqLvl === undefined && preReqLvl > requiredSkill.level ? preReqLvl : requiredSkill.level;
+                    const targetLvl = preReqLvl !== undefined && preReqLvl > requiredSkill.level ? preReqLvl : requiredSkill.level;
                     this.planSkill(requiredSkill.id, targetLvl, preReqLvl);
                 }
             }
 
+            const spPerHour = (this.attributes[skill.primary_attribute] +
+                (this.attributes[skill.secondary_attribute] / 2)) * 60;
+
             // add each level individually
             for (let i = currentLvl + 1; i <= lvl; i += 1) {
-                const spForLevel = 250 * skill.training_time_multiplier * (Math.sqrt(32) ** (i - 1));
                 const currentSP = skill.skillpoints_in_skill > skill.planned_skillpoints_in_skill ? skill.skillpoints_in_skill : skill.planned_skillpoints_in_skill;
+                const spForLevel = 250 * skill.training_time_multiplier * (Math.sqrt(32) ** (i - 1));
                 const missingSPforLevel = spForLevel - currentSP;
 
-                const pri = this.attributes.hasOwnProperty(skill.primary_attribute) ? this.attributes[skill.primary_attribute] : 0;
-                const sec = this.attributes.hasOwnProperty(skill.secondary_attribute) ? this.attributes[skill.secondary_attribute] : 0;
+                let time = missingSPforLevel * (3600 / spPerHour);
 
-                const spPerHour = (pri + (sec / 2)) * 60;
-
-                let time = 0;
-                if (this.isOmega) {
-                    time = missingSPforLevel / (pri + (sec / 2)) * 60 * 1000;
-                } else {
-                    time = missingSPforLevel / (pri + (sec / 2)) * 60 * 2 * 1000;
+                if (!this.isOmega) {
+                    time *= 2;
                 }
 
-                this.time += time;
+                this.time += time * 1000;
 
                 skill.planned_skill_level = i;
                 skill.planned_skillpoints_in_skill = spForLevel;
 
-                l.push({
+                this.queue.push({
+                    type: 'skill',
                     id: typeId,
-                    lvl: i,
+                    level: i,
+                    name: skill.name,
+                    title: `${skill.name} ${i}`,
                     sp: missingSPforLevel,
                     spTotal: spForLevel,
-                    name: skill.name,
                     spHour: spPerHour,
-                    time: time,
+                    time: time * 1000,
+                    required_skills: skill.required_skills,
                 });
             }
-
-        this.queue = this.queue.concat(l);
         }
     }
 

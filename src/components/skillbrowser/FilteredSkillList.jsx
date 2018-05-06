@@ -62,8 +62,8 @@ export default class FilteredSkillList extends React.Component {
         this.handleFilterTextChange = this.handleFilterTextChange.bind(this);
     }
 
-    handleSkillListSelection(id) {
-        this.props.onSkillSelectionChange(id);
+    handleSkillListSelection(id, e) {
+        this.props.onSkillSelectionChange(id, e);
     }
 
     handleFilterTextChange(filterText) {
@@ -107,8 +107,8 @@ export class SkillList extends React.Component {
         }
     }
 
-    handleSkillListSelection(id) {
-        this.props.onSkillSelectionChange(id);
+    handleSkillListSelection(id, e) {
+        this.props.onSkillSelectionChange(id, e);
     }
 
     render() {
@@ -135,7 +135,7 @@ export class SkillList extends React.Component {
                             <ListItem
                                 key={skill.type_id}
                                 primaryText={skill.name}
-                                onClick={() => this.handleSkillListSelection(skill.type_id)}
+                                onClick={(e) => this.handleSkillListSelection(skill.type_id, e)}
                                 rightIcon={
                                     <FontIcon style={{ 'fontSize': 18 }}>{romanNumerals[skillLevel]}</FontIcon>
                                 }
@@ -162,7 +162,7 @@ export class SkillList extends React.Component {
                         <ListItem
                             key={skill.type_id}
                             primaryText={skill.name}
-                            onClick={() => this.handleSkillListSelection(skill.type_id)}
+                            onClick={(e) => this.handleSkillListSelection(skill.type_id, e)}
                             rightIcon={
                                 <FontIcon style={{ 'fontSize': 18 }}>{romanNumerals[skillLevel]}</FontIcon>
                             }
