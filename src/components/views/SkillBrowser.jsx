@@ -59,7 +59,6 @@ export default class SkillBrowser extends React.Component {
 
     handleCharacterChange(value) {
         this.setState({ characterId: value });
-
     }
 
     render() {
@@ -96,7 +95,7 @@ export default class SkillBrowser extends React.Component {
                                         />
                                         <CardText style={styles.margin10} expandable>
                                             {
-                                                this.queue.map((s, i) => <span key={i}>{` ${s.name} ${s.lvl}`}<span style={{ color: grey500 }}>{` ${DateHelper.niceCountdown(s.time)} `}<br /></span></span>)
+                                                this.queue.map((s, i) => <span key={i}>{` ${s.name} ${s.level}`}<span style={{ color: grey500 }}>{` ${DateHelper.niceCountdown(s.time)} `}<br /></span></span>)
                                             }
                                         </CardText>
                                     </Card>
