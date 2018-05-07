@@ -58,27 +58,43 @@ export default class Plans extends React.Component {
             totalTime: 0,
             planSkillPopoverOpen: false,
             planSkillPopoverAnchor: undefined,
+            selection: [],
         };
 
         this.handleSkillLevelSelection = this.handleSkillLevelSelection.bind(this);
         this.handleSkillListSelection = this.handleSkillListSelection.bind(this);
 
+        this.onRemove = this.onRemove.bind(this);
         this.onSortEnd = this.onSortEnd.bind(this);
 
         this.planCharacter = new PlanCharacter(this.props.characterId);
         this.queue = [];
     }
 
-    onSortEnd({ oldIndex, newIndex }) {
-        this.planCharacter.moveQueuedSkillByPosition(oldIndex, newIndex, true);
-        this.setState({ items: this.planCharacter.queue });
-        this.setState({ totalTime: this.planCharacter.time });
+    onSortEnd(oldIndex, newIndex, selected) {
+        if (selected === undefined || selected.length <= 1) {
+            this.planCharacter.moveQueuedItemByPosition(oldIndex, newIndex, true);
+            this.setState({
+                items: this.planCharacter.queue,
+                totalTime: this.planCharacter.time,
+                selection: [],
+            });
+        } else if (selected !== undefined || selected.length > 1) {
+            this.planCharacter.moveQueuedItemsByPosition(oldIndex, newIndex, selected);
+            this.setState({
+                items: this.planCharacter.queue,
+                totalTime: this.planCharacter.time,
+                selection: [],
+            });
+        }
     }
 
     handleSkillListSelection(selectedType, e) {
-        this.setState({ planSkillPopoverAnchor: e.currentTarget });
-        this.setState({ planSkillPopoverOpen: true });
-        this.setState({ selectedType: selectedType });
+        this.setState({
+            planSkillPopoverAnchor: e.currentTarget,
+            planSkillPopoverOpen: true,
+            selectedType: selectedType,
+        });
     }
 
     handleSkillLevelSelection(level, prereqs) {
@@ -92,15 +108,13 @@ export default class Plans extends React.Component {
         }
     }
 
-    remove(index) {
-        const requestedOrder = [...this.state.items];
-        requestedOrder.splice(index, 1);
-        this.planCharacter.reset();
-
-        // build a new queue from the proposed list
-        for (const skill of requestedOrder) {
-            this.planCharacter.planSkill(skill.id, skill.level);
+    onRemove(index, e) {
+        if (e.ctrlKey || e.metaKey === 0) {
+            this.planCharacter.removeItemByPosition(index, true);
+        } else {
+            this.planCharacter.removeItemByPosition(index);
         }
+
         this.setState({ items: this.planCharacter.queue });
         this.setState({ totalTime: this.planCharacter.time });
     }
@@ -111,10 +125,10 @@ export default class Plans extends React.Component {
                 <PlanSkillPopover open={this.state.planSkillPopoverOpen} anchorEl={this.state.planSkillPopoverAnchor} onLevelSelected={this.handleSkillLevelSelection} />
                 <Card style={styles.menuCard}>
                     <SelectField
-                    style={styles.planSelector}
-                    floatingLabelText="Plan"
-                    value={this.state.characterId}
-                    onChange={this.handleCharacterChange}
+                        style={styles.planSelector}
+                        floatingLabelText="Plan"
+                        value={this.state.characterId}
+                        onChange={this.handleCharacterChange}
                     >
                         <MenuItem value={1} primaryText="This" />
                         <MenuItem value={2} primaryText="that" />
@@ -133,10 +147,11 @@ export default class Plans extends React.Component {
                             <td style={styles.rightColumn}>
                                 <Paper style={styles.margin10}>
                                     <SkillPlanTable
-                                        onRemove={(index) => this.remove(index)}
+                                        onRemove={this.onRemove}
                                         onSkillMove={this.onSortEnd}
                                         items={this.state.items}
                                         totalTime={this.state.totalTime}
+                                        selected={this.state.selected}
                                     />
                                 </Paper>
                             </td>

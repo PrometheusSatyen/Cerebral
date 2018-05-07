@@ -65,6 +65,19 @@ class PlanCharacter {
     }
 
     /**
+     * Add an item to the queue
+     *
+     * @param {object} skillQueueItem
+     */
+    addItemToQueue(skillQueueItem, bannedSkills) {
+        if (skillQueueItem.type === 'skill') {
+            this.planSkill(skillQueueItem.id, skillQueueItem.level, undefined, bannedSkills);
+        } else if (skillQueueItem.type === 'remap') {
+            this.addRemap(skillQueueItem.attributes);
+        }
+    }
+
+    /**
      * Verifies if the skill in position oldIndex can be moved to newIndex.
      *
      * @param {number} oldIndex     Current position of the skill in queue
@@ -80,6 +93,11 @@ class PlanCharacter {
             const queueSubset = this.queue.slice(oldIndex + 1, newIndex + 1);
             // do we have to rebuild the whole queue?
             illegalMove = queueSubset.some((skill) => {
+                // not a skill, need to recalculate values
+                if (skill.type !== 'skill') {
+                    return true;
+                }
+
                 // same skill but higher level? can't move past it
                 if (skill.id === skillToMove.id && skill.level > skillToMove.level) {
                     return true;
@@ -90,11 +108,11 @@ class PlanCharacter {
                     skill.required_skills.some(
                         req => req.id === skillToMove.id && req.level >= skillToMove.level
                     )) {
-                        return true;
+                    return true;
                 }
                 return false;
             });
-        // going up, need to check the "to be moved" skill prereqs against those
+            // going up, need to check the "to be moved" skill prereqs against those
         } else {
             const queueSubset = this.queue.slice(newIndex, oldIndex).reverse();
             illegalMove = queueSubset.some((skill) => {
@@ -107,7 +125,7 @@ class PlanCharacter {
                 if (skillToMove.required_skills.length > 0
                     && skillToMove.required_skills.some(
                         req => req.id === skill.id && skill.level <= req.level)
-                    ) {
+                ) {
                     return true;
                 }
                 return false;
@@ -116,20 +134,20 @@ class PlanCharacter {
         return !illegalMove;
     }
 
-     /**
-     * Tries to move a skill in the current queue
-     *
-     * Attempt to move the skill in position oldIndex to newIndex.
-     * To force a move and allow other skills to be reorderd use forceMoveByRebuild.
-     * Forced moves will still honor prereqs.
-     *
-     *
-     * @param {number}   oldIndex     Current position of the skill in queue
-     * @param {number}   newIndex     Desired position of the skill in queue
-     * @param {boolean}  forceMoveByRebuild Rebuild queue to force a reorder if nessessacy
-     *
-     */
-    moveQueuedSkillByPosition(oldIndex, newIndex, forceMoveByRebuild) {
+    /**
+    * Tries to move an item in the current queue
+    *
+    * Attempt to move the skill or other item in position oldIndex to newIndex.
+    * To force a move and allow other skills to be reorderd use forceMoveByRebuild.
+    * Forced moves will still honor prereqs.
+    *
+    *
+    * @param {number}   oldIndex     Current position of the item in queue
+    * @param {number}   newIndex     Desired position of the item in queue
+    * @param {boolean}  forceMoveByRebuild Rebuild queue to force a reorder if nessessacy
+    *
+    */
+    moveQueuedItemByPosition(oldIndex, newIndex, forceMoveByRebuild) {
         const canMove = this.canMoveSkillToPosition(oldIndex, newIndex);
 
         if (canMove) {
@@ -141,7 +159,7 @@ class PlanCharacter {
                 }
             }
             this.queue.splice(newIndex, 0, this.queue.splice(oldIndex, 1)[0]);
-        // reset the queue and readd all skills
+            // reset the queue and readd all skills
         } else if (forceMoveByRebuild) {
             const oldQueue = this.queue.slice(0);
             if (newIndex >= oldQueue.length) {
@@ -150,12 +168,82 @@ class PlanCharacter {
                     k -= 1;
                     oldQueue.push(undefined);
                 }
-              }
-              oldQueue.splice(newIndex, 0, oldQueue.splice(oldIndex, 1)[0]);
+            }
+            oldQueue.splice(newIndex, 0, oldQueue.splice(oldIndex, 1)[0]);
 
             this.reset();
             for (const s of oldQueue) {
-                this.planSkill(s.id, s.level);
+                this.addItemToQueue(s);
+            }
+        }
+    }
+
+    /**
+     * Attempts to move a set of items around. oldIndex can be any
+     * Forces a rebuild of the queue with the new order.
+     *
+     *
+     * @param {number}   oldIndex     Current position of any of the to be moved items
+     * @param {number}   newIndex     Desired position of the item in queue
+     * @param {Array}  itemsToMove    List of positions to move to newIndex
+     *
+     */
+    moveQueuedItemsByPosition(oldIndex, newIndex, itemsToMove) {
+        if (itemsToMove.length > 0) {
+            let newItemOrder = [];
+            const itemsToAppend = [];
+
+            for (let i = 0; i < this.queue.length; i += 1) {
+                // will we move this one around or does it "stay in place"
+                if (itemsToMove.indexOf(i) === -1) {
+                    // are we moving items to a later slot?
+                    if (newIndex > oldIndex) {
+                        // should it be added before or after our moved items?
+                        if (i <= newIndex) {
+                            newItemOrder.push(i);
+                        } else if (i > newIndex) {
+                            itemsToAppend.push(i);
+                        }
+                        // no, moving up in the list
+                    } else if (newIndex < oldIndex) {
+                        // should it be added before or after our moved items?
+                        if (i < newIndex) {
+                            newItemOrder.push(i);
+                        } else if (i >= newIndex) {
+                            itemsToAppend.push(i);
+                        }
+                    }
+                }
+            }
+            newItemOrder = newItemOrder.concat(itemsToMove).concat(itemsToAppend);
+
+            const newQueue = [...this.queue];
+            let nIndex = newIndex;
+
+            // remove all itemsToMove from the queue
+            const itemsToInsert = [];
+            for (let i = itemsToMove.length - 1; i >= 0; i -= 1) {
+                const index = itemsToMove[i];
+                // adjust newIndex if required
+                if (index < nIndex && index !== oldIndex) {
+                    nIndex -= 1;
+                }
+
+                itemsToInsert.unshift(newQueue[index]);
+                newQueue.splice(index, 1);
+            }
+
+            // insert the items that should be moved into their new position
+            let k = 0;
+            for (let i = 0; i < itemsToInsert.length; i += 1) {
+                newQueue.splice(nIndex + k, 0, itemsToInsert[i]);
+                k += 1;
+            }
+
+            // reset and readd everything to the queue
+            this.reset();
+            for (const s of newQueue) {
+                this.addItemToQueue(s);
             }
         }
     }
@@ -176,6 +264,8 @@ class PlanCharacter {
     planSkill(typeId, lvl, preReqLvl) {
         const skill = this.skills[typeId];
 
+        // is it a valid skill and (do we need to train or do we care about prereqs)
+        // train skill to level 0 but prereqs to x is valid
         if (skill !== undefined
             && ((skill.trained_skill_level < lvl && skill.planned_skill_level < lvl) || lvl === 0)) {
             const currentLvl = skill.trained_skill_level > skill.planned_skill_level ? skill.trained_skill_level : skill.planned_skill_level;
@@ -185,7 +275,24 @@ class PlanCharacter {
                 for (const requiredSkill of skill.required_skills) {
                     // should we train to min lvl or a different level?
                     const targetLvl = preReqLvl !== undefined && preReqLvl > requiredSkill.level ? preReqLvl : requiredSkill.level;
-                    this.planSkill(requiredSkill.id, targetLvl, preReqLvl);
+
+                    // do we have a ban list? prereq skill must not be on the banlist?
+                    if (!(this.bannedSkills !== undefined && this.bannedSkills.includes(requiredSkill.id))) {
+                        // did we specifically ban this prereq?
+                        if (!(this.bannedSkill !== undefined && this.bannedSkill === requiredSkill.id && this.bannedSkillLevel <= requiredSkill.level)) {
+                            this.planSkill(requiredSkill.id, targetLvl, preReqLvl);
+                        } else {
+                            if (this.bannedSkills === undefined) {
+                                this.bannedSkills = [];
+                            }
+                            this.bannedSkills.push(skill.type_id);
+                        }
+                    } else {
+                        if (this.bannedSkills === undefined) {
+                            this.bannedSkills = [];
+                        }
+                        this.bannedSkills.push(skill.type_id);
+                    }
                 }
             }
 
@@ -194,34 +301,77 @@ class PlanCharacter {
 
             // add each level individually
             for (let i = currentLvl + 1; i <= lvl; i += 1) {
-                const currentSP = skill.skillpoints_in_skill > skill.planned_skillpoints_in_skill ? skill.skillpoints_in_skill : skill.planned_skillpoints_in_skill;
-                const spForLevel = 250 * skill.training_time_multiplier * (Math.sqrt(32) ** (i - 1));
-                const missingSPforLevel = spForLevel - currentSP;
+                // the skill must not be on the band list and it must not be banned directly
+                if ((!(this.bannedSkills !== undefined && this.bannedSkills.includes(skill.type_id)))
+                    && (!((this.bannedSkill !== undefined && this.bannedSkill === skill.type_id)
+                        && (this.bannedSkillLevel !== undefined && this.bannedSkillLevel <= i)))
+                ) {
+                    const currentSP = skill.skillpoints_in_skill > skill.planned_skillpoints_in_skill ? skill.skillpoints_in_skill : skill.planned_skillpoints_in_skill;
+                    const spForLevel = 250 * skill.training_time_multiplier * (Math.sqrt(32) ** (i - 1));
+                    const missingSPforLevel = spForLevel - currentSP;
 
-                let time = missingSPforLevel * (3600 / spPerHour);
+                    let time = missingSPforLevel * (3600 / spPerHour);
 
-                if (!this.isOmega) {
-                    time *= 2;
+                    if (!this.isOmega) {
+                        time *= 2;
+                    }
+
+                    this.time += time * 1000;
+
+                    skill.planned_skill_level = i;
+                    skill.planned_skillpoints_in_skill = spForLevel;
+
+                    this.queue.push({
+                        type: 'skill',
+                        id: typeId,
+                        level: i,
+                        name: skill.name,
+                        title: `${skill.name} ${i}`,
+                        sp: missingSPforLevel,
+                        spTotal: spForLevel,
+                        spHour: spPerHour,
+                        time: time * 1000,
+                        required_skills: skill.required_skills,
+                    });
                 }
-
-                this.time += time * 1000;
-
-                skill.planned_skill_level = i;
-                skill.planned_skillpoints_in_skill = spForLevel;
-
-                this.queue.push({
-                    type: 'skill',
-                    id: typeId,
-                    level: i,
-                    name: skill.name,
-                    title: `${skill.name} ${i}`,
-                    sp: missingSPforLevel,
-                    spTotal: spForLevel,
-                    spHour: spPerHour,
-                    time: time * 1000,
-                    required_skills: skill.required_skills,
-                });
             }
+        }
+    }
+
+    /**
+     * Tries to remove the item positioned in index
+     *
+     * Removes the item in the requested position if possible without violating prereqs.
+     * Use force to remove the skill and all skills depended on it from the queue.
+     *
+     * @param {number}  index Position of the item in queue
+     * @param {boolean} force I really want this skill gone
+     */
+    removeItemByPosition(index, force) {
+        if (force === undefined || force === false) {
+            const newQueue = [...this.queue];
+            newQueue.splice(index, 1);
+            this.reset();
+
+            for (const s of newQueue) {
+                this.addItemToQueue(s);
+            }
+        } else if (force !== undefined || force === true) {
+            const newQueue = [...this.queue];
+
+
+            this.bannedSkills = [];
+            this.bannedSkill = this.queue[index].id;
+            this.bannedSkillLevel = this.queue[index].level;
+
+            this.reset();
+
+            for (const s of newQueue) {
+                this.addItemToQueue(s);
+            }
+            this.bannedSkills = undefined;
+            this.bannedSkill = undefined;
+            this.bannedSkillLevel = undefined;
         }
     }
 

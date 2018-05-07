@@ -23,6 +23,14 @@ const styles = {
     planRow: {
         height: 20,
     },
+    planRowHighlight: {
+        height: 20,
+        background: '#404040',
+    },
+    planRowHidden: {
+        height: 0,
+        visibility: false,
+    },
     planRowColumn: {
         height: 20,
         paddingRight: 6,
@@ -56,44 +64,68 @@ const styles = {
     },
 };
 
-const SortableItem = SortableElement(({ index, value, onRemove, idx }) =>
-    <TableRow selectable style={styles.planRow}>
-        <TableRowColumn style={styles.planRowColumnSkill}>
-            {value.title}
-        </TableRowColumn>
-        <TableRowColumn style={styles.planRowColumnTime}>
-            {DateHelper.niceCountdown(value.time)}
-        </TableRowColumn>
-        <TableRowColumn style={styles.planRowColumn}>
-            {AllSkills.skills[value.id].market_group_name}
-        </TableRowColumn>
-        <TableRowColumn style={styles.planRowColumnDelete}>
-            <IconButton
-                style={styles.deleteButton}
-                iconStyle={styles.deleteButton}
-                onClick={() => onRemove(idx)}
-            >
-                <FontIcon style={styles.deleteButton} className="material-icons">delete</FontIcon>
-            </IconButton>
-        </TableRowColumn>
-    </TableRow>
+const SortableItem = SortableElement(
+    class SortableItemA extends React.Component {
+        onMouseDown(e) {
+            if (e.target.innerText !== undefined && e.target.innerText === 'delete') {
+                this.props.onRemove(this.props.idx, e);
+            } else {
+                this.props.onMouseDown(this.props.idx, e);
+            }
+        }
+        render() {
+            const style = this.props.highlighted ? styles.planRowHighlight : styles.planRow;
+            return (
+                <TableRow selectable style={style} onMouseDown={this.onMouseDown.bind(this)}>
+                    <TableRowColumn style={styles.planRowColumnSkill}>
+                        {this.props.value.title}
+                    </TableRowColumn>
+                    <TableRowColumn style={styles.planRowColumnTime}>
+                        {DateHelper.niceCountdown(this.props.value.time)}
+                    </TableRowColumn>
+                    <TableRowColumn style={styles.planRowColumn}>
+                        {AllSkills.skills[this.props.value.id].market_group_name}
+                    </TableRowColumn>
+                    <TableRowColumn style={styles.planRowColumnDelete}>
+                        <IconButton
+                            style={styles.deleteButton}
+                            iconStyle={styles.deleteButton}
+                        >
+                            <FontIcon style={styles.deleteButton} className="material-icons">delete</FontIcon>
+                        </IconButton>
+                    </TableRowColumn>
+                </TableRow>
+            )
+        }
+    }
 );
 
-const SortableList = SortableContainer(({ items, onRemove }) => {
-    return (
-        <TableBody displayRowCheckbox={false}>
-            {items.map((value, index) => (
-                <SortableItem
-                    key={`item-${index}`}
-                    index={index}
-                    value={value}
-                    onRemove={onRemove}
-                    idx={index}
-                />
-            ))}
-        </TableBody>
-    );
-}
+const SortableList = SortableContainer(
+    class SortableListAnonymous extends React.Component {
+        render() {
+            return (
+                <TableBody displayRowCheckbox={false}>
+                    {this.props.items.map((value, index) => {
+                        {
+                            const highlighted = this.props.selection !== undefined ? this.props.selection.indexOf(index) > -1 : 0
+                            return (
+                                <SortableItem
+                                    key={`item-${index}`}
+                                    index={index}
+                                    value={value}
+                                    onRemove={this.props.onRemove}
+                                    onMouseDown={this.props.onMouseDown}
+                                    idx={index}
+                                    highlighted={highlighted}
+                                />
+                            );
+                        }
+                    })
+                    }
+                </TableBody>
+            );
+        }
+    },
 );
 
 // workaround for https://github.com/mui-org/material-ui/issues/6579
@@ -106,28 +138,52 @@ export default class SkillPlanTable extends React.Component {
         this.state = {
             items: [],
             totalTime: 0,
+            selection: [],
         };
 
         this.onSortEnd = this.onSortEnd.bind(this);
         this.onDelete = this.onDelete.bind(this);
+        this.onMouseDownCallback = this.onMouseDownCallback.bind(this);
         this.shouldCancelStart = this.shouldCancelStart.bind(this);
-    }
-
-    onSortEnd(oldIndex, newIndex) {
-        this.props.onSkillMove(oldIndex, newIndex);
-    }
-
-    onDelete(index) {
-        this.props.onRemove(index);
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.items !== this.props.items) {
             this.setState({ items: nextProps.items });
+
         }
         if (nextProps.totalTime !== this.props.totalTime) {
             this.setState({ totalTime: nextProps.totalTime });
         }
+    }
+
+    onDelete(index, e) {
+        this.props.onRemove(index, e);
+    }
+
+    onMouseDownCallback(index, event) {
+        let newSelection = this.state.selection;
+        const testIndex = newSelection.indexOf(index);
+
+        if (event.ctrlKey || event.metaKey || this.state.selection.length === 0) {
+            if (newSelection && testIndex !== -1) {
+                newSelection.splice(testIndex, 1);
+            } else {
+                newSelection = newSelection.concat([index]);
+            }
+        } else if (testIndex === -1) {
+            newSelection = [index];
+        }
+        this.setState({
+            selection: newSelection.sort((a, b) => { return a - b })
+        });
+        event.preventDefault();
+        return false;
+    }
+
+    onSortEnd({ oldIndex, newIndex }) {
+        this.props.onSkillMove(oldIndex, newIndex, this.state.selection);
+        this.setState({ selection: [] });
     }
 
     shouldCancelStart(e) {
@@ -151,10 +207,12 @@ export default class SkillPlanTable extends React.Component {
                 </TableHeader>
                 <SortableList
                     items={this.state.items}
-                    onSortEnd={this.onSortEnd}
                     distance={1}
                     shouldCancelStart={this.shouldCancelStart}
-                    onRemove={(index) => this.onDelete(index)}
+                    selection={this.state.selection}
+                    onMouseDown={this.onMouseDownCallback}
+                    onRemove={this.onDelete}
+                    onSortEnd={this.onSortEnd}
                 />
                 <TableFooter style={styles.planRow} adjustForCheckbox={false}>
                     <TableRow style={styles.planRow}>
