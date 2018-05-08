@@ -16,6 +16,7 @@ import FilteredSkillList from '../../skillbrowser/FilteredSkillList';
 import PlanCharacter from '../../../models/PlanCharacter';
 import SkillPlanTable from '../../tables/SkillPlanTable';
 import PlanSkillPopover from '../../popovers/PlanSkillToLevelPopover';
+import RemapDialog from '../../dialogs/RemapDialog';
 
 
 const styles = {
@@ -52,23 +53,32 @@ export default class Plans extends React.Component {
         super(props);
 
         this.state = {
-            selectedType: 0,
             characterId: this.props.characterId,
+
+            selectedType: 0,
             items: [],
+            selection: [],
             totalTime: 0,
+
             planSkillPopoverOpen: false,
             planSkillPopoverAnchor: undefined,
-            selection: [],
+
+            remapDialogOpen: false,
+            remapDialogMode: 'add',
+            remapAttribues: {},
+            remapImplants: 0,
         };
 
-        this.handleSkillLevelSelection = this.handleSkillLevelSelection.bind(this);
-        this.handleSkillListSelection = this.handleSkillListSelection.bind(this);
+        this.onSkillLevelSelected = this.onSkillLevelSelected.bind(this);
+        this.onSkillSelected = this.onSkillSelected.bind(this);
 
+        this.onEdit = this.onEdit.bind(this);
+        this.onGetOptimalAttributes = this.onGetOptimalAttributes.bind(this);
         this.onRemove = this.onRemove.bind(this);
+        this.onRemapAdd = this.onRemapAdd.bind(this);
         this.onSortEnd = this.onSortEnd.bind(this);
 
         this.planCharacter = new PlanCharacter(this.props.characterId);
-        this.queue = [];
     }
 
     onSortEnd(oldIndex, newIndex, selected) {
@@ -89,7 +99,7 @@ export default class Plans extends React.Component {
         }
     }
 
-    handleSkillListSelection(selectedType, e) {
+    onSkillSelected(selectedType, e) {
         this.setState({
             planSkillPopoverAnchor: e.currentTarget,
             planSkillPopoverOpen: true,
@@ -97,7 +107,7 @@ export default class Plans extends React.Component {
         });
     }
 
-    handleSkillLevelSelection(level, prereqs) {
+    onSkillLevelSelected(level, prereqs) {
         this.setState({ planSkillPopoverOpen: false });
 
         if (this.state.selectedType !== undefined && level !== undefined) {
@@ -106,6 +116,44 @@ export default class Plans extends React.Component {
             this.setState({ items: this.planCharacter.queue });
             this.setState({ totalTime: this.planCharacter.time });
         }
+    }
+
+    onRemapAdd(attributes, implants, index) {
+        if (attributes !== undefined) {
+            if (index === undefined) {
+                this.planCharacter.addRemap(attributes, implants);
+                this.setState({ items: this.planCharacter.queue });
+            } else {
+                this.planCharacter.editRemapAtPosition(attributes, implants, index);
+                this.setState({
+                    items: this.planCharacter.queue,
+                    totalTime: this.planCharacter.time,
+                });
+            }
+        }
+        this.setState({
+            remapDialogOpen: false,
+            remapDialogMode: 'add',
+            remapDialogEditIndex: undefined,
+        });
+    }
+
+    onEdit(index) {
+        if (this.state.items[index] !== undefined && this.state.items[index].type === 'remap') {
+            this.setState({
+                remapAttribues: Object.assign({}, this.state.items[index].attributes),
+                remapImplants: this.state.items[index].implants,
+                remapDialogOpen: true,
+                remapDialogMode: 'edit',
+                remapDialogEditIndex: index,
+            });
+        }
+    }
+
+    onGetOptimalAttributes(index, implants) {
+        this.setState({
+            remapAttribues: this.planCharacter.getSuggestedAttributesForRemapAt(index, implants),
+        });
     }
 
     onRemove(index, e) {
@@ -122,7 +170,19 @@ export default class Plans extends React.Component {
     render() {
         return (
             <div>
-                <PlanSkillPopover open={this.state.planSkillPopoverOpen} anchorEl={this.state.planSkillPopoverAnchor} onLevelSelected={this.handleSkillLevelSelection} />
+                <RemapDialog
+                    attributes={this.state.remapAttribues}
+                    editIndex={this.state.remapDialogEditIndex}
+                    implants={this.state.remapImplants}
+                    onAddRemap={this.onRemapAdd}
+                    onGetOptimalAttributes={this.onGetOptimalAttributes}
+                    open={this.state.remapDialogOpen}
+                />
+                <PlanSkillPopover
+                    open={this.state.planSkillPopoverOpen}
+                    anchorEl={this.state.planSkillPopoverAnchor}
+                    onLevelSelected={this.onSkillLevelSelected}
+                />
                 <Card style={styles.menuCard}>
                     <SelectField
                         style={styles.planSelector}
@@ -135,18 +195,22 @@ export default class Plans extends React.Component {
                         <MenuItem value={3} primaryText="and" />
                         <MenuItem value={4} primaryText="the other thing" />
                     </SelectField>
+                    <IconButton style={styles.iconButton} onClick={() => this.setState({ remapDialogOpen: true, remapDialogMode: 'add' })}>
+                        <FontIcon className="material-icons">navigate_next</FontIcon>
+                    </IconButton>
                 </Card>
                 <table>
                     <tbody>
                         <tr>
                             <td style={styles.leftColumn}>
                                 <Card style={styles.skillListCard}>
-                                    <FilteredSkillList style={styles.skillListCard} characterId={this.state.characterId} onSkillSelectionChange={this.handleSkillListSelection} />
+                                    <FilteredSkillList style={styles.skillListCard} characterId={this.state.characterId} onSkillSelectionChange={this.onSkillSelected} />
                                 </Card>
                             </td>
                             <td style={styles.rightColumn}>
                                 <Paper style={styles.margin10}>
                                     <SkillPlanTable
+                                        onEdit={this.onEdit}
                                         onRemove={this.onRemove}
                                         onSkillMove={this.onSortEnd}
                                         items={this.state.items}

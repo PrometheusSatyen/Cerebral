@@ -55,6 +55,12 @@ const styles = {
         paddingRight: 6,
         paddingLeft: 6,
     },
+    planRowColumnEdit: {
+        height: 20,
+        width: 30,
+        paddingRight: 6,
+        paddingLeft: 6,
+    },
     deleteButton: {
         height: 20,
         width: 20,
@@ -69,33 +75,70 @@ const SortableItem = SortableElement(
         onMouseDown(e) {
             if (e.target.innerText !== undefined && e.target.innerText === 'delete') {
                 this.props.onRemove(this.props.idx, e);
+            } else if (e.target.innerText !== undefined && e.target.innerText === 'mode_edit') {
+                this.props.onEdit(this.props.idx, e);
             } else {
                 this.props.onMouseDown(this.props.idx, e);
             }
         }
         render() {
             const style = this.props.highlighted ? styles.planRowHighlight : styles.planRow;
-            return (
-                <TableRow selectable style={style} onMouseDown={this.onMouseDown.bind(this)}>
-                    <TableRowColumn style={styles.planRowColumnSkill}>
-                        {this.props.value.title}
-                    </TableRowColumn>
-                    <TableRowColumn style={styles.planRowColumnTime}>
-                        {DateHelper.niceCountdown(this.props.value.time)}
-                    </TableRowColumn>
-                    <TableRowColumn style={styles.planRowColumn}>
-                        {AllSkills.skills[this.props.value.id].market_group_name}
-                    </TableRowColumn>
-                    <TableRowColumn style={styles.planRowColumnDelete}>
-                        <IconButton
-                            style={styles.deleteButton}
-                            iconStyle={styles.deleteButton}
-                        >
-                            <FontIcon style={styles.deleteButton} className="material-icons">delete</FontIcon>
-                        </IconButton>
-                    </TableRowColumn>
-                </TableRow>
-            )
+            switch (this.props.value.type) {
+                case 'skill': {
+                    return (
+                        <TableRow selectable style={style} onMouseDown={this.onMouseDown.bind(this)}>
+                            <TableRowColumn style={styles.planRowColumnSkill}>
+                                {this.props.value.title}
+                            </TableRowColumn>
+                            <TableRowColumn style={styles.planRowColumnTime}>
+                                {DateHelper.niceCountdown(this.props.value.time)}
+                            </TableRowColumn>
+                            <TableRowColumn style={styles.planRowColumn}>
+                                {AllSkills.skills[this.props.value.id].market_group_name}
+                            </TableRowColumn>
+                            <TableRowColumn style={styles.planRowColumnEdit}>
+                            </TableRowColumn>
+                            <TableRowColumn style={styles.planRowColumnDelete}>
+                                <IconButton
+                                    style={styles.deleteButton}
+                                    iconStyle={styles.deleteButton}
+                                >
+                                    <FontIcon style={styles.deleteButton} className="material-icons">delete</FontIcon>
+                                </IconButton>
+                            </TableRowColumn>
+                        </TableRow>
+                    );
+                }
+                case 'remap': {
+                    return (
+                        <TableRow selectable style={style} onMouseDown={this.onMouseDown.bind(this)}>
+                            <TableRowColumn style={styles.planRowColumnSkill}>
+                                {this.props.value.title}
+                            </TableRowColumn>
+                            <TableRowColumn style={styles.planRowColumnTime}>
+                            </TableRowColumn>
+                            <TableRowColumn style={styles.planRowColumn}>
+                            </TableRowColumn>
+                            <TableRowColumn style={styles.planRowColumnEdit}>
+                                <IconButton
+                                    style={styles.deleteButton}
+                                    iconStyle={styles.deleteButton}
+                                >
+                                    <FontIcon style={styles.deleteButton} className="material-icons">mode_edit</FontIcon>
+                                </IconButton>
+                            </TableRowColumn>
+                            <TableRowColumn style={styles.planRowColumnDelete}>
+                                <IconButton
+                                    style={styles.deleteButton}
+                                    iconStyle={styles.deleteButton}
+                                >
+                                    <FontIcon style={styles.deleteButton} className="material-icons">delete</FontIcon>
+                                </IconButton>
+                            </TableRowColumn>
+                        </TableRow>
+                    );
+                }
+            }
         }
     }
 );
@@ -115,6 +158,7 @@ const SortableList = SortableContainer(
                                     value={value}
                                     onRemove={this.props.onRemove}
                                     onMouseDown={this.props.onMouseDown}
+                                    onEdit={this.props.onEdit}
                                     idx={index}
                                     highlighted={highlighted}
                                 />
@@ -188,7 +232,7 @@ export default class SkillPlanTable extends React.Component {
 
     shouldCancelStart(e) {
         // Prevent sorting from being triggered if target is input or button
-        if (['delete', 'add'].indexOf(e.target.textContent.toLowerCase()) !== -1) {
+        if (['delete', 'mode_edit', 'add'].indexOf(e.target.textContent.toLowerCase()) !== -1) {
             return true; // Return true to cancel sorting
         }
         return false;
@@ -210,6 +254,7 @@ export default class SkillPlanTable extends React.Component {
                     distance={1}
                     shouldCancelStart={this.shouldCancelStart}
                     selection={this.state.selection}
+                    onEdit={this.props.onEdit}
                     onMouseDown={this.onMouseDownCallback}
                     onRemove={this.onDelete}
                     onSortEnd={this.onSortEnd}

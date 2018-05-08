@@ -56,6 +56,7 @@ class PlanCharacter {
     reset() {
         this.queue = [];
         this.time = 0;
+        this.attributes = Object.assign({}, this.baseCharacter.attributes);
 
         for (const skill in AllSkills.skills) {
             const skillId = AllSkills.skills[skill].type_id;
@@ -73,7 +74,7 @@ class PlanCharacter {
         if (skillQueueItem.type === 'skill') {
             this.planSkill(skillQueueItem.id, skillQueueItem.level, undefined, bannedSkills);
         } else if (skillQueueItem.type === 'remap') {
-            this.addRemap(skillQueueItem.attributes);
+            this.addRemap(skillQueueItem.attributes, skillQueueItem.implants);
         }
     }
 
@@ -88,12 +89,17 @@ class PlanCharacter {
         const skillToMove = this.queue[oldIndex];
         let illegalMove = false;
 
+        // we only handle skills
+        if (skillToMove.type !== 'skill') {
+            return false;
+        }
+
         // going down in the list?
         if (oldIndex < newIndex) {
             const queueSubset = this.queue.slice(oldIndex + 1, newIndex + 1);
             // do we have to rebuild the whole queue?
             illegalMove = queueSubset.some((skill) => {
-                // not a skill, need to recalculate values
+                // not a skill, might be a remap => need to recalculate values
                 if (skill.type !== 'skill') {
                     return true;
                 }
@@ -116,6 +122,10 @@ class PlanCharacter {
         } else {
             const queueSubset = this.queue.slice(newIndex, oldIndex).reverse();
             illegalMove = queueSubset.some((skill) => {
+                // not a skill, might be a remap => need to recalculate values
+                if (skill.type !== 'skill') {
+                    return true;
+                }
                 // same skill but lower level? can't move past it
                 if (skillToMove.id === skill.id && skill.level < skillToMove.level) {
                     return true;
@@ -249,6 +259,158 @@ class PlanCharacter {
     }
 
     /**
+     * Adds a remap to the queue.
+     *
+     * @param {object}   attributes   Object that has a number value for each of the 5 attributes
+     *
+     */
+    addRemap(attributes, implants) {
+        if (attributes !== undefined
+            && implants !== undefined
+            && attributes.hasOwnProperty('perception')
+            && attributes.hasOwnProperty('memory')
+            && attributes.hasOwnProperty('willpower')
+            && attributes.hasOwnProperty('intelligence')
+            && attributes.hasOwnProperty('charisma')
+        ) {
+            const fullAttributes = Object.assign({}, attributes);
+            for (const a in fullAttributes) {
+                fullAttributes[a] += implants;
+            }
+
+            this.attributes = fullAttributes;
+
+            const remapItem = {
+                attributes: Object.assign({}, attributes),
+                implants: implants,
+                type: 'remap',
+                title: `Remap - P${fullAttributes.perception} M${fullAttributes.memory} W${fullAttributes.willpower} I${fullAttributes.intelligence} C${fullAttributes.charisma}`,
+            };
+            this.queue.push(remapItem);
+        }
+    }
+
+    /**
+     * Edits a remap to the queue. Forces a rebuild.
+     *
+     * @param {object} attributes Object that has a number value for each of the 5 attributes
+     * @param {number} implants   Attribute bonus added by implants
+     * @param {index}  index      Position of the remap to replace
+     *
+     */
+    editRemapAtPosition(attributes, implants, index) {
+        if (attributes !== undefined
+            && implants !== undefined
+            && index !== undefined
+            && this.queue[index].type === 'remap'
+            && attributes.hasOwnProperty('perception')
+            && attributes.hasOwnProperty('memory')
+            && attributes.hasOwnProperty('willpower')
+            && attributes.hasOwnProperty('intelligence')
+            && attributes.hasOwnProperty('charisma')
+        ) {
+            const fullAttributes = Object.assign({}, attributes);
+            for (const a in fullAttributes) {
+                fullAttributes[a] += implants;
+            }
+
+            this.attributes = fullAttributes;
+
+            const remapItem = {
+                attributes: Object.assign({}, attributes),
+                implants: implants,
+                type: 'remap',
+                title: `Remap - P${fullAttributes.perception} M${fullAttributes.memory} W${fullAttributes.willpower} I${fullAttributes.intelligence} C${fullAttributes.charisma}`,
+            };
+
+            const newQueue = [...this.queue];
+
+            this.reset();
+            newQueue[index] = remapItem;
+            for (const s of newQueue) {
+                this.addItemToQueue(s);
+            }
+        }
+    }
+
+    /**
+     * Determins a suggested attribute distribution between index and the next remap or end of queue
+     *
+     * @param {index}  index Position of the remap
+     *
+     */
+    getSuggestedAttributesForRemapAt(index, implants) {
+        let lastIndex = 0;
+        const implantBonus = implants !== undefined ? implants : this.queue[index].implants;
+        // look for the next remap point
+        for (let i = index + 1; i < this.queue.length; i += 1) {
+            if (this.queue[i].type === 'remap') {
+                lastIndex = i;
+                break;
+            }
+        }
+        lastIndex = lastIndex > 0 ? lastIndex : this.queue.length;
+
+        const initialQueue = [...this.queue];
+        const baseSkills = initialQueue.slice(0, index);
+        const skillsToTrain = initialQueue.slice(index + 1, lastIndex);
+
+        const attributes = {
+            perception: 17 + implantBonus,
+            memory: 17 + implantBonus,
+            willpower: 17 + implantBonus,
+            intelligence: 17 + implantBonus,
+            charisma: 17 + implantBonus,
+        };
+
+        const remapPlanChar = new PlanCharacter(this.id);
+        // set the allready trained skills to the ones in queue before the remap
+        remapPlanChar.queue = [...baseSkills];
+        // reset the time
+        remapPlanChar.time = 0;
+        // set to base attributes
+        remapPlanChar.attributes = Object.assign({}, attributes);
+
+        let availablePoints = 14;
+        while (availablePoints > 0) {
+            const times = [];
+            // increase each of the attributes by 1 and determine the time needed
+            for (const attribute in attributes) {
+                remapPlanChar.attributes[attribute] += 1;
+                for (const s of skillsToTrain) {
+                    remapPlanChar.planSkill(s.id, s.level, 0);
+                }
+                remapPlanChar.attributes[attribute] -= 1;
+                times.push([attribute, remapPlanChar.time]);
+
+                //reset the planner, time is nulled by reset
+                remapPlanChar.reset();
+                remapPlanChar.attributes = Object.assign({}, attributes);
+                remapPlanChar.queue = [...baseSkills];
+            }
+            // which attribute gave us the best training time?
+            const order = times.sort(function(a, b) { return a[1] - b[1]; });
+
+            // increase the attribute that gave the best results, go with second one if already capped
+            if (attributes[order[0][0]] < 27 + implantBonus) {
+                attributes[order[0][0]] += 1;
+            } else {
+                attributes[order[1][0]] += 1;
+            }
+            remapPlanChar.attributes = Object.assign({}, attributes);
+
+            // one less point to spend
+            availablePoints -= 1;
+        }
+
+        for (const attribute in attributes) {
+            attributes[attribute] -= implantBonus;
+        }
+
+        return attributes;
+    }
+
+    /**
      * Adds a skill to the queue.
      *
      * Resolves the skill and all prerequisite skills and adds them to the plan queue.
@@ -331,7 +493,11 @@ class PlanCharacter {
                         spTotal: spForLevel,
                         spHour: spPerHour,
                         time: time * 1000,
+                        primaryAttribute: skill.primary_attribute,
+                        secondaryAttribute: skill.secondary_attribute,
+                        attributeTitle: `${skill.primary_attribute.substring(0, 3)} / ${skill.secondary_attribute.substring(0, 3)}`,
                         required_skills: skill.required_skills,
+                        
                     });
                 }
             }
@@ -358,7 +524,6 @@ class PlanCharacter {
             }
         } else if (force !== undefined || force === true) {
             const newQueue = [...this.queue];
-
 
             this.bannedSkills = [];
             this.bannedSkill = this.queue[index].id;
