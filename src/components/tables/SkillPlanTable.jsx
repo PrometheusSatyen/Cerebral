@@ -34,7 +34,8 @@ const styles = {
     planRowColumn: {
         height: 20,
         paddingRight: 6,
-        paddingLeft: 60,
+        paddingLeft: 6,
+        textTransform: 'capitalize',
     },
     planRowColumnSkill: {
         height: 20,
@@ -51,15 +52,21 @@ const styles = {
     },
     planRowColumnDelete: {
         height: 20,
-        width: 30,
+        width: 20,
+        paddingRight: 6,
+        paddingLeft: 6,
+    },
+    planRowColumnSPh: {
+        height: 20,
+        width: 40,
         paddingRight: 6,
         paddingLeft: 6,
     },
     planRowColumnEdit: {
         height: 20,
-        width: 30,
-        paddingRight: 6,
-        paddingLeft: 6,
+        width: 20,
+        paddingRight: 0,
+        paddingLeft: 0,
     },
     deleteButton: {
         height: 20,
@@ -96,6 +103,12 @@ const SortableItem = SortableElement(
                             <TableRowColumn style={styles.planRowColumn}>
                                 {AllSkills.skills[this.props.value.id].market_group_name}
                             </TableRowColumn>
+                            <TableRowColumn style={styles.planRowColumn}>
+                                {this.props.value.attributeTitle}
+                            </TableRowColumn>
+                            <TableRowColumn style={styles.planRowColumnSPh}>
+                                {this.props.value.spHour}
+                            </TableRowColumn>
                             <TableRowColumn style={styles.planRowColumnEdit}>
                             </TableRowColumn>
                             <TableRowColumn style={styles.planRowColumnDelete}>
@@ -115,10 +128,10 @@ const SortableItem = SortableElement(
                             <TableRowColumn style={styles.planRowColumnSkill}>
                                 {this.props.value.title}
                             </TableRowColumn>
-                            <TableRowColumn style={styles.planRowColumnTime}>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.planRowColumn}>
-                            </TableRowColumn>
+                            <TableRowColumn style={styles.planRowColumnTime} />
+                            <TableRowColumn style={styles.planRowColumn} />
+                            <TableRowColumn style={styles.planRowColumn} />
+                            <TableRowColumn style={styles.planRowColumnSPh} />
                             <TableRowColumn style={styles.planRowColumnEdit}>
                                 <IconButton
                                     style={styles.deleteButton}
@@ -246,6 +259,9 @@ export default class SkillPlanTable extends React.Component {
                         <TableHeaderColumn style={styles.planRowColumnSkill}>Skill</TableHeaderColumn>
                         <TableHeaderColumn style={styles.planRowColumnTime}>Training Time</TableHeaderColumn>
                         <TableHeaderColumn style={styles.planRowColumn}>Group</TableHeaderColumn>
+                        <TableHeaderColumn style={styles.planRowColumn}>Attributes</TableHeaderColumn>
+                        <TableHeaderColumn style={styles.planRowColumnSPh}>SP/h</TableHeaderColumn>
+                        <TableHeaderColumn style={styles.planRowColumnEdit}></TableHeaderColumn>
                         <TableHeaderColumn style={styles.planRowColumnDelete}></TableHeaderColumn>
                     </TableRow>
                 </TableHeader>
@@ -263,6 +279,8 @@ export default class SkillPlanTable extends React.Component {
                     <TableRow style={styles.planRow}>
                         <TableHeaderColumn style={styles.planRowColumnSkill}>{`${this.state.items.length} skills`}</TableHeaderColumn>
                         <TableHeaderColumn style={styles.planRowColumnTime}>{DateHelper.niceCountdown(this.state.totalTime)}</TableHeaderColumn>
+                        <TableHeaderColumn style={styles.planRowColumn}></TableHeaderColumn>
+                        <TableHeaderColumn style={styles.planRowColumn}></TableHeaderColumn>
                         <TableHeaderColumn style={styles.planRowColumn}></TableHeaderColumn>
                         <TableHeaderColumn style={styles.planRowColumnDelete}></TableHeaderColumn>
                     </TableRow>
