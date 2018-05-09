@@ -5,7 +5,7 @@ import Store from 'electron-store';
 
 
 let mailbodies = undefined;
-const mailbobdies = new Store({
+const mailbodiesStore = new Store({
     name: 'mailbodies-store',
 });
 let mailbodyLastUsed = 0;
@@ -107,7 +107,7 @@ export default class MailBodyHelper {
         mailbodyLastUsed = new Date().getTime();
 
         if (mailbodies === undefined) {
-            mailbodies = mailbobdies.get('mailbodies-store');
+            mailbodies = mailbodiesStore.get('mailbodies-store');
             if (mailbodies === undefined) {
                 mailbodies = {};
             }
@@ -130,7 +130,7 @@ export default class MailBodyHelper {
             }
 
             thingsSaveTimeout = setTimeout(() => {
-                mailbobdies.set('mailbodies-store', mailbodies);
+                mailbodiesStore.set('mailbodies-store', mailbodies);
             }, 10000);
         }
     }
@@ -141,7 +141,7 @@ export default class MailBodyHelper {
                 clearTimeout(thingsSaveTimeout);
             }
 
-            mailbobdies.set('mailbodies-store', mailbodies);
+            mailbodiesStore.set('mailbodies-store', mailbodies);
         }
     }
 

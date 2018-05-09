@@ -53,19 +53,19 @@ export default class MainContentDialog extends React.Component {
     getAvatarComponent(id, type) {
         switch (type) {
             case 'character':
-                return <Avatar style={styles.avatar} size={32} src={`https://image.eveonline.com/Character/${id}_32.jpg`} />;
+                return <Avatar key={id} style={styles.avatar} size={32} src={`https://image.eveonline.com/Character/${id}_32.jpg`} />;
                 break;
             case 'corporation':
-                return <Avatar style={styles.avatar} size={32} src={`https://image.eveonline.com/Corporation/${id}_32.png`} />;
+                return <Avatar key={id} style={styles.avatar} size={32} src={`https://image.eveonline.com/Corporation/${id}_32.png`} />;
                 break;
             case 'alliance':
-                return <Avatar style={styles.avatar} size={32} src={`https://image.eveonline.com/Alliance/${id}_32.png`} />;
+                return <Avatar key={id} style={styles.avatar} size={32} src={`https://image.eveonline.com/Alliance/${id}_32.png`} />;
                 break;
             case 'mailing_list':
-                return <Avatar style={styles.avatar} size={32} icon={<FontIcon className="material-icons">list</FontIcon>} />;
+                return <Avatar key={id} style={styles.avatar} size={32} icon={<FontIcon className="material-icons">list</FontIcon>} />;
                 break;
             default:
-                return <Avatar style={styles.avatar} size={32} icon={<FontIcon className="material-icons">help</FontIcon>} />;
+                return <Avatar key={id} style={styles.avatar} size={32} icon={<FontIcon className="material-icons">help</FontIcon>} />;
         }
     }
 
@@ -104,7 +104,7 @@ export default class MainContentDialog extends React.Component {
                                         <div style={styles.wrapper}>
                                             {
                                                 mail.recipients.map(r =>
-                                                    <Chip style={styles.chip}>{this.getAvatarComponent(r.recipient_id, r.recipient_type)}{r.recipient_name}</Chip>,
+                                                    <Chip key={r.recipient_id} style={styles.chip}>{this.getAvatarComponent(r.recipient_id, r.recipient_type)}{r.recipient_name}</Chip>,
                                                 )
                                             }
                                         </div>
@@ -126,7 +126,7 @@ export default class MainContentDialog extends React.Component {
                         </table>
                         <Paper>
                             <div style={{ margin: 10 }}>
-                                {mail.body.body.split(/\n/g).map(text => <span>{text}<br /></span>)}
+                                {mail.body.body.split(/\n/g).map((text, i) => <span key={i}>{text}<br /></span>)}
                             </div>
                         </Paper>
                     </div>
@@ -137,6 +137,7 @@ export default class MainContentDialog extends React.Component {
                                 {
                                     mail.body.links.map((link, index) =>
                                     (<ListItem
+                                        key={index}
                                         primaryText={`${index + 1} - ${link}`}
                                         rightIcon={<FontIcon className="material-icons">open_in_new</FontIcon>}
                                         onClick={e => {require("electron").shell.openExternal(link); }}
