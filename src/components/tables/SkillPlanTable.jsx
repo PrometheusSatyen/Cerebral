@@ -3,8 +3,10 @@
 import React from 'react';
 
 import {
+    Checkbox,
     IconButton,
     FontIcon,
+    Popover,
     Table,
     TableBody,
     TableHeader,
@@ -27,22 +29,31 @@ const styles = {
         height: 20,
         background: '#404040',
     },
-    planRowHidden: {
-        height: 0,
-        visibility: false,
-    },
     planRowColumn: {
         height: 20,
         paddingRight: 6,
         paddingLeft: 6,
         textTransform: 'capitalize',
     },
+    planRowColumnBuffer: {
+        height: 20,
+        width: '0%',
+        paddingRight: 6,
+        paddingLeft: 6,
+        textTransform: 'capitalize',
+    },
+    planRowColumnHidden: {
+        height: 20,
+        paddingRight: 0,
+        paddingLeft: 0,
+        visibility: 'hidden',
+        width: 0,
+    },
     planRowColumnSkill: {
         height: 20,
         width: 250,
         paddingRight: 6,
         paddingLeft: 6,
-
     },
     planRowColumnTime: {
         height: 20,
@@ -53,7 +64,7 @@ const styles = {
     planRowColumnDelete: {
         height: 20,
         width: 20,
-        paddingRight: 6,
+        paddingRight: 3,
         paddingLeft: 6,
     },
     planRowColumnSPh: {
@@ -97,17 +108,20 @@ const SortableItem = SortableElement(
                             <TableRowColumn style={styles.planRowColumnSkill}>
                                 {this.props.value.title}
                             </TableRowColumn>
-                            <TableRowColumn style={styles.planRowColumnTime}>
+                            <TableRowColumn style={this.props.columnTime}>
                                 {DateHelper.niceCountdown(this.props.value.time)}
                             </TableRowColumn>
-                            <TableRowColumn style={styles.planRowColumn}>
+                            <TableRowColumn style={this.props.columnMarketGroup}>
                                 {AllSkills.skills[this.props.value.id].market_group_name}
                             </TableRowColumn>
-                            <TableRowColumn style={styles.planRowColumn}>
+                            <TableRowColumn style={this.props.columnAttributes}>
                                 {this.props.value.attributeTitle}
                             </TableRowColumn>
-                            <TableRowColumn style={styles.planRowColumnSPh}>
+                            <TableRowColumn style={this.props.columnSPhs}>
                                 {this.props.value.spHour}
+                            </TableRowColumn>
+                            <TableRowColumn style={this.props.columnLastRemap}>
+                                {DateHelper.niceCountdown(this.props.value.lastRemap)}
                             </TableRowColumn>
                             <TableRowColumn style={styles.planRowColumnEdit}>
                             </TableRowColumn>
@@ -128,10 +142,11 @@ const SortableItem = SortableElement(
                             <TableRowColumn style={styles.planRowColumnSkill}>
                                 {this.props.value.title}
                             </TableRowColumn>
-                            <TableRowColumn style={styles.planRowColumnTime} />
-                            <TableRowColumn style={styles.planRowColumn} />
-                            <TableRowColumn style={styles.planRowColumn} />
-                            <TableRowColumn style={styles.planRowColumnSPh} />
+                            <TableRowColumn style={this.props.columnTime} />
+                            <TableRowColumn style={this.props.columnMarketGroup} />
+                            <TableRowColumn style={this.props.columnAttributes} />
+                            <TableRowColumn style={this.props.columnSPhs} />
+                            <TableRowColumn style={this.props.columnLastRemap} />
                             <TableRowColumn style={styles.planRowColumnEdit}>
                                 <IconButton
                                     style={styles.deleteButton}
@@ -174,6 +189,11 @@ const SortableList = SortableContainer(
                                     onEdit={this.props.onEdit}
                                     idx={index}
                                     highlighted={highlighted}
+                                    columnTime={this.props.columnTime}
+                                    columnMarketGroup={this.props.columnMarketGroup}
+                                    columnAttributes={this.props.columnAttributes}
+                                    columnSPhs={this.props.columnSPhs}
+                                    columnLastRemap={this.props.columnLastRemap}
                                 />
                             );
                         }
@@ -196,7 +216,19 @@ export default class SkillPlanTable extends React.Component {
             items: [],
             totalTime: 0,
             selection: [],
+            columnTimeChecked: true,
+            columnMarketGroupChecked: true,
+            columnAttributesChecked: false,
+            columnSPhsStyleChecked: false,
+            columnLastRemapChecked: false,
+            columnTimeStyle: styles.planRowColumnTime,
+            columnMarketGroupStyle: styles.planRowColumn,
+            columnAttributesStyle: styles.planRowColumnHidden,
+            columnSPhsStyle: styles.planRowColumnHidden,
+            columnLastRemapStyle: styles.planRowColumnHidden,
         };
+
+        this.handleColumnEditRequestClose = this.handleColumnEditRequestClose.bind(this);
 
         this.onSortEnd = this.onSortEnd.bind(this);
         this.onDelete = this.onDelete.bind(this);
@@ -251,42 +283,124 @@ export default class SkillPlanTable extends React.Component {
         return false;
     }
 
+    handleColumnEditRequestClose() {
+        this.setState({
+            columnEditOpen: false,
+        });
+    };
+
     render() {
         return (
-            <Table >
-                <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-                    <TableRow style={styles.planRow}>
-                        <TableHeaderColumn style={styles.planRowColumnSkill}>Skill</TableHeaderColumn>
-                        <TableHeaderColumn style={styles.planRowColumnTime}>Training Time</TableHeaderColumn>
-                        <TableHeaderColumn style={styles.planRowColumn}>Group</TableHeaderColumn>
-                        <TableHeaderColumn style={styles.planRowColumn}>Attributes</TableHeaderColumn>
-                        <TableHeaderColumn style={styles.planRowColumnSPh}>SP/h</TableHeaderColumn>
-                        <TableHeaderColumn style={styles.planRowColumnEdit}></TableHeaderColumn>
-                        <TableHeaderColumn style={styles.planRowColumnDelete}></TableHeaderColumn>
-                    </TableRow>
-                </TableHeader>
-                <SortableList
-                    items={this.state.items}
-                    distance={1}
-                    shouldCancelStart={this.shouldCancelStart}
-                    selection={this.state.selection}
-                    onEdit={this.props.onEdit}
-                    onMouseDown={this.onMouseDownCallback}
-                    onRemove={this.onDelete}
-                    onSortEnd={this.onSortEnd}
-                />
-                <TableFooter style={styles.planRow} adjustForCheckbox={false}>
-                    <TableRow style={styles.planRow}>
-                        <TableHeaderColumn style={styles.planRowColumnSkill}>{`${this.state.items.length} skills`}</TableHeaderColumn>
-                        <TableHeaderColumn style={styles.planRowColumnTime}>{DateHelper.niceCountdown(this.state.totalTime)}</TableHeaderColumn>
-                        <TableHeaderColumn style={styles.planRowColumn}></TableHeaderColumn>
-                        <TableHeaderColumn style={styles.planRowColumn}></TableHeaderColumn>
-                        <TableHeaderColumn style={styles.planRowColumn}></TableHeaderColumn>
-                        <TableHeaderColumn style={styles.planRowColumnDelete}></TableHeaderColumn>
-                    </TableRow>
-                </TableFooter>
-            </Table>
-
+            <div>
+                <Popover
+                    open={this.state.columnEditOpen}
+                    anchorEl={this.state.columnEditAnchor}
+                    anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+                    targetOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    onRequestClose={this.handleColumnEditRequestClose}
+                    style={{ background: '#404040' }}
+                >
+                    <div style={{ margin: 10 }}>
+                        <Checkbox
+                            label="Time"
+                            style={styles.checkbox}
+                            checked={this.state.columnTimeChecked}
+                            onCheck={(e, c) => this.setState({
+                                columnTimeStyle: c ? styles.planRowColumnTime : styles.planRowColumnHidden,
+                                columnTimeChecked: c,
+                            })}
+                        />
+                        <Checkbox
+                            label="Group"
+                            style={styles.checkbox}
+                            checked={this.state.columnMarketGroupChecked}
+                            onCheck={(e, c) => this.setState({
+                                columnMarketGroupStyle: c ? styles.planRowColumn : styles.planRowColumnHidden,
+                                columnMarketGroupChecked: c,
+                             })}
+                        />
+                        <Checkbox
+                            label="Attributes"
+                            style={styles.checkbox}
+                            checked={this.state.columnAttributesChecked}
+                            onCheck={(e, c) => this.setState({
+                                columnAttributesStyle: c ? styles.planRowColumn : styles.planRowColumnHidden,
+                                columnAttributesChecked: c,
+                             })}
+                        />
+                        <Checkbox
+                            label="SP/h"
+                            style={styles.checkbox}
+                            checked={this.state.columnSPhsStyleChecked}
+                            onCheck={(e, c) => this.setState({
+                                columnSPhsStyle: c ? styles.planRowColumnSPh : styles.planRowColumnHidden,
+                                columnSPhsStyleChecked: c,
+                            })}
+                        />
+                        <Checkbox
+                            label="Remap"
+                            style={styles.checkbox}
+                            checked={this.state.columnLastRemapChecked}
+                            onCheck={(e, c) => this.setState({ 
+                                columnLastRemapStyle: c ? styles.planRowColumn : styles.planRowColumnHidden,
+                                columnLastRemapChecked: c,
+                            })}
+                        />
+                    </div>
+                </Popover>
+                <Table style={{overflow: 'hidden'}}>
+                    <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+                        <TableRow style={styles.planRow}>
+                            <TableHeaderColumn style={styles.planRowColumnSkill}>Skill</TableHeaderColumn>
+                            <TableHeaderColumn style={this.state.columnTimeStyle}>Training Time</TableHeaderColumn>
+                            <TableHeaderColumn style={this.state.columnMarketGroupStyle}>Group</TableHeaderColumn>
+                            <TableHeaderColumn style={this.state.columnAttributesStyle}>Attributes</TableHeaderColumn>
+                            <TableHeaderColumn style={this.state.columnSPhsStyle}>SP/h</TableHeaderColumn>
+                            <TableHeaderColumn style={this.state.columnLastRemapStyle}>Since remap</TableHeaderColumn>
+                            <TableHeaderColumn style={styles.planRowColumnEdit}></TableHeaderColumn>
+                            <TableHeaderColumn style={styles.planRowColumnDelete}>
+                                <IconButton
+                                    style={styles.deleteButton}
+                                    iconStyle={styles.deleteButton}
+                                    onClick={(e) => this.setState({
+                                        columnEditOpen: true,
+                                        columnEditAnchor: e.currentTarget
+                                    })}
+                                >
+                                    <FontIcon style={styles.deleteButton} className="material-icons">keyboard_arrow_down</FontIcon>
+                                </IconButton>
+                            </TableHeaderColumn>
+                        </TableRow>
+                    </TableHeader>
+                    <SortableList
+                        items={this.state.items}
+                        distance={1}
+                        shouldCancelStart={this.shouldCancelStart}
+                        selection={this.state.selection}
+                        onEdit={this.props.onEdit}
+                        onMouseDown={this.onMouseDownCallback}
+                        onRemove={this.onDelete}
+                        onSortEnd={this.onSortEnd}
+                        columnTime={this.state.columnTimeStyle}
+                        columnMarketGroup={this.state.columnMarketGroupStyle}
+                        columnAttributes={this.state.columnAttributesStyle}
+                        columnSPhs={this.state.columnSPhsStyle}
+                        columnLastRemap={this.state.columnLastRemapStyle}
+                    />
+                    <TableFooter style={styles.planRow} adjustForCheckbox={false}>
+                        <TableRow style={styles.planRow}>
+                            <TableHeaderColumn style={styles.planRowColumnSkill}>{`${this.state.items.length} skills`}</TableHeaderColumn>
+                            <TableHeaderColumn style={this.state.columnTimeStyle}>{DateHelper.niceCountdown(this.state.totalTime)}</TableHeaderColumn>
+                            <TableHeaderColumn style={this.state.columnMarketGroupStyle} />
+                            <TableHeaderColumn style={this.state.columnAttributesStyle} />
+                            <TableHeaderColumn style={this.state.columnSPhsStyle} />
+                            <TableHeaderColumn style={this.state.columnLastRemapStyle} />
+                            <TableHeaderColumn style={styles.planRowColumnEdit} />
+                            <TableHeaderColumn style={styles.planRowColumnDelete} />
+                        </TableRow>
+                    </TableFooter>
+                </Table>
+            </div>
         );
     }
 }

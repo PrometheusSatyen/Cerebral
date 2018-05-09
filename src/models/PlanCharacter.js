@@ -27,6 +27,7 @@ class PlanCharacter {
         this.skills = {};
         this.queue = [];
         this.time = 0;
+        this.lastRemap = this.attributes.last_remap_date !== undefined ?  (Date.now() - (new Date(this.attributes.last_remap_date).getTime())) : 0;
 
         for (const skill in AllSkills.skills) {
             const skillId = AllSkills.skills[skill].type_id;
@@ -57,6 +58,7 @@ class PlanCharacter {
         this.queue = [];
         this.time = 0;
         this.attributes = Object.assign({}, this.baseCharacter.attributes);
+        this.lastRemap = this.attributes.last_remap_date !== undefined ?  (Date.now() - (new Date(this.attributes.last_remap_date).getTime())) : 0;
 
         for (const skill in AllSkills.skills) {
             const skillId = AllSkills.skills[skill].type_id;
@@ -279,6 +281,7 @@ class PlanCharacter {
             }
 
             this.attributes = fullAttributes;
+            this.lastRemap = 0;
 
             const remapItem = {
                 attributes: Object.assign({}, attributes),
@@ -479,6 +482,7 @@ class PlanCharacter {
                     }
 
                     this.time += time * 1000;
+                    this.lastRemap += time * 1000;
 
                     skill.planned_skill_level = i;
                     skill.planned_skillpoints_in_skill = spForLevel;
@@ -493,6 +497,7 @@ class PlanCharacter {
                         spTotal: spForLevel,
                         spHour: spPerHour,
                         time: time * 1000,
+                        lastRemap: this.lastRemap,
                         primaryAttribute: skill.primary_attribute,
                         secondaryAttribute: skill.secondary_attribute,
                         attributeTitle: `${skill.primary_attribute.substring(0, 3)} / ${skill.secondary_attribute.substring(0, 3)}`,

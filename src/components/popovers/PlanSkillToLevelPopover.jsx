@@ -31,8 +31,7 @@ const styles = {
     },
 }
 
-export default class PopoverExampleSimple extends React.Component {
-
+export default class PlanSkillToLevelPopover extends React.Component {
     constructor(props) {
         super(props);
 
@@ -42,7 +41,6 @@ export default class PopoverExampleSimple extends React.Component {
             minLevel: this.props.minLevel,
         };
         this.handleRequestClose = this.handleRequestClose.bind(this);
-
     }
 
     componentWillReceiveProps(nextProps) {
@@ -57,13 +55,12 @@ export default class PopoverExampleSimple extends React.Component {
         }
     }
 
-
     handleRequestClose(level, pre) {
         this.setState({
             open: false,
         });
         this.props.onLevelSelected(level, pre);
-    };
+    }
 
     render() {
         return (
