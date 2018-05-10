@@ -132,7 +132,7 @@ export default class SkillPlanStore {
 
         if (skillPlans === undefined) {
             const retrieved = skillPlansStore.get('skillplans-store');
-            if (retrieved.hasOwnProperty('version') && retrieved.version === 1) {
+            if (retrieved !== undefined && retrieved.hasOwnProperty('version') && retrieved.version === 1) {
                 skillPlans = retrieved.plans;
             }
             if (skillPlans === undefined) {
