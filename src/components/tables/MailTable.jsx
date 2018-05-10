@@ -3,8 +3,10 @@
 import React from 'react';
 
 import ReactTable from 'react-table';
-import MailContentDialog from '../dialogs/MailContentDialog';
 import { FontIcon, IconButton } from 'material-ui';
+
+import MailContentDialog from '../dialogs/MailContentDialog';
+
 
 const styles = {
     fontIcon: {

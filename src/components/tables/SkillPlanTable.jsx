@@ -257,7 +257,17 @@ export default class SkillPlanTable extends React.Component {
         let newSelection = this.state.selection;
         const testIndex = newSelection.indexOf(index);
 
-        if (event.ctrlKey || event.metaKey || this.state.selection.length === 0) {
+        if (event.shiftKey && this.state.selection.length === 1) {
+            if (newSelection[0] > index) {
+                for (let i = index; i < newSelection[0]; i += 1) {
+                    newSelection = newSelection.concat([i]);
+                }
+            } else {
+                for (let i = index; i > newSelection[0]; i -= 1) {
+                    newSelection = newSelection.concat([i]);
+                }
+            }
+        } else if (event.ctrlKey || event.metaKey || this.state.selection.length === 0) {
             if (newSelection && testIndex !== -1) {
                 newSelection.splice(testIndex, 1);
             } else {
@@ -392,7 +402,19 @@ export default class SkillPlanTable extends React.Component {
                     />
                     <TableFooter style={styles.planRow} adjustForCheckbox={false}>
                         <TableRow style={styles.planRow}>
-                            <TableHeaderColumn style={styles.planRowColumnSkill}>{`${this.state.items.length} skills`}</TableHeaderColumn>
+                            <TableHeaderColumn style={styles.planRowColumnSkill}>
+                                {
+                                    this.state.selection.length > 1 ?
+                                    `${this.state.items.length} skills (${this.state.selection.length} selected - ${
+                                        DateHelper.niceCountdown(
+                                            this.state.selection.reduce(
+                                                (totalTime, index) => (totalTime + (this.state.items[index].type === 'skill' ? this.state.items[index].time : 0)), 0,
+                                            )
+                                        )
+                                    })`
+                                    :
+                                    `${this.state.items.length} skills`
+                                }</TableHeaderColumn>
                             <TableHeaderColumn style={this.state.columnTimeStyle}>{DateHelper.niceCountdown(this.state.totalTime)}</TableHeaderColumn>
                             <TableHeaderColumn style={this.state.columnMarketGroupStyle} />
                             <TableHeaderColumn style={this.state.columnAttributesStyle} />
