@@ -136,6 +136,7 @@ const SortableItem = SortableElement(
                         </TableRow>
                     );
                 }
+                case 'note':
                 case 'remap': {
                     return (
                         <TableRow selectable style={style} onMouseDown={this.onMouseDown.bind(this)}>

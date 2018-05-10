@@ -77,6 +77,8 @@ class PlanCharacter {
             this.planSkill(skillQueueItem.id, skillQueueItem.level, undefined, bannedSkills);
         } else if (skillQueueItem.type === 'remap') {
             this.addRemap(skillQueueItem.attributes, skillQueueItem.implants);
+        } else if (skillQueueItem.type === 'note') {
+            this.addNote(skillQueueItem.text, skillQueueItem.details);
         }
     }
 
@@ -288,6 +290,44 @@ class PlanCharacter {
             };
             this.queue.push(remapItem);
         }
+    }
+
+    /**
+     * Adds a note to the queue.
+     *
+     * @param {object}   attributes   Object that has a number value for each of the 5 attributes
+     *
+     */
+    addNote(text, details) {
+        if (text !== undefined) {
+            const item = {
+                text,
+                details,
+                title: `Note - ${text}`,
+                type: 'note',
+            };
+            this.queue.push(item);
+        }
+    }
+
+    /**
+     * Edits a note to the queue
+     *
+     * @param {string} text    Header
+     * @param {string} details Body
+     * @param {index}  index   Position of the note to replace
+     *
+     */
+    editNoteAtPosition(text, details, index) {
+        if (text !== undefined
+            && details !== undefined
+            && index !== undefined) {
+                if (this.queue[index] !== undefined && this.queue[index].type === 'note') {
+                    this.queue[index].text = text;
+                    this.queue[index].details = details;
+                    this.queue[index].title = `Note - ${text}`;
+                }
+            }
     }
 
     /**
