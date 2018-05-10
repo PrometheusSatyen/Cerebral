@@ -11,6 +11,7 @@ import {
 } from 'material-ui';
 
 import FilteredSkillList from '../../skillbrowser/FilteredSkillList';
+import ImportToPlanPopover from '../../popovers/ImportToPlanPopover';
 import NewRenamePlanPopover from '../../popovers/NewRenamePlanPopover';
 import NoteDialog from '../../dialogs/NoteDialog';
 import PlanCharacter from '../../../models/PlanCharacter';
@@ -97,6 +98,7 @@ export default class Plans extends React.Component {
         this.onDuplicateSkillPlan = this.onDuplicateSkillPlan.bind(this);
         this.onEdit = this.onEdit.bind(this);
         this.onGetOptimalAttributes = this.onGetOptimalAttributes.bind(this);
+        this.onImport = this.onImport.bind(this);
         this.onNewSkillPlan = this.onNewSkillPlan.bind(this);
         this.onNoteAdd = this.onNoteAdd.bind(this);
         this.onRemove = this.onRemove.bind(this);
@@ -376,6 +378,26 @@ export default class Plans extends React.Component {
         }
     }
 
+    onImport(name, source, skills) {
+        if (name !== undefined && source !== undefined && skills !== undefined && skills.length > 0) {
+            this.planCharacter.addNote(name, `Imported from ${source}`);
+            skills.forEach(s => this.planCharacter.planSkill(s.typeId, s.level));
+            
+            this.setState({
+                items: this.planCharacter.queue,
+                totalTime: this.planCharacter.time,
+                
+            });
+            SkillPlanStore.storeSkillPlan(
+                this.state.characterId,
+                this.state.skillPlanId,
+                this.state.skillPlanName,
+                this.planCharacter.queue,
+            );
+        }
+        this.setState({ importToPlanPopoverOpen: false });
+    }
+
 
     render() {
         return (
@@ -409,6 +431,11 @@ export default class Plans extends React.Component {
                     open={this.state.renameSkillPopoverOpen}
                     anchorEl={this.state.renameSkillPopoverAnchor}
                     onNewName={this.onRenameSkillPlan}
+                />
+                <ImportToPlanPopover
+                    open={this.state.importToPlanPopoverOpen}
+                    anchorEl={this.state.importToPlanPopoverAnchor}
+                    onImport={this.onImport}
                 />
                 <Paper
                     style={styles.menuCard}
@@ -457,10 +484,11 @@ export default class Plans extends React.Component {
                             />
                             <RaisedButton
                                 style={styles.raisedButton}
-                                onClick={() => this.setState({ remapDialogOpen: true, remapDialogMode: 'add' })}
+                                onClick={(e) => this.setState({
+                                    importToPlanPopoverOpen: true,
+                                    importToPlanPopoverAnchor: e.currentTarget })}
                                 label={'Import'}
                                 backgroundColor="#616161"
-                                disabled={true}
                             />
                         </div>
                         <div>
