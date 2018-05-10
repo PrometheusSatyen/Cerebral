@@ -4,14 +4,10 @@ import React from 'react';
 
 import {
     Card,
-    IconButton,
-    FontIcon,
     MenuItem,
     Paper,
-    Popover,
     RaisedButton,
     SelectField,
-    TextField,
 } from 'material-ui';
 
 
@@ -133,7 +129,7 @@ export default class Plans extends React.Component {
         this.setState({
             planSkillPopoverAnchor: e.currentTarget,
             planSkillPopoverOpen: true,
-            selectedType: selectedType,
+            selectedType,
         });
     }
 
@@ -143,8 +139,10 @@ export default class Plans extends React.Component {
         if (this.state.selectedType !== undefined && level !== undefined) {
             const preReqLevel = prereqs !== undefined && prereqs > 0 ? prereqs : 0;
             this.planCharacter.planSkill(this.state.selectedType, level, preReqLevel);
-            this.setState({ items: this.planCharacter.queue });
-            this.setState({ totalTime: this.planCharacter.time });
+            this.setState({
+                items: this.planCharacter.queue,
+                totalTime: this.planCharacter.time,
+            });
             SkillPlanStore.storeSkillPlan(this.state.characterId, this.state.skillPlanId, this.state.skillPlanName, this.planCharacter.queue);
         }
     }
@@ -156,8 +154,10 @@ export default class Plans extends React.Component {
             this.planCharacter.removeItemByPosition(index);
         }
 
-        this.setState({ items: this.planCharacter.queue });
-        this.setState({ totalTime: this.planCharacter.time });
+        this.setState({
+            items: this.planCharacter.queue,
+            totalTime: this.planCharacter.time,
+        });
         SkillPlanStore.storeSkillPlan(this.state.characterId, this.state.skillPlanId, this.state.skillPlanName, this.planCharacter.queue);
     }
 
@@ -214,11 +214,13 @@ export default class Plans extends React.Component {
             )
 
             SkillPlanStore.storeSkillPlan(this.props.characterId, newId, name, this.planCharacter.queue);
-            this.setState({ items: this.planCharacter.queue });
-            this.setState({ totalTime: this.planCharacter.time });
-            this.setState({ skillPlans: SkillPlanStore.getSkillPlansForCharacter(this.props.characterId) });
-            this.setState({ skillPlanId: newId });
-            this.setState({ skillPlanName: name });
+            this.setState({
+                items: this.planCharacter.queue,
+                totalTime: this.planCharacter.time,
+                skillPlans: SkillPlanStore.getSkillPlansForCharacter(this.props.characterId),
+                skillPlanId: newId,
+                skillPlanName: name,
+            });
         }
     }
 
@@ -228,13 +230,15 @@ export default class Plans extends React.Component {
 
             if (plan !== undefined) {
                 this.planCharacter.reset();
-                for (const item of plan.queue) {
-                    this.planCharacter.addItemToQueue(item);
-                }
-                this.setState({ skillPlanId: skillPlanId });
-                this.setState({ items: this.planCharacter.queue });
-                this.setState({ totalTime: this.planCharacter.time });
-                this.setState({ skillPlanName: plan.name });
+                plan.queue.forEach(item =>
+                    this.planCharacter.addItemToQueue(item),
+                );
+                this.setState({
+                    skillPlanId,
+                    items: this.planCharacter.queue,
+                    totalTime: this.planCharacter.time,
+                    skillPlanName: plan.name,
+                });
             }
         }
     }

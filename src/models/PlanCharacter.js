@@ -184,9 +184,8 @@ class PlanCharacter {
             oldQueue.splice(newIndex, 0, oldQueue.splice(oldIndex, 1)[0]);
 
             this.reset();
-            for (const s of oldQueue) {
-                this.addItemToQueue(s);
-            }
+
+            oldQueue.forEach(item => this.addItemToQueue(item));
         }
     }
 
@@ -254,9 +253,7 @@ class PlanCharacter {
 
             // reset and readd everything to the queue
             this.reset();
-            for (const s of newQueue) {
-                this.addItemToQueue(s);
-            }
+            newQueue.forEach(item => this.addItemToQueue(item));
         }
     }
 
@@ -285,7 +282,7 @@ class PlanCharacter {
 
             const remapItem = {
                 attributes: Object.assign({}, attributes),
-                implants: implants,
+                implants,
                 type: 'remap',
                 title: `Remap - P${fullAttributes.perception} M${fullAttributes.memory} W${fullAttributes.willpower} I${fullAttributes.intelligence} C${fullAttributes.charisma}`,
             };
@@ -321,7 +318,7 @@ class PlanCharacter {
 
             const remapItem = {
                 attributes: Object.assign({}, attributes),
-                implants: implants,
+                implants,
                 type: 'remap',
                 title: `Remap - P${fullAttributes.perception} M${fullAttributes.memory} W${fullAttributes.willpower} I${fullAttributes.intelligence} C${fullAttributes.charisma}`,
             };
@@ -330,9 +327,7 @@ class PlanCharacter {
 
             this.reset();
             newQueue[index] = remapItem;
-            for (const s of newQueue) {
-                this.addItemToQueue(s);
-            }
+            newQueue.forEach(item => this.addItemToQueue(item));
         }
     }
 
@@ -378,21 +373,20 @@ class PlanCharacter {
         while (availablePoints > 0) {
             const times = [];
             // increase each of the attributes by 1 and determine the time needed
-            for (const attribute in attributes) {
+            Object.keys(attributes).forEach((attribute) => {
                 remapPlanChar.attributes[attribute] += 1;
-                for (const s of skillsToTrain) {
-                    remapPlanChar.planSkill(s.id, s.level, 0);
-                }
+                skillsToTrain.forEach(skill => remapPlanChar.planSkill(skill.id, skill.level, 0));
                 remapPlanChar.attributes[attribute] -= 1;
+
                 times.push([attribute, remapPlanChar.time]);
 
-                //reset the planner, time is nulled by reset
+                // reset the planner, time is nulled by reset
                 remapPlanChar.reset();
                 remapPlanChar.attributes = Object.assign({}, attributes);
                 remapPlanChar.queue = [...baseSkills];
-            }
+            });
             // which attribute gave us the best training time?
-            const order = times.sort(function(a, b) { return a[1] - b[1]; });
+            const order = times.sort((a, b) => a[1] - b[1]);
 
             // increase the attribute that gave the best results, go with second one if already capped
             if (attributes[order[0][0]] < 27 + implantBonus) {
@@ -437,7 +431,7 @@ class PlanCharacter {
 
             // any required skills to train?
             if (skill.required_skills.length > 0) {
-                for (const requiredSkill of skill.required_skills) {
+                skill.required_skills.forEach((requiredSkill) => {
                     // should we train to min lvl or a different level?
                     const targetLvl = preReqLvl !== undefined && preReqLvl > requiredSkill.level ? preReqLvl : requiredSkill.level;
 
@@ -458,7 +452,7 @@ class PlanCharacter {
                         }
                         this.bannedSkills.push(skill.type_id);
                     }
-                }
+                });
             }
 
             const spPerHour = (this.attributes[skill.primary_attribute] +
@@ -502,7 +496,6 @@ class PlanCharacter {
                         secondaryAttribute: skill.secondary_attribute,
                         attributeTitle: `${skill.primary_attribute.substring(0, 3)} / ${skill.secondary_attribute.substring(0, 3)}`,
                         required_skills: skill.required_skills,
-                        
                     });
                 }
             }
@@ -524,9 +517,7 @@ class PlanCharacter {
             newQueue.splice(index, 1);
             this.reset();
 
-            for (const s of newQueue) {
-                this.addItemToQueue(s);
-            }
+            newQueue.forEach(item => this.addItemToQueue(item));
         } else if (force !== undefined || force === true) {
             const newQueue = [...this.queue];
 
@@ -535,10 +526,8 @@ class PlanCharacter {
             this.bannedSkillLevel = this.queue[index].level;
 
             this.reset();
+            newQueue.forEach(item => this.addItemToQueue(item));
 
-            for (const s of newQueue) {
-                this.addItemToQueue(s);
-            }
             this.bannedSkills = undefined;
             this.bannedSkill = undefined;
             this.bannedSkillLevel = undefined;

@@ -166,9 +166,12 @@ const SortableItem = SortableElement(
                         </TableRow>
                     );
                 }
+                default: {
+                    return (<TableRow />);
+                }
             }
         }
-    }
+    },
 );
 
 const SortableList = SortableContainer(
@@ -239,7 +242,6 @@ export default class SkillPlanTable extends React.Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.items !== this.props.items) {
             this.setState({ items: nextProps.items });
-
         }
         if (nextProps.totalTime !== this.props.totalTime) {
             this.setState({ totalTime: nextProps.totalTime });
@@ -341,7 +343,7 @@ export default class SkillPlanTable extends React.Component {
                             label="Remap"
                             style={styles.checkbox}
                             checked={this.state.columnLastRemapChecked}
-                            onCheck={(e, c) => this.setState({ 
+                            onCheck={(e, c) => this.setState({
                                 columnLastRemapStyle: c ? styles.planRowColumn : styles.planRowColumnHidden,
                                 columnLastRemapChecked: c,
                             })}
