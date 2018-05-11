@@ -35,7 +35,7 @@ export default class Character extends React.Component {
 
     switchPage(newPage) {
         this.setState({
-            currentPage: newPage,
+            currentPage: newPage
         });
     }
 

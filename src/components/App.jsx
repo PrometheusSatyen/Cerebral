@@ -16,7 +16,6 @@ import Contracts from './views/Contracts';
 import Character from './views/Character';
 import Settings from './views/Settings';
 
-
 const muiTheme = getMuiTheme(darkBaseTheme, {
     palette: {
         accent1Color: lightBlue200,
@@ -26,7 +25,7 @@ const muiTheme = getMuiTheme(darkBaseTheme, {
 const styles = {
     mainDiv: {
         margin: '0 0 0 270px',
-        padding: '0 0 0 0',
+        padding: '0 0 0 0'
     }
 };
 
