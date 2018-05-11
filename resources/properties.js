@@ -1,8 +1,8 @@
 'use strict';
 
 export default {
-    'version': '0.6.1-dev-dnr',
-    'author_email': 'dunar.dolorgiet@gmail.com',
+    'version': '0.6.1-dev',
+    'author_email': 'prometheussatyen',
 
     'eve_sso_url': 'https://login.eveonline.com/oauth',
     'eve_sso_url_no_oauth': 'https://login.eveonline.com',
