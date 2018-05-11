@@ -10,6 +10,7 @@ import {
     SelectField,
 } from 'material-ui';
 
+import ExportFromPlanPopover from '../../popovers/ExportFromPlanPopover';
 import FilteredSkillList from '../../skillbrowser/FilteredSkillList';
 import ImportToPlanPopover from '../../popovers/ImportToPlanPopover';
 import NewRenamePlanPopover from '../../popovers/NewRenamePlanPopover';
@@ -107,6 +108,7 @@ export default class Plans extends React.Component {
         this.handleSkillPlanRemove = this.handleSkillPlanRemove.bind(this);
         this.handleSkillPlanRename = this.handleSkillPlanRename.bind(this);
         this.handleImport = this.handleImport.bind(this);
+        this.handleExportClose = this.handleExportClose.bind(this);
 
         this.planCharacter = new PlanCharacter(this.props.characterId);
     }
@@ -412,6 +414,10 @@ export default class Plans extends React.Component {
         this.setState({ importToPlanPopoverOpen: false });
     }
 
+    handleExportClose() {
+        this.setState({ exportFromPlanPopoverOpen: false });
+    }
+
 
     render() {
         return (
@@ -450,6 +456,13 @@ export default class Plans extends React.Component {
                     open={this.state.importToPlanPopoverOpen}
                     anchorEl={this.state.importToPlanPopoverAnchor}
                     onImport={this.handleImport}
+                />
+                <ExportFromPlanPopover
+                    open={this.state.exportFromPlanPopoverOpen}
+                    anchorEl={this.state.exportFromPlanPopoverAnchor}
+                    items={this.state.items}
+                    onClose={this.handleExportClose}
+                    name={this.state.skillPlanName}
                 />
                 <Paper
                     style={styles.menuCard}
@@ -520,10 +533,11 @@ export default class Plans extends React.Component {
                             />
                             <RaisedButton
                                 style={styles.raisedButton}
-                                onClick={() => this.setState({ remapDialogOpen: true })}
+                                onClick={(e) => this.setState({
+                                    exportFromPlanPopoverOpen: true,
+                                    exportFromPlanPopoverAnchor: e.currentTarget })}
                                 label={'Export'}
                                 backgroundColor="#616161"
-                                disabled={true}
                             />
                         </div>
                     </div>

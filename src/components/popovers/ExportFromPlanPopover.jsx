@@ -5,8 +5,8 @@ import MenuItem from 'material-ui/MenuItem';
 
 import ImportExportHelper from '../../helpers/ImportExportHelper';
 
-const path = require('path');
 const { dialog } = require('electron').remote;
+
 
 const styles = {
     popover: {
@@ -14,7 +14,7 @@ const styles = {
     },
 };
 
-export default class ImportToPlanPopover extends React.Component {
+export default class ExportFromPlanPopover extends React.Component {
     constructor(props) {
         super(props);
 
@@ -23,8 +23,7 @@ export default class ImportToPlanPopover extends React.Component {
             anchorEl: undefined,
         };
         this.handleRequestClose = this.handleRequestClose.bind(this);
-        this.handleCerebralJsonImport = this.handleCerebralJsonImport.bind(this);
-        this.handleEVEMonXmlImport = this.handleEVEMonXmlImport.bind(this);
+        this.handleCerebralJsonExport = this.handleCerebralJsonExport.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -40,51 +39,39 @@ export default class ImportToPlanPopover extends React.Component {
         this.setState({
             open: false,
         });
-        this.props.onImport(undefined);
+        this.props.onClose(undefined);
     }
 
-    handleCerebralJsonImport(files) {
-        if (files !== undefined) {
-            const fileName = path.basename(files[0]);
-            const skills = ImportExportHelper.ImportCerebral(files[0]);
-            this.props.onImport(`Import of "${fileName}"`, 'Cerebral JSON', skills);
+    handleCerebralJsonExport(file) {
+        if (file !== undefined) {
+            ImportExportHelper.ExportCerebral(file,this.props.items);
+
             this.setState({
                 open: false,
             });
+            this.props.onClose();
         }
-    }
-
-    handleEVEMonXmlImport(files) {
-        if (files !== undefined) {
-            const fileName = path.basename(files[0]);
-            const skills = ImportExportHelper.ImportEVEMonXML(files[0]);
-            this.props.onImport(`Import of "${fileName}"`, 'EVEMon XML', skills);
-            this.setState({
-                open: false,
-            });
-        }
-    }
-
-    handleEVEMonXml() {
-        dialog.showOpenDialog({
-            properties: [
-                'openFile',
-            ],
-            filters: [
-                { name: 'EVEMon Skill Plans', extensions: ['xml'] },
-                { name: 'All Files', extensions: ['*'] },
-            ] }, this.handleEVEMonXmlImport);
     }
 
     handleCerebralJson() {
-        dialog.showOpenDialog({
-            properties: [
-                'openFile',
-            ],
+        dialog.showSaveDialog({
+            defaultPath: `${this.props.name}.cerebral_plan`,
             filters: [
                 { name: 'Cerebral Skill Plans', extensions: ['cerebral_plan'] },
                 { name: 'All Files', extensions: ['*'] },
-            ] }, this.handleCerebralJsonImport);
+            ] }, this.handleCerebralJsonExport);
+    }
+
+    handleEVEClipboard(){
+        ImportExportHelper.ExportClipboard(this.props.items);
+        this.setState({
+            open: false,
+        });
+        this.props.onClose();
+    }
+
+    handleEVEClipboardShoppingList() {
+
     }
 
     render() {
@@ -98,9 +85,8 @@ export default class ImportToPlanPopover extends React.Component {
             >
                 <Menu style={styles.menu} menuItemStyle={styles.menuItem} listStyle={styles.listItem}>
                     <MenuItem primaryText="Cerebral Plan" onClick={() => this.handleCerebralJson()} />
-                    <MenuItem primaryText="EVEMon Plan" onClick={() => this.handleEVEMonXml()} />
-                    <MenuItem disabled primaryText="Fitting" onClick={() => this.handleEVEClipboard()} />
-                    <MenuItem disabled primaryText="Clipboard EVE format" onClick={() => this.handleEVEClipboard()} />
+                    <MenuItem primaryText="Clipboard (first 50)" onClick={() => this.handleEVEClipboard()} />
+                    <MenuItem disabled primaryText="Clipboard (Shopping List)" onClick={() => this.handleEVEClipboardShoppingList()} />
                 </Menu>
             </Popover>
         );

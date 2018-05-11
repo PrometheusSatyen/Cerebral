@@ -511,11 +511,11 @@ class PlanCharacter {
                     const spForLevel = 250 * skill.training_time_multiplier * (Math.sqrt(32) ** (i - 1));
                     const missingSPforLevel = spForLevel - currentSP;
 
-                    let time = missingSPforLevel * (3600 / spPerHour);
-
                     if (!this.isOmega) {
-                        time *= 2;
+                        spPerHour /= 2;
                     }
+
+                    let time = missingSPforLevel * (3600 / spPerHour);
 
                     this.time += time * 1000;
                     this.lastRemap += time * 1000;
