@@ -356,19 +356,14 @@ export default class Plans extends React.Component {
     handleSkillPlanRemove() {
         SkillPlanStore.deleteSkillPlan(this.props.characterId, this.state.skillPlanId);
         const plans = SkillPlanStore.getSkillPlansForCharacter(this.props.characterId);
-        if (plans.length > 0) {
-            this.setState({
-                skillPlans: plans,
-                skillPlanId: plans[0].id,
-                skillPlanName: plans[0].name,
-            });
-        } else {
-            this.setState({
-                skillPlans: plans,
-                skillPlanId: undefined,
-                skillPlanName: undefined,
-            });
-        }
+
+        this.planCharacter.reset();
+        this.setState({
+            items: this.planCharacter.queue,
+            skillPlans: plans,
+            skillPlanId: undefined,
+            skillPlanName: undefined,
+        });
     }
 
     handleSkillPlanDuplicate() {
