@@ -2,7 +2,7 @@
 
 export default {
     'version': '0.6.1-dev',
-    'author_email': 'prometheussatyent@gmail.com',
+    'author_email': 'prometheussatyen@gmail.com',
 
     'eve_sso_url': 'https://login.eveonline.com/oauth',
     'eve_sso_url_no_oauth': 'https://login.eveonline.com',
