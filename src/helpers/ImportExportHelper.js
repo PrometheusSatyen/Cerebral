@@ -61,7 +61,7 @@ export default class ImportExportHelper {
                 const content = fs.readFileSync(filePath);
                 const plan = JSON.parse(content);
                 if (plan !== undefined) {
-                    if (plan.version === 1) {
+                    if (plan.formatVersion === 1) {
                         plan.skills.forEach((skill) => {
                             skills.push({ typeId: skill.typeId, level: skill.level });
                         });

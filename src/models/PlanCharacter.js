@@ -497,8 +497,12 @@ class PlanCharacter {
                 });
             }
 
-            const spPerHour = (this.attributes[skill.primary_attribute] +
+            let spPerHour = (this.attributes[skill.primary_attribute] +
                 (this.attributes[skill.secondary_attribute] / 2)) * 60;
+
+            if (!this.isOmega) {
+                spPerHour *= 0.5;
+            }
 
             // add each level individually
             for (let i = currentLvl + 1; i <= lvl; i += 1) {
@@ -510,10 +514,6 @@ class PlanCharacter {
                     const currentSP = skill.skillpoints_in_skill > skill.planned_skillpoints_in_skill ? skill.skillpoints_in_skill : skill.planned_skillpoints_in_skill;
                     const spForLevel = 250 * skill.training_time_multiplier * (Math.sqrt(32) ** (i - 1));
                     const missingSPforLevel = spForLevel - currentSP;
-
-                    if (!this.isOmega) {
-                        spPerHour /= 2;
-                    }
 
                     let time = missingSPforLevel * (3600 / spPerHour);
 
