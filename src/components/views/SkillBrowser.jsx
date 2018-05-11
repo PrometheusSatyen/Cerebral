@@ -77,15 +77,14 @@ export default class SkillBrowser extends React.Component {
                             </td>
                             <td style={styles.rightColumn}>
                                 <div >
-                                    {this.state.selectedType !== 0 ?
+                                    {this.state.selectedType !== 0 &&
                                         <SkillInfoCard style={styles.margin10} characterId={this.state.characterId} selectedType={this.state.selectedType} />
-                                        : ''
                                     }
                                     <Paper style={styles.margin10} >
                                         <SkillTree characterId={this.state.characterId} selectedType={this.state.selectedType} />
                                     </Paper>
                                 </div>
-                                {this.queue.length > 0 ?
+                                {this.queue.length > 0 &&
                                     <Card style={styles.margin10}>
                                         <CardHeader 
                                             actAsExpander
@@ -99,7 +98,6 @@ export default class SkillBrowser extends React.Component {
                                             }
                                         </CardText>
                                     </Card>
-                                    : ''
                                 }
                             </td>
                         </tr>

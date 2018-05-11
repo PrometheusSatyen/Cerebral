@@ -118,42 +118,73 @@ export class SkillList extends React.Component {
         const items = [];
 
         // a filter is set, add flat list of matching skills
-        if (filter !== undefined && filter !== '') {
-            for (const skillGroup of this.skillGroups) {
-                for (const skill of skillGroup.children) {
-                    if (skill.name.toLowerCase().indexOf(filter) !== -1) {
-                        let skillLevel = 0;
-                        if (character !== undefined) {
-                            const charskill = character.skills.filter(s => (s.skill_id === skill.type_id));
-
-                            if (charskill !== undefined && charskill[0] !== undefined) {
-                                skillLevel = charskill[0].trained_skill_level;
+        if (filter !== undefined && filter !== '' && filter.length > 2) {
+            this.skillGroups.forEach((skillGroup) => {
+                skillGroup.children.forEach((skill) => {
+                    // does the filter contain a |? search for each one
+                    if (filter.indexOf('|') !== -2) {
+                        let skillsToAdd = [];
+                        filter.split('|').forEach((element) => {
+                            if (element.length > 1 && skill.name.toLowerCase().indexOf(element) !== -1) {
+                                skillsToAdd.push(skill);
                             }
-                        }
+                        });
 
-                        items.push(
-                            <ListItem
-                                key={skill.type_id}
-                                primaryText={skill.name}
-                                onClick={(e) => this.handleSkillListSelection(skill.type_id, e)}
-                                rightIcon={
-                                    <FontIcon style={{ 'fontSize': 18 }}>{romanNumerals[skillLevel]}</FontIcon>
+                        skillsToAdd = skillsToAdd.filter((elem, pos, arr) => arr.indexOf(elem) === pos);
+                        skillsToAdd.forEach((skilla) => {
+                            let skillLevel = 0;
+                                if (character !== undefined) {
+                                    const charskill = character.skills.filter(s => (s.skill_id === skilla.type_id));
+                                    if (charskill !== undefined && charskill[0] !== undefined) {
+                                        skillLevel = charskill[0].trained_skill_level;
+                                    }
                                 }
-                            />,
-                        );
+                            items.push(
+                                <ListItem
+                                    key={skill.type_id}
+                                    primaryText={skill.name}
+                                    onClick={(e) => this.handleSkillListSelection(skill.type_id, e)}
+                                    rightIcon={
+                                        <FontIcon style={{ fontSize: 18 }}>{romanNumerals[skillLevel]}</FontIcon>
+                                    }
+                                />,
+                            );
+                        });
+                    } else {
+                        if (skill.name.toLowerCase().indexOf(filter) !== -1) {
+                            let skillLevel = 0;
+                            if (character !== undefined) {
+                                const charskill = character.skills.filter(s => (s.skill_id === skill.type_id));
+
+                                if (charskill !== undefined && charskill[0] !== undefined) {
+                                    skillLevel = charskill[0].trained_skill_level;
+                                }
+                            }
+
+                            items.push(
+                                <ListItem
+                                    key={skill.type_id}
+                                    primaryText={skill.name}
+                                    onClick={(e) => this.handleSkillListSelection(skill.type_id, e)}
+                                    rightIcon={
+                                        <FontIcon style={{ fontSize: 18 }}>{romanNumerals[skillLevel]}</FontIcon>
+                                    }
+                                />,
+                            );
+                        }
                     }
-                }
-            }
+                });
+            });
             items.sort((a, b) => a.props.primaryText.localeCompare(b.props.primaryText));
         // unfiltered, group skills by their market groups
         } else {
-            for (const skillGroup of this.skillGroups) {
+            this.skillGroups.forEach((skillGroup) => {
                 const nestedItems = [];
-                for (const skill of skillGroup.children) {
+                skillGroup.children.forEach((skill) => {
                     let skillLevel = 0;
                     if (character !== undefined) {
                         const charskill = character.skills.filter(s => (s.skill_id === skill.type_id));
-    
+
                         if (charskill !== undefined && charskill[0] !== undefined) {
                             skillLevel = charskill[0].trained_skill_level;
                         }
@@ -168,7 +199,7 @@ export class SkillList extends React.Component {
                             }
                         />,
                     );
-                }
+                });
 
                 items.push(
                     <ListItem
@@ -179,7 +210,7 @@ export class SkillList extends React.Component {
                         nestedItems={nestedItems}
                     />,
                 );
-            }
+            });
         }
 
         return (

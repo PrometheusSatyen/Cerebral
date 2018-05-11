@@ -1,8 +1,5 @@
 import React from 'react';
-import Popover from 'material-ui/Popover';
-import TextField from 'material-ui/TextField';
-import Menu from 'material-ui/Menu';
-import MenuItem from 'material-ui/MenuItem';
+import { Popover, TextField } from 'material-ui';
 
 const styles = {
     popover: {

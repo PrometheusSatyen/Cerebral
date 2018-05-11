@@ -36,9 +36,8 @@ export default class RemapDialog extends React.Component {
 
         this.handleImplants = this.handleImplants.bind(this);
         this.handleSlider = this.handleSlider.bind(this);
+        this.handleUseSuggested = this.handleUseSuggested.bind(this);
         this.updateSliders = this.updateSliders.bind(this);
-        this.useSuggested = this.useSuggested.bind(this);
-
     }
 
     handleClose(e) {
@@ -66,12 +65,11 @@ export default class RemapDialog extends React.Component {
         this.setState({ attributes: currentAttributes });
     }
 
-    useSuggested(e) {
+    handleUseSuggested(e) {
         if (this.props.editIndex !== undefined) {
             this.props.onGetOptimalAttributes(this.props.editIndex, this.state.implants);
         }
     }
-
 
     handleSlider(attribute, value) {
         const currentAttributes = this.state.attributes;
@@ -85,7 +83,7 @@ export default class RemapDialog extends React.Component {
                 pool -= currentAttributes[a];
             }
             if (pool > 0) {
-                currentAttributes[attribute] = value;
+                currentAttributes[attribute] = pool + currentAttributes[attribute] <= value ? pool + currentAttributes[attribute] : value;
                 this.setState({ attributes: currentAttributes });
             } else {
                 this.setState({ attributes: currentAttributes });
@@ -95,7 +93,7 @@ export default class RemapDialog extends React.Component {
 
     handleImplants(value) {
         const implants = value;
-        this.setState({ implants: implants });
+        this.setState({ implants });
     }
 
     render() {
@@ -106,7 +104,7 @@ export default class RemapDialog extends React.Component {
                         <FlatButton
                             label="Use optimal"
                             primary={true}
-                            onClick={e => this.useSuggested(e)}
+                            onClick={e => this.handleUseSuggested(e)}
                         />
                         : ''
                 }

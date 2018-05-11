@@ -27,9 +27,9 @@ class PlanCharacter {
         this.skills = {};
         this.queue = [];
         this.time = 0;
-        this.lastRemap = this.attributes.last_remap_date !== undefined ?  (Date.now() - (new Date(this.attributes.last_remap_date).getTime())) : 0;
+        this.lastRemap = this.attributes.last_remap_date !== undefined ? (Date.now() - (new Date(this.attributes.last_remap_date).getTime())) : 0;
 
-        for (const skill in AllSkills.skills) {
+        Object.keys(AllSkills.skills).forEach((skill) => {
             const skillId = AllSkills.skills[skill].type_id;
             this.skills[skillId] = Object.assign({}, AllSkills.skills[skillId]);
 
@@ -47,7 +47,7 @@ class PlanCharacter {
                 this.skills[skillId].planned_skillpoints_in_skill = 0;
                 this.isUnknown = true;
             }
-        }
+        });
     }
 
     /**
@@ -60,11 +60,11 @@ class PlanCharacter {
         this.attributes = Object.assign({}, this.baseCharacter.attributes);
         this.lastRemap = this.attributes.last_remap_date !== undefined ?  (Date.now() - (new Date(this.attributes.last_remap_date).getTime())) : 0;
 
-        for (const skill in AllSkills.skills) {
+        Object.keys(AllSkills.skills).forEach((skill) => {
             const skillId = AllSkills.skills[skill].type_id;
             this.skills[skillId].planned_skill_level = 0;
             this.skills[skillId].planned_skillpoints_in_skill = 0;
-        }
+        });
     }
 
     /**
@@ -116,7 +116,7 @@ class PlanCharacter {
                 // any skill that requires this one? can't move past that one either
                 if (skill.required_skills.length > 0 &&
                     skill.required_skills.some(
-                        req => req.id === skillToMove.id && req.level >= skillToMove.level
+                        req => req.id === skillToMove.id && req.level >= skillToMove.level,
                     )) {
                     return true;
                 }
@@ -263,6 +263,7 @@ class PlanCharacter {
      * Adds a remap to the queue.
      *
      * @param {object}   attributes   Object that has a number value for each of the 5 attributes
+     * @param {number}   implants     Uniform +attribute implant set used
      *
      */
     addRemap(attributes, implants) {
@@ -275,9 +276,10 @@ class PlanCharacter {
             && attributes.hasOwnProperty('charisma')
         ) {
             const fullAttributes = Object.assign({}, attributes);
-            for (const a in fullAttributes) {
-                fullAttributes[a] += implants;
-            }
+
+            Object.keys(fullAttributes).forEach((attribute) => {
+                fullAttributes[attribute] += implants;
+            });
 
             this.attributes = fullAttributes;
             this.lastRemap = 0;
@@ -350,9 +352,9 @@ class PlanCharacter {
             && attributes.hasOwnProperty('charisma')
         ) {
             const fullAttributes = Object.assign({}, attributes);
-            for (const a in fullAttributes) {
-                fullAttributes[a] += implants;
-            }
+            Object.keys(fullAttributes).forEach((attribute) => {
+                fullAttributes[attribute] += implants;
+            });
 
             this.attributes = fullAttributes;
 
@@ -440,9 +442,9 @@ class PlanCharacter {
             availablePoints -= 1;
         }
 
-        for (const attribute in attributes) {
+        Object.keys(attributes).forEach((attribute) => {
             attributes[attribute] -= implantBonus;
-        }
+        });
 
         return attributes;
     }

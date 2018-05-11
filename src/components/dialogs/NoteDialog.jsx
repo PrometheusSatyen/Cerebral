@@ -27,7 +27,6 @@ export default class NoteDialog extends React.Component {
             text: this.props.text,
             details: this.props.details,
         };
-
     }
 
     handleClose(e) {
@@ -35,7 +34,7 @@ export default class NoteDialog extends React.Component {
     }
 
     handleAdd(e) {
-        this.props.onAddNote(this.state.text, this.state.details, this.props.editIndex);
+        this.props.onAddNote(this.state.text, this.state.details || '', this.props.editIndex);
     }
 
     componentWillReceiveProps(nextProps) {

@@ -64,8 +64,6 @@ export default class Plans extends React.Component {
         super(props);
 
         this.state = {
-            characterId: this.props.characterId,
-
             selectedType: 0,
             items: [],
             selection: [],
@@ -86,31 +84,49 @@ export default class Plans extends React.Component {
             renameSkillPopoverAnchor: undefined,
 
             remapDialogOpen: false,
-            remapDialogMode: 'add',
             remapAttribues: {},
             remapImplants: 0,
         };
 
-        this.onSkillLevelSelected = this.onSkillLevelSelected.bind(this);
-        this.onSkillSelected = this.onSkillSelected.bind(this);
+        
+        this.handleSkillSelected = this.handleSkillSelected.bind(this);
+        this.handleSkillAdd = this.handleSkillAdd.bind(this);
 
-        this.onDeleteSkillPlan = this.onDeleteSkillPlan.bind(this);
-        this.onDuplicateSkillPlan = this.onDuplicateSkillPlan.bind(this);
-        this.onEdit = this.onEdit.bind(this);
-        this.onGetOptimalAttributes = this.onGetOptimalAttributes.bind(this);
-        this.onImport = this.onImport.bind(this);
-        this.onNewSkillPlan = this.onNewSkillPlan.bind(this);
-        this.onNoteAdd = this.onNoteAdd.bind(this);
-        this.onRemove = this.onRemove.bind(this);
-        this.onRemapAdd = this.onRemapAdd.bind(this);
-        this.onRenameSkillPlan = this.onRenameSkillPlan.bind(this);
-        this.onSelectedSkillPlanChanged = this.onSelectedSkillPlanChanged.bind(this);
-        this.onSortEnd = this.onSortEnd.bind(this);
+        this.handleNoteAdd = this.handleNoteAdd.bind(this);
+        this.handleRemapAdd = this.handleRemapAdd.bind(this);
+
+        this.handleGetOptimalAttributes = this.handleGetOptimalAttributes.bind(this);
+        this.handleItemEdit = this.handleItemEdit.bind(this);
+
+        this.handleItemMove = this.handleItemMove.bind(this);
+        this.handleItemRemove = this.handleItemRemove.bind(this);
+
+        this.handleSkillPlanAdd = this.handleSkillPlanAdd.bind(this);
+        this.handleSkillPlanChanged = this.handleSkillPlanChanged.bind(this);
+        this.handleSkillPlanDuplicate = this.handleSkillPlanDuplicate.bind(this);
+        this.handleSkillPlanRemove = this.handleSkillPlanRemove.bind(this);
+        this.handleSkillPlanRename = this.handleSkillPlanRename.bind(this);
+        this.handleImport = this.handleImport.bind(this);
 
         this.planCharacter = new PlanCharacter(this.props.characterId);
     }
 
-    onSortEnd(oldIndex, newIndex, selected) {
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.characterId !== this.props.characterId) {
+            if (nextProps.characterId !== undefined && nextProps.characterId !== 0) {
+                this.planCharacter = new PlanCharacter(nextProps.characterId);
+                this.setState({
+                    totalTime: this.planCharacter.time,
+                    items: this.planCharacter.queue,
+                    skillPlans: SkillPlanStore.getSkillPlansForCharacter(nextProps.characterId),
+                    skillPlanId: undefined,
+                    skillPlanName: undefined,
+                });
+            }
+        }
+    }
+
+    handleItemMove(oldIndex, newIndex, selected) {
         if (selected === undefined || selected.length <= 1) {
             this.planCharacter.moveQueuedItemByPosition(oldIndex, newIndex, true);
             this.setState({
@@ -119,7 +135,7 @@ export default class Plans extends React.Component {
                 selection: [],
             });
             SkillPlanStore.storeSkillPlan(
-                this.state.characterId,
+                this.props.characterId,
                 this.state.skillPlanId,
                 this.state.skillPlanName,
                 this.planCharacter.queue,
@@ -132,7 +148,7 @@ export default class Plans extends React.Component {
                 selection: [],
             });
             SkillPlanStore.storeSkillPlan(
-                this.state.characterId,
+                this.props.characterId,
                 this.state.skillPlanId,
                 this.state.skillPlanName,
                 this.planCharacter.queue,
@@ -140,7 +156,7 @@ export default class Plans extends React.Component {
         }
     }
 
-    onSkillSelected(selectedType, e) {
+    handleSkillSelected(selectedType, e) {
         this.setState({
             planSkillPopoverAnchor: e.currentTarget,
             planSkillPopoverOpen: true,
@@ -148,7 +164,7 @@ export default class Plans extends React.Component {
         });
     }
 
-    onSkillLevelSelected(level, prereqs) {
+    handleSkillAdd(level, prereqs) {
         this.setState({ planSkillPopoverOpen: false });
 
         if (this.state.selectedType !== undefined && level !== undefined) {
@@ -159,7 +175,7 @@ export default class Plans extends React.Component {
                 totalTime: this.planCharacter.time,
             });
             SkillPlanStore.storeSkillPlan(
-                this.state.characterId,
+                this.props.characterId,
                 this.state.skillPlanId,
                 this.state.skillPlanName,
                 this.planCharacter.queue,
@@ -167,7 +183,7 @@ export default class Plans extends React.Component {
         }
     }
 
-    onRemove(index, e) {
+    handleItemRemove(index, e) {
         if (e.ctrlKey || e.metaKey === 0) {
             this.planCharacter.removeItemByPosition(index, true);
         } else {
@@ -179,20 +195,20 @@ export default class Plans extends React.Component {
             totalTime: this.planCharacter.time,
         });
         SkillPlanStore.storeSkillPlan(
-            this.state.characterId,
+            this.props.characterId,
             this.state.skillPlanId,
             this.state.skillPlanName,
             this.planCharacter.queue,
         );
     }
 
-    onRemapAdd(attributes, implants, index) {
+    handleRemapAdd(attributes, implants, index) {
         if (attributes !== undefined) {
             if (index === undefined) {
                 this.planCharacter.addRemap(attributes, implants);
                 this.setState({ items: this.planCharacter.queue });
                 SkillPlanStore.storeSkillPlan(
-                    this.state.characterId,
+                    this.props.characterId,
                     this.state.skillPlanId,
                     this.state.skillPlanName,
                     this.planCharacter.queue,
@@ -204,7 +220,7 @@ export default class Plans extends React.Component {
                     totalTime: this.planCharacter.time,
                 });
                 SkillPlanStore.storeSkillPlan(
-                    this.state.characterId,
+                    this.props.characterId,
                     this.state.skillPlanId,
                     this.state.skillPlanName,
                     this.planCharacter.queue,
@@ -213,18 +229,17 @@ export default class Plans extends React.Component {
         }
         this.setState({
             remapDialogOpen: false,
-            remapDialogMode: 'add',
             remapDialogEditIndex: undefined,
         });
     }
 
-    onNoteAdd(text, details, index) {
+    handleNoteAdd(text, details, index) {
         if (text !== undefined) {
             if (index === undefined) {
                 this.planCharacter.addNote(text, details);
                 this.setState({ items: this.planCharacter.queue });
                 SkillPlanStore.storeSkillPlan(
-                    this.state.characterId,
+                    this.props.characterId,
                     this.state.skillPlanId,
                     this.state.skillPlanName,
                     this.planCharacter.queue,
@@ -236,7 +251,7 @@ export default class Plans extends React.Component {
                     totalTime: this.planCharacter.time,
                 });
                 SkillPlanStore.storeSkillPlan(
-                    this.state.characterId,
+                    this.props.characterId,
                     this.state.skillPlanId,
                     this.state.skillPlanName,
                     this.planCharacter.queue,
@@ -249,13 +264,12 @@ export default class Plans extends React.Component {
         });
     }
 
-    onEdit(index) {
+    handleItemEdit(index) {
         if (this.state.items[index] !== undefined && this.state.items[index].type === 'remap') {
             this.setState({
                 remapAttribues: Object.assign({}, this.state.items[index].attributes),
                 remapImplants: this.state.items[index].implants,
                 remapDialogOpen: true,
-                remapDialogMode: 'edit',
                 remapDialogEditIndex: index,
             });
         } else if (this.state.items[index] !== undefined && this.state.items[index].type === 'note') {
@@ -268,13 +282,13 @@ export default class Plans extends React.Component {
         }
     }
 
-    onGetOptimalAttributes(index, implants) {
+    handleGetOptimalAttributes(index, implants) {
         this.setState({
             remapAttribues: this.planCharacter.getSuggestedAttributesForRemapAt(index, implants),
         });
     }
 
-    onNewSkillPlan(name) {
+    handleSkillPlanAdd(name) {
         this.setState({
             newSkillPopoverOpen: false,
             newSkillPopoverAnchor: undefined,
@@ -297,9 +311,9 @@ export default class Plans extends React.Component {
         }
     }
 
-    onSelectedSkillPlanChanged(skillPlanId) {
+    handleSkillPlanChanged(skillPlanId) {
         if (skillPlanId !== undefined) {
-            const plan = SkillPlanStore.getSkillPlan(this.state.characterId, skillPlanId);
+            const plan = SkillPlanStore.getSkillPlan(this.props.characterId, skillPlanId);
 
             if (plan !== undefined) {
                 this.planCharacter.reset();
@@ -316,16 +330,16 @@ export default class Plans extends React.Component {
         }
     }
 
-    onRenameSkillPlan(name) {
+    handleSkillPlanRename(name) {
         if (this.state.skillPlanId !== undefined
-            && SkillPlanStore.doesPlanExist(this.state.characterId, this.state.skillPlanId)) {
+            && SkillPlanStore.doesPlanExist(this.props.characterId, this.state.skillPlanId)) {
             this.setState({
                 renameSkillPopoverOpen: false,
                 renameSkillPopoverAnchor: undefined,
             });
             if (name !== undefined) {
                 SkillPlanStore.storeSkillPlan(
-                    this.state.characterId,
+                    this.props.characterId,
                     this.state.skillPlanId,
                     name,
                     this.planCharacter.queue,
@@ -337,8 +351,8 @@ export default class Plans extends React.Component {
         }
     }
 
-    onDeleteSkillPlan() {
-        SkillPlanStore.deleteSkillPlan(this.state.characterId, this.state.skillPlanId);
+    handleSkillPlanRemove() {
+        SkillPlanStore.deleteSkillPlan(this.props.characterId, this.state.skillPlanId);
         const plans = SkillPlanStore.getSkillPlansForCharacter(this.props.characterId);
         if (plans.length > 0) {
             this.setState({
@@ -355,9 +369,9 @@ export default class Plans extends React.Component {
         }
     }
 
-    onDuplicateSkillPlan() {
+    handleSkillPlanDuplicate() {
         if (this.state.skillPlanId !== undefined
-            && SkillPlanStore.doesPlanExist(this.state.characterId, this.state.skillPlanId)) {
+            && SkillPlanStore.doesPlanExist(this.props.characterId, this.state.skillPlanId)) {
             const newId = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
                 (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
             )
@@ -378,7 +392,7 @@ export default class Plans extends React.Component {
         }
     }
 
-    onImport(name, source, skills) {
+    handleImport(name, source, skills) {
         if (name !== undefined && source !== undefined && skills !== undefined && skills.length > 0) {
             this.planCharacter.addNote(name, `Imported from ${source}`);
             skills.forEach(s => this.planCharacter.planSkill(s.typeId, s.level));
@@ -389,7 +403,7 @@ export default class Plans extends React.Component {
                 
             });
             SkillPlanStore.storeSkillPlan(
-                this.state.characterId,
+                this.props.characterId,
                 this.state.skillPlanId,
                 this.state.skillPlanName,
                 this.planCharacter.queue,
@@ -406,36 +420,36 @@ export default class Plans extends React.Component {
                     attributes={this.state.remapAttribues}
                     editIndex={this.state.remapDialogEditIndex}
                     implants={this.state.remapImplants}
-                    onAddRemap={this.onRemapAdd}
-                    onGetOptimalAttributes={this.onGetOptimalAttributes}
+                    onAddRemap={this.handleRemapAdd}
+                    onGetOptimalAttributes={this.handleGetOptimalAttributes}
                     open={this.state.remapDialogOpen}
                 />
                 <NoteDialog
                     text={this.state.noteText}
                     details={this.state.noteDetails}
                     editIndex={this.state.noteDialogEditIndex}
-                    onAddNote={this.onNoteAdd}
+                    onAddNote={this.handleNoteAdd}
                     open={this.state.noteDialogOpen}
                 />
                 <PlanSkillPopover
                     open={this.state.planSkillPopoverOpen}
                     anchorEl={this.state.planSkillPopoverAnchor}
-                    onLevelSelected={this.onSkillLevelSelected}
+                    onLevelSelected={this.handleSkillAdd}
                 />
                 <NewRenamePlanPopover
                     open={this.state.newSkillPopoverOpen}
                     anchorEl={this.state.newSkillPopoverAnchor}
-                    onNewName={this.onNewSkillPlan}
+                    onNewName={this.handleSkillPlanAdd}
                 />
                 <NewRenamePlanPopover
                     open={this.state.renameSkillPopoverOpen}
                     anchorEl={this.state.renameSkillPopoverAnchor}
-                    onNewName={this.onRenameSkillPlan}
+                    onNewName={this.handleSkillPlanRename}
                 />
                 <ImportToPlanPopover
                     open={this.state.importToPlanPopoverOpen}
                     anchorEl={this.state.importToPlanPopoverAnchor}
-                    onImport={this.onImport}
+                    onImport={this.handleImport}
                 />
                 <Paper
                     style={styles.menuCard}
@@ -446,15 +460,15 @@ export default class Plans extends React.Component {
                             style={styles.planSelector}
                             floatingLabelText="Plan"
                             value={this.state.skillPlanId}
-                            onChange={(e, k, v) => this.onSelectedSkillPlanChanged(v)}
+                            onChange={(e, k, v) => this.handleSkillPlanChanged(v)}
                         >
                             {
-                                this.state.skillPlans.map((v) => {
+                                this.state.skillPlans.map((plan) => {
                                     return (
                                         <MenuItem
-                                            key={v.id}
-                                            value={v.id}
-                                            primaryText={v.name}
+                                            key={plan.id}
+                                            value={plan.id}
+                                            primaryText={plan.name}
                                         />
                                     );
                                 })
@@ -494,19 +508,19 @@ export default class Plans extends React.Component {
                         <div>
                             <RaisedButton
                                 style={styles.raisedButton}
-                                onClick={this.onDuplicateSkillPlan}
+                                onClick={this.handleSkillPlanDuplicate}
                                 label={'Duplicate'}
                                 backgroundColor="#616161"
                             />
                             <RaisedButton
                                 style={styles.raisedButton}
-                                onClick={this.onDeleteSkillPlan}
+                                onClick={this.handleSkillPlanRemove}
                                 label={'Delete'}
                                 backgroundColor="#616161"
                             />
                             <RaisedButton
                                 style={styles.raisedButton}
-                                onClick={() => this.setState({ remapDialogOpen: true, remapDialogMode: 'add' })}
+                                onClick={() => this.setState({ remapDialogOpen: true })}
                                 label={'Export'}
                                 backgroundColor="#616161"
                                 disabled={true}
@@ -517,7 +531,7 @@ export default class Plans extends React.Component {
                         <div>
                             <RaisedButton
                                 style={styles.raisedButton}
-                                onClick={() => this.setState({ remapDialogOpen: true, remapDialogMode: 'add' })}
+                                onClick={() => this.setState({ remapDialogOpen: true })}
                                 label={'Add Remap'}
                                 backgroundColor="#616161"
                             />
@@ -537,17 +551,17 @@ export default class Plans extends React.Component {
                                 <Card style={styles.skillListCard}>
                                     <FilteredSkillList
                                         style={styles.skillListCard}
-                                        characterId={this.state.characterId}
-                                        onSkillSelectionChange={this.onSkillSelected}
+                                        characterId={this.props.characterId}
+                                        onSkillSelectionChange={this.handleSkillSelected}
                                     />
                                 </Card>
                             </td>
                             <td style={styles.rightColumn}>
                                 <Paper style={styles.margin10}>
                                     <SkillPlanTable
-                                        onEdit={this.onEdit}
-                                        onRemove={this.onRemove}
-                                        onSkillMove={this.onSortEnd}
+                                        onEdit={this.handleItemEdit}
+                                        onRemove={this.handleItemRemove}
+                                        onSkillMove={this.handleItemMove}
                                         items={this.state.items}
                                         totalTime={this.state.totalTime}
                                         selected={this.state.selected}

@@ -16,9 +16,9 @@ export default class CharacterSelector extends React.Component {
         const allChars = Character.getAll();
 
         this.chars = [];
-        for (const char in allChars) {
+        Object.keys(allChars).forEach((char) => {
             this.chars.push(<MenuItem key={char} value={char} primaryText={allChars[char].name} />);
-        }
+        });
         this.chars.sort((a, b) => a.props.primaryText.localeCompare(b.props.primaryText));
     }
 

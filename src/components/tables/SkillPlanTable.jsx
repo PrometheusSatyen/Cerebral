@@ -89,8 +89,13 @@ const styles = {
 };
 
 const SortableItem = SortableElement(
-    class SortableItemA extends React.Component {
-        onMouseDown(e) {
+    class SortableItemA extends React.PureComponent {
+        constructor() {
+            super();
+            this.handleMouseDown = this.handleMouseDown.bind(this);
+        }
+
+        handleMouseDown(e) {
             if (e.target.innerText !== undefined && e.target.innerText === 'delete') {
                 this.props.onRemove(this.props.idx, e);
             } else if (e.target.innerText !== undefined && e.target.innerText === 'mode_edit') {
@@ -99,12 +104,13 @@ const SortableItem = SortableElement(
                 this.props.onMouseDown(this.props.idx, e);
             }
         }
+
         render() {
             const style = this.props.highlighted ? styles.planRowHighlight : styles.planRow;
             switch (this.props.value.type) {
                 case 'skill': {
                     return (
-                        <TableRow selectable style={style} onMouseDown={this.onMouseDown.bind(this)}>
+                        <TableRow selectable style={style} onMouseDown={this.handleMouseDown}>
                             <TableRowColumn style={styles.planRowColumnSkill}>
                                 {this.props.value.title}
                             </TableRowColumn>
@@ -139,7 +145,7 @@ const SortableItem = SortableElement(
                 case 'note':
                 case 'remap': {
                     return (
-                        <TableRow selectable style={style} onMouseDown={this.onMouseDown.bind(this)}>
+                        <TableRow selectable style={style} onMouseDown={this.handleMouseDown}>
                             <TableRowColumn style={styles.planRowColumnSkill}>
                                 {this.props.value.title}
                             </TableRowColumn>
@@ -182,10 +188,10 @@ const SortableList = SortableContainer(
                 <TableBody displayRowCheckbox={false}>
                     {this.props.items.map((value, index) => {
                         {
-                            const highlighted = this.props.selection !== undefined ? this.props.selection.indexOf(index) > -1 : 0
+                            const highlighted = this.props.selection !== undefined ? this.props.selection.indexOf(index) > -1 : 0;
                             return (
                                 <SortableItem
-                                    key={`item-${index}`}
+                                    key={value.type === 'skill' ? `skill-${value.title}` : `item-${index}`}
                                     index={index}
                                     value={value}
                                     onRemove={this.props.onRemove}
@@ -234,9 +240,9 @@ export default class SkillPlanTable extends React.Component {
 
         this.handleColumnEditRequestClose = this.handleColumnEditRequestClose.bind(this);
 
-        this.onSortEnd = this.onSortEnd.bind(this);
-        this.onDelete = this.onDelete.bind(this);
-        this.onMouseDownCallback = this.onMouseDownCallback.bind(this);
+        this.handleSortEnd = this.handleSortEnd.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
+        this.handleMouseDown = this.handleMouseDown.bind(this);
         this.shouldCancelStart = this.shouldCancelStart.bind(this);
     }
 
@@ -249,11 +255,11 @@ export default class SkillPlanTable extends React.Component {
         }
     }
 
-    onDelete(index, e) {
+    handleDelete(index, e) {
         this.props.onRemove(index, e);
     }
 
-    onMouseDownCallback(index, event) {
+    handleMouseDown(index, event) {
         let newSelection = this.state.selection;
         const testIndex = newSelection.indexOf(index);
 
@@ -277,13 +283,13 @@ export default class SkillPlanTable extends React.Component {
             newSelection = [index];
         }
         this.setState({
-            selection: newSelection.sort((a, b) => { return a - b })
+            selection: newSelection.sort((a, b) => (a - b)),
         });
         event.preventDefault();
         return false;
     }
 
-    onSortEnd({ oldIndex, newIndex }) {
+    handleSortEnd({ oldIndex, newIndex }) {
         this.props.onSkillMove(oldIndex, newIndex, this.state.selection);
         this.setState({ selection: [] });
     }
@@ -300,7 +306,7 @@ export default class SkillPlanTable extends React.Component {
         this.setState({
             columnEditOpen: false,
         });
-    };
+    }
 
     render() {
         return (
@@ -375,9 +381,9 @@ export default class SkillPlanTable extends React.Component {
                                 <IconButton
                                     style={styles.deleteButton}
                                     iconStyle={styles.deleteButton}
-                                    onClick={(e) => this.setState({
+                                    onClick={e => this.setState({
                                         columnEditOpen: true,
-                                        columnEditAnchor: e.currentTarget
+                                        columnEditAnchor: e.currentTarget,
                                     })}
                                 >
                                     <FontIcon style={styles.deleteButton} className="material-icons">keyboard_arrow_down</FontIcon>
@@ -391,9 +397,9 @@ export default class SkillPlanTable extends React.Component {
                         shouldCancelStart={this.shouldCancelStart}
                         selection={this.state.selection}
                         onEdit={this.props.onEdit}
-                        onMouseDown={this.onMouseDownCallback}
-                        onRemove={this.onDelete}
-                        onSortEnd={this.onSortEnd}
+                        onMouseDown={this.handleMouseDown}
+                        onRemove={this.handleDelete}
+                        onSortEnd={this.handleSortEnd}
                         columnTime={this.state.columnTimeStyle}
                         columnMarketGroup={this.state.columnMarketGroupStyle}
                         columnAttributes={this.state.columnAttributesStyle}
@@ -409,7 +415,7 @@ export default class SkillPlanTable extends React.Component {
                                         DateHelper.niceCountdown(
                                             this.state.selection.reduce(
                                                 (totalTime, index) => (totalTime + (this.state.items[index].type === 'skill' ? this.state.items[index].time : 0)), 0,
-                                            )
+                                            ),
                                         )
                                     })`
                                     :
