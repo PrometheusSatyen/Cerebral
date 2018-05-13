@@ -367,7 +367,7 @@ export default class SkillPlanTable extends React.Component {
                         />
                     </div>
                 </Popover>
-                <Table style={{overflow: 'hidden'}} height={`${window.innerHeight-170-60}px`}>
+                <Table style={{overflow: 'hidden'}}>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                         <TableRow style={styles.planRow}>
                             <TableHeaderColumn style={styles.planRowColumnSkill}>Skill</TableHeaderColumn>

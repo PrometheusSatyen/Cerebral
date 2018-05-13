@@ -562,7 +562,6 @@ export default class Plans extends React.Component {
                                         style={styles.skillListCard}
                                         characterId={this.props.characterId}
                                         onSkillSelectionChange={this.handleSkillSelected}
-                                        height={window.innerHeight - 182}
                                     />
                                 </Card>
                             </td>
