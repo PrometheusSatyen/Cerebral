@@ -29,15 +29,38 @@ class PlanCharacter {
         this.time = 0;
         this.lastRemap = this.attributes.last_remap_date !== undefined ? (Date.now() - (new Date(this.attributes.last_remap_date).getTime())) : 0;
 
+        const finishedSkills = this.baseCharacter.getFinishedSkillsInQueue();
+        const finishedSkillIds = finishedSkills.map(o => o.skill_id);
+        const currentSkill = this.baseCharacter.getCurrentSkill();
+
         Object.keys(AllSkills.skills).forEach((skill) => {
             const skillId = AllSkills.skills[skill].type_id;
             this.skills[skillId] = Object.assign({}, AllSkills.skills[skillId]);
 
             const baseCharacterSkill = this.baseCharacter.skills.filter(s => (s.skill_id.toString() === skill));
             if (baseCharacterSkill !== undefined && baseCharacterSkill[0] !== undefined) {
-                this.skills[skillId].trained_skill_level = baseCharacterSkill[0].trained_skill_level;
+
+                let trainedSkillLevel = baseCharacterSkill[0].trained_skill_level;
+                let skillPointsInSkill = baseCharacterSkill[0].skillpoints_in_skill;
+
+                // is this the skill we are currently training? approximate the sp and use those instead
+                if (currentSkill !== undefined && currentSkill.skill_id === skillId) {
+                    let startingMilliseconds = new Date(currentSkill.start_date).getTime();
+                    let millisecondsPassed = new Date().getTime() - startingMilliseconds;
+                    let additionalTrainedSp = millisecondsPassed * this.baseCharacter.getCurrentSpPerMillisecond();
+                    skillPointsInSkill = (currentSkill.training_start_sp + additionalTrainedSp);
+                // any of the skills that already finished?
+                } else if (finishedSkillIds.includes(skillId)) {
+                    const queueEntries = finishedSkills.filter(o => o.skill_id === skillId);
+                    queueEntries.sort((a, b) => (a.finished_level > b.finished_level));
+
+                    trainedSkillLevel = queueEntries[0].finished_level;
+                    skillPointsInSkill = queueEntries[0].level_end_sp;
+                }
+
+                this.skills[skillId].trained_skill_level = trainedSkillLevel;
                 this.skills[skillId].planned_skill_level = 0;
-                this.skills[skillId].skillpoints_in_skill = baseCharacterSkill[0].skillpoints_in_skill;
+                this.skills[skillId].skillpoints_in_skill = skillPointsInSkill;
                 this.skills[skillId].planned_skillpoints_in_skill = 0;
                 this.isUnknown = false;
             } else {

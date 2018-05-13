@@ -80,6 +80,7 @@ export default class FilteredSkillList extends React.Component {
                     characterId={this.props.characterId}
                     onSkillSelectionChange={this.handleSkillListSelection}
                     filter={this.state.filterText}
+                    height={this.props.height}
                 />
             </div>
         );
@@ -213,8 +214,14 @@ export class SkillList extends React.Component {
             });
         }
 
+        const listStyle = Object.assign({}, styles.skillList);
+        if (this.props.height !== undefined) {
+            listStyle.height = this.props.height - (styles.skillFilter.height + (styles.skillFilter.margin * 2)) - styles.skillFilter.margin - 16;
+            listStyle.overflowY = 'auto';
+        }
+
         return (
-            <List style={styles.skillList}>
+            <List style={listStyle}>
                 {items}
             </List>
         );

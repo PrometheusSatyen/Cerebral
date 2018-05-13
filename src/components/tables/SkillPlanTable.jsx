@@ -367,7 +367,7 @@ export default class SkillPlanTable extends React.Component {
                         />
                     </div>
                 </Popover>
-                <Table style={{overflow: 'hidden'}}>
+                <Table style={{overflow: 'hidden'}} height={`${window.innerHeight-170-60}px`}>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                         <TableRow style={styles.planRow}>
                             <TableHeaderColumn style={styles.planRowColumnSkill}>Skill</TableHeaderColumn>
@@ -410,11 +410,11 @@ export default class SkillPlanTable extends React.Component {
                         <TableRow style={styles.planRow}>
                             <TableHeaderColumn style={styles.planRowColumnSkill}>
                                 {
-                                    this.state.selection.length > 1 ?
+                                    this.state.selection && this.state.selection.length > 1 ?
                                     `${this.state.items.length} skills (${this.state.selection.length} selected - ${
                                         DateHelper.niceCountdown(
                                             this.state.selection.reduce(
-                                                (totalTime, index) => (totalTime + (this.state.items[index].type === 'skill' ? this.state.items[index].time : 0)), 0,
+                                                (totalTime, index) => (totalTime + (this.state.items[index] && this.state.items[index].type === 'skill' ? this.state.items[index].time : 0)), 0,
                                             ),
                                         )
                                     })`
