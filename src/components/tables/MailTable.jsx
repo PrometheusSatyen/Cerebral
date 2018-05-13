@@ -22,6 +22,7 @@ const styles = {
     table: {
         color: '#fff',
         fontSize: '9pt',
+        cursor: 'default',
     },
 };
 

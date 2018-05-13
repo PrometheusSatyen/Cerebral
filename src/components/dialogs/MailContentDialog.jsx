@@ -53,19 +53,19 @@ export default class MainContentDialog extends React.Component {
     getAvatarComponent(id, type) {
         switch (type) {
             case 'character':
-                return <Avatar style={styles.avatar} size={32} src={`https://image.eveonline.com/Character/${id}_32.jpg`} />;
+                return <Avatar key={id} style={styles.avatar} size={32} src={`https://image.eveonline.com/Character/${id}_32.jpg`} />;
                 break;
             case 'corporation':
-                return <Avatar style={styles.avatar} size={32} src={`https://image.eveonline.com/Corporation/${id}_32.png`} />;
+                return <Avatar key={id} style={styles.avatar} size={32} src={`https://image.eveonline.com/Corporation/${id}_32.png`} />;
                 break;
             case 'alliance':
-                return <Avatar style={styles.avatar} size={32} src={`https://image.eveonline.com/Alliance/${id}_32.png`} />;
+                return <Avatar key={id} style={styles.avatar} size={32} src={`https://image.eveonline.com/Alliance/${id}_32.png`} />;
                 break;
             case 'mailing_list':
-                return <Avatar style={styles.avatar} size={32} icon={<FontIcon className="material-icons">list</FontIcon>} />;
+                return <Avatar key={id} style={styles.avatar} size={32} icon={<FontIcon className="material-icons">list</FontIcon>} />;
                 break;
             default:
-                return <Avatar style={styles.avatar} size={32} icon={<FontIcon className="material-icons">help</FontIcon>} />;
+                return <Avatar key={id} style={styles.avatar} size={32} icon={<FontIcon className="material-icons">help</FontIcon>} />;
         }
     }
 
@@ -131,7 +131,7 @@ export default class MainContentDialog extends React.Component {
                         </Paper>
                     </div>
                     {
-                        mail.body.links !== undefined && mail.body.links.length > 0 ?
+                        mail.body.links !== undefined && mail.body.links.length > 0 &&
                             <div>
                                 <List style={styles.p}>
                                 {
@@ -145,7 +145,6 @@ export default class MainContentDialog extends React.Component {
                                 }
                                 </List>
                             </div>
-                        : ''
                     }
                 </Dialog>
             </div>
