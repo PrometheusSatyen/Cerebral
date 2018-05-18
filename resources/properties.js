@@ -81,6 +81,9 @@ export default {
         'location': 300,
         'ship': 300,
         'fatigue': 300,
+        'mails': 300,
+        'maillabels': 900,
+        'mailinglists': 900,
     },
 
     'contract_completed_statuses': [

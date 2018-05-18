@@ -14,6 +14,7 @@ import alphaSkillSet from '../../resources/alpha_skill_set';
 import DateTimeHelper from '../helpers/DateTimeHelper';
 import BulkIdResolver from '../helpers/BulkIdResolver';
 import LocationHelper from '../helpers/LocationHelper';
+import MailBodyHelper from '../helpers/MailBodyHelper';
 
 let subscribedComponents = [];
 let characters;
@@ -35,6 +36,9 @@ class Character {
         this.skillTree = [];
         this.nextRefreshes = {};
         this.contractSlotsUsed = 0;
+        this.mails = [];
+        this.mailLabels = {};
+        this.mailingLists = {};
     }
 
     getCurrentSkill() {
@@ -55,6 +59,14 @@ class Character {
         return this.skillQueue.filter((o) => {
             return (o.hasOwnProperty('finish_date')) && (new Date(o.finish_date) < currentDate);
         });
+    }
+
+    getMails() {
+        return this.mails
+    }
+
+    getMailLabels() {
+        return this.mailLabels
     }
 
     getLastSkill() {
@@ -307,6 +319,9 @@ class Character {
             this.refreshFatigue(),
             this.refreshLoyaltyPoints(),
             this.refreshContracts(),
+            this.refreshMails(),
+            this.refreshMailLabels(),
+            this.refreshMailingLists(),
         ]);
     }
 
@@ -695,6 +710,156 @@ class Character {
         }
     }
 
+    async refreshMailLabels() {
+        if (this.shouldRefresh('maillabels')) {
+            const client = new EsiClient();
+            await client.authChar(AuthorizedCharacter.get(this.id));
+
+            try {
+                const labels = await client.get('characters/' + this.id + '/mail/labels', 'v2', 'esi-mail.read_mail.v1');
+
+                const mailLabels = {};
+                for (const label of labels) {
+                    mailLabels[label.label_id] = label;
+                }
+
+                this.mailLabels = mailLabels;
+
+                this.markRefreshed('maillabels');
+            } catch (err) {
+                if (err === 'Scope missing') {
+                    this.markFailedNoScope('mails');
+                }
+            }
+
+            this.save();
+        }
+    }
+    
+    async refreshMailingLists() {
+        if (this.shouldRefresh('mailinglists')) {
+            const client = new EsiClient();
+            await client.authChar(AuthorizedCharacter.get(this.id));
+
+            try {
+                const mailingLists = await client.get('characters/' + this.id + '/mail/lists', 'v1', 'esi-mail.read_mail.v1');
+
+                const lists = {};
+
+                for (const list of mailingLists) {
+                    lists[list.mailing_list_id] = list;
+                }
+
+                this.mailingLists = lists;
+
+                this.markRefreshed('mailinglists');
+            } catch (err) {
+                if (err === 'Scope missing') {
+                    this.markFailedNoScope('mails');
+                }
+            }
+
+            this.save();
+        }
+    }
+
+    async refreshMails() {
+        if (this.shouldRefresh('mails')) {
+            const client = new EsiClient();
+            await client.authChar(AuthorizedCharacter.get(this.id));
+
+            try {
+                this.mails = await client.get('characters/' + this.id + '/mail', 'v1', 'esi-mail.read_mail.v1');
+
+                const resolver = new BulkIdResolver();
+                for (const mail of this.mails) {
+                    // "Welcome" mail from a mailing list, mailing lists will not resolve
+                    if (mail.recipients[0].recipient_type === 'mailing_list' && mail.recipients[0].recipient_id == mail.from){
+                        mail.from_name = 'Welcome ML';
+                    } else {
+                        resolver.addId(mail.from);
+                    }
+
+                    // resolve any resolveable names
+                    for (const recipient of mail.recipients) {
+                        if (recipient.recipient_type !== undefined && recipient.recipient_id !== undefined) {
+                            switch (recipient.recipient_type) {
+                                case 'character':
+                                case 'corporation':
+                                case 'alliance':
+                                    resolver.addId(recipient.recipient_id);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+
+                    const labelNames = [];
+                    for (const label of mail.labels) {
+                        // outbox
+                        if (label === 2) {
+                            this.is_sent = true;
+                        }
+
+                        if (this.mailLabels.hasOwnProperty(label)) {
+                            labelNames.push(this.mailLabels[label].name);
+                        }
+                    }
+
+                    mail.label_names = labelNames;
+                    mail.is_sent = mail.hasOwnProperty('is_sent') ? mail.is_sent : false;
+                    mail.is_read = mail.hasOwnProperty('is_read') ? mail.is_read : false;
+
+                    mail.subject = mail.subject.replace(/&amp;/g, '&');
+                    mail.subject = mail.subject.replace(/&lt;/g, '<');
+                    mail.subject = mail.subject.replace(/&gt;/g, '>');
+                    mail.subject = mail.subject.replace(/&quot;/g, '"');
+                }
+
+                await resolver.resolve();
+
+                for (const mail of this.mails) {
+                    if (resolver.get(mail.from) !== undefined) {
+                        mail.from_name = resolver.get(mail.from).name;
+                    } else if (this.mailingLists[mail.from] !== undefined) {
+                        mail.from_name = this.mailingLists[mail.from].name;
+                    } else {
+                        mail.from_name = '*Unknown*';
+                    }
+
+                    for (const recipient of mail.recipients) {
+                        if (recipient.recipient_type !== undefined && recipient.recipient_id !== undefined) {
+                            switch (recipient.recipient_type) {
+                                case 'character':
+                                case 'corporation':
+                                case 'alliance':
+                                    recipient.recipient_name = resolver.get(recipient.recipient_id) !== undefined ? resolver.get(recipient.recipient_id).name : '*Unknown*';
+                                    break;
+                                case 'mailing_list':
+                                    this.mailingLists[recipient.recipient_id] !== undefined ? recipient.recipient_name = this.mailingLists[recipient.recipient_id].name : '*Unknown Mailing List*';
+                                    break;
+                                default:
+                                    recipient.recipient_name = '*Unknown*';
+                                    break;
+                            }
+                        }
+                    }
+
+                    mail.body = await MailBodyHelper.retrieveMailBody(mail.mail_id,client,this.id)
+                }
+
+                this.markRefreshed('mails');
+            } catch (err) {
+                if (err === 'Scope missing') {
+                    this.markFailedNoScope('mails');
+                }
+            }
+
+            this.save();
+        }
+    }
+
     shouldRefresh(type) {
         return (!this.nextRefreshes.hasOwnProperty(type)) || (new Date(this.nextRefreshes[type].do) < new Date());
     }
@@ -758,6 +923,9 @@ class Character {
             "location": "Current Location",
             "ship": "Active Ship",
             "fatigue": "Jump Fatigue",
+            "mails": "Mails",
+            "maillabels": "Mail Labels",
+            "mailinglists": "Mailing Lists",
         };
 
         // TODO: clean this up jfc
