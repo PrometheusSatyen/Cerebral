@@ -59,11 +59,14 @@
     "react": "^15.6.2",
     "react-dom": "^15.6.2",
     "react-router-dom": "^4.2.2",
-    "react-table": "^6.8.0",
+    "react-sortable-hoc": "^0.6.8",
+    "react-sortable-tree": "^2.1.1",
+    "react-table": "^6.8.2",
     "request": "^2.85.0",
     "request-promise-native": "^1.0.5",
     "sanitize-html": "^1.18.2",
-    "winston": "^3.0.0-rc3"
+    "winston": "^3.0.0-rc3",
+    "xml2js": "^0.4.19"
   },
   "devDependencies": {
     "babel-plugin-transform-async-to-generator": "^6.24.1",

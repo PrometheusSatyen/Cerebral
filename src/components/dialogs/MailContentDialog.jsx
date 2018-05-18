@@ -131,7 +131,7 @@ export default class MainContentDialog extends React.Component {
                         </Paper>
                     </div>
                     {
-                        mail.body.links !== undefined && mail.body.links.length > 0 ?
+                        mail.body.links !== undefined && mail.body.links.length > 0 &&
                             <div>
                                 <List style={styles.p}>
                                 {
@@ -146,7 +146,6 @@ export default class MainContentDialog extends React.Component {
                                 }
                                 </List>
                             </div>
-                        : ''
                     }
                 </Dialog>
             </div>

@@ -7,6 +7,7 @@ import {FontIcon} from 'material-ui';
 
 import Summary from './Character/Summary';
 import Skills from './Character/Skills';
+import Plans from './Character/Plans';
 import Contracts from './Character/Contracts';
 import Mails from './Character/Mails';
 import Api from './Character/Api';
@@ -28,7 +29,7 @@ export default class Character extends React.Component {
         super(props);
 
         this.state = {
-            currentPage: 'summary'
+            currentPage: 'summary',
         }
     }
 
@@ -43,6 +44,9 @@ export default class Character extends React.Component {
 
         let component;
         switch(this.state.currentPage) {
+            case 'plans':
+                component = <Plans characterId={characterId}/>;
+            break;
             case 'skills':
                 component = <Skills characterId={characterId}/>;
                 break;
@@ -75,6 +79,13 @@ export default class Character extends React.Component {
                                   style={styles.button}
                                   icon={<FontIcon className="material-icons">library_books</FontIcon>}
                                   onClick={e => this.switchPage('skills')}/>
+
+                    <RaisedButton label="Plans"
+                                  disabled={this.state.currentPage === 'plans'}
+                                  backgroundColor="#616161"
+                                  style={styles.button}
+                                  icon={<FontIcon className="material-icons">format_list_numbered</FontIcon>}
+                                  onClick={e => this.switchPage('plans')}/>
 
                     <RaisedButton label="Mails"
                                   disabled={this.state.currentPage === 'mails'}

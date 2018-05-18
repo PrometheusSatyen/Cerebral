@@ -10,6 +10,7 @@ import {lightBlue200} from 'material-ui/styles/colors';
 
 import LeftNav from './nav/LeftNav';
 import Overview from './views/Overview';
+import SkillBrowser from './views/SkillBrowser';
 import SpFarming from './views/SpFarming';
 import Contracts from './views/Contracts';
 import Character from './views/Character';
@@ -43,6 +44,7 @@ export default class App extends React.Component {
                     <div style={styles.mainDiv}>
                         <Route exact path="/" component={Overview} />
                         <Route path="/sp-farming" component={SpFarming} />
+                        <Route path="/skill-browser" component={SkillBrowser} />
                         <Route path="/contracts" component={Contracts} />
                         <Route path="/settings" component={Settings} />
                         <Route path="/characters/:characterId" component={Character} />
