@@ -177,8 +177,8 @@ class Character {
             return true;
         }
 
-        // if they have any skills with active level > enabled, must be alpha
-        if (this.skills.find(o => o.active_skill_level > o.trained_skill_level) !== undefined) {
+        // if they have any skills with trained level > active, must be alpha
+        if (this.skills.find(o => o.trained_skill_level > o.active_skill_level) !== undefined) {
             return false;
         }
 
