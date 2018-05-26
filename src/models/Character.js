@@ -173,7 +173,7 @@ class Character {
 
     isOmega() {
         // if they have >5 mil sp and a skill actively training, must be omega
-        if ((this.total_sp > 5000000) && (this.getCurrentSkill() !== null)) {
+        if ((this.total_sp > 5000000) && (this.getCurrentSkill() != null)) {
             return true;
         }
 
