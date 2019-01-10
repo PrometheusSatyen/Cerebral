@@ -1,7 +1,7 @@
 'use strict';
 
 export default {
-    'version': '0.6.1-dev',
+    'version': '0.7.0',
     'author_email': 'prometheussatyen@gmail.com',
 
     'eve_sso_url': 'https://login.eveonline.com/oauth',
@@ -62,7 +62,7 @@ export default {
         },
     ],
 
-    'eve_esi_url': 'https://esi.tech.ccp.is',
+    'eve_esi_url': 'https://esi.evetech.net',
     'eve_default_data_source': 'tranquility',
 
     'refresh_intervals': {

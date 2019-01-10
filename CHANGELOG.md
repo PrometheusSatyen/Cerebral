@@ -1,9 +1,14 @@
-XXXX-XX-XX: 0.6.1-dev
+2019-01-09: 0.7.0
 -------------------------
 * Fixed bug causing utilized contract slots for characters to always show as 0.
 * Renamed pending contracts to incomplete contracts.
 * Added an indicator of the last refresh to the character contracts pages.
 * Added more info button to contracts tables which brings up a dialog box giving full details of the contract.
+* Skill browser
+* Skill planner
+* Mails
+* Updated to esi.evetech.net URL
+* Honestly there's probably other shit I've forgotten it's been a while since I release an update, hopefully it all works.
 
 2018-04-21: 0.6.0
 -------------------------
