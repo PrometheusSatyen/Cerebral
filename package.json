@@ -51,34 +51,34 @@
     }
   },
   "dependencies": {
-    "electron-compile": "^6.4.2",
-    "electron-devtools-installer": "^2.2.3",
+    "electron-compile": "^6.4.4",
+    "electron-devtools-installer": "^2.2.4",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^1.3.0",
-    "material-ui": "^0.20.0",
+    "material-ui": "^0.20.2",
     "react": "^15.6.2",
     "react-dom": "^15.6.2",
-    "react-router-dom": "^4.2.2",
+    "react-router-dom": "^4.3.1",
     "react-sortable-hoc": "^0.6.8",
-    "react-sortable-tree": "^2.1.1",
-    "react-table": "^6.8.2",
-    "request": "^2.85.0",
+    "react-sortable-tree": "^2.6.0",
+    "react-table": "^6.8.6",
+    "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
-    "sanitize-html": "^1.18.2",
-    "winston": "^3.0.0-rc3",
+    "sanitize-html": "^1.20.0",
+    "winston": "^3.1.0",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-plugin-transform-es2015-classes": "^6.24.1",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
-    "electron-forge": "^5.1.1",
+    "electron-forge": "^5.2.3",
     "electron-prebuilt-compile": "1.8.2",
     "eslint": "^3.19.0",
     "eslint-config-airbnb": "^15.1.0",
-    "eslint-plugin-import": "^2.10.0",
+    "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^5.1.1",
-    "eslint-plugin-react": "^7.7.0"
+    "eslint-plugin-react": "^7.12.3"
   }
 }
