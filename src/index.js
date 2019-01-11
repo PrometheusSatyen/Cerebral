@@ -16,13 +16,14 @@ let mainWindow;
 const isDevMode = process.execPath.match(/[\\/]electron/);
 const iconPath = path.join(__dirname, '../resources/icon.ico');
 
-const shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
+const lockObtained = app.requestSingleInstanceLock();
+app.on('second-instance', (event, commandLine, workingDirectory) => {
     if (mainWindow) {
         mainWindow.show();
     }
 });
 
-if (shouldQuit) {
+if (!lockObtained) {
     app.quit();
 }
 
