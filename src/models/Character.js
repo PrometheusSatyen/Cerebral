@@ -303,6 +303,9 @@ class Character {
         // first refresh basic info which will be needed for the rest of the calls
         await this.refreshInfo();
 
+        // refresh access token if needed, enforce 60 second validity to prevent chance of a mid data pull refresh
+        await AuthorizedCharacter.get(this.id).getAccessToken(60);
+
         // asynchronously fetch all the other information and return a promise which resolves when everything is fetched
         return Promise.all([
             this.refreshPortrait(),
