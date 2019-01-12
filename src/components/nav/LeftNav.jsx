@@ -81,7 +81,6 @@ export default class LeftNav extends React.Component {
                     <ListItem value={2} primaryText="Skill Browser" onClick={(e) => this.handleClick(e)}/>
                     <ListItem value={3} primaryText="SP Farming" onClick={(e) => this.handleClick(e)}/>
                     <ListItem value={4} primaryText="Contracts" onClick={(e) => this.handleClick(e)}/>
-                    <ListItem value={5} primaryText="Settings" onClick={(e) => this.handleClick(e)}/>
 
                     <br/>
 
