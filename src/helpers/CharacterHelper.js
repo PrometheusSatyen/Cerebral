@@ -2,7 +2,7 @@
 
 import electron from 'electron';
 
-import SsoClient from './eve/SsoClient';
+import SsoClientv2 from './eve/SsoClientv2';
 import Character from '../models/Character';
 
 import appProperties from '../../resources/properties.js';
@@ -11,11 +11,12 @@ let authWindow;
 
 export default class CharacterHelper {
     static addCharacter() {
-        let client = new SsoClient();
-        let redirect = client.redirect(appProperties.scopes.map(a => a.name));
+        let client = new SsoClientv2();
+        const challenge = SsoClientv2.generateCodeChallenge();
+        let redirect = client.redirect(appProperties.scopes.map(a => a.name), challenge);
 
         authWindow = new electron.remote.BrowserWindow({
-            width: 400,
+            width: 475,
             height: 700,
             show: false,
             'node-integration': false
@@ -24,26 +25,35 @@ export default class CharacterHelper {
         authWindow.setMenu(null);
         authWindow.show();
 
-        async function handleCallback(url) {
-            let raw_code = /code=([^&]*)/.exec(url) || null;
-            let code = (raw_code && raw_code.length > 1) ? raw_code[1] : null;
+        async function handleCode(code) {
+            let character = await client.authorize(code, challenge);
+            character.save();
+
+            // mark for a force refresh (this might be a re-authorization)
+            Character.markCharacterForForceRefresh(character.id);
+
+            // we go into the structures cache and we clear this character id from anywhere it appears in an attempted list
+            // this ensures that on next refresh structures will be attempted to be repulled
+            StructureHelper.removeCharacterIdFromAttemptedLists(character.id);
+
+            Character.build();
+        }
+
+        authWindow.webContents.on('will-redirect', function(event, url) {
+            let rawCode = /\?code=([^&]*)/.exec(url) || null;
+            let code = (rawCode && rawCode.length > 1) ? rawCode[1] : null;
             let error = /\?error=(.+)$/.exec(url);
 
             if (code || error) {
+                event.preventDefault();
                 authWindow.destroy();
             }
 
             if (code) {
-                let character = await client.authorize(code);
-                character.save();
-                Character.build();
+                handleCode(code);
             } else if (error) {
                 alert("Failed to authorize your character, please try again.")
             }
-        }
-
-        authWindow.webContents.on('did-get-redirect-request', function (event, oldUrl, newUrl) {
-            handleCallback(newUrl);
         });
 
         authWindow.webContents.on('did-finish-load', function(event, url) {

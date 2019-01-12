@@ -4,8 +4,8 @@ import CharacterHelper from '../helpers/CharacterHelper';
 
 const Store = require('electron-store');
 
-import StructureHelper from '../helpers/StructureHelper';
 import SsoClient from '../helpers/eve/SsoClient';
+import SsoClientv2 from '../helpers/eve/SsoClientv2';
 import Character from './Character';
 
 import appProperties from '../../resources/properties';
@@ -16,7 +16,7 @@ const authorizedCharactersStore = new Store({
 });
 
 class AuthorizedCharacter {
-    constructor(id, accessToken, accessTokenExpiry, refreshToken, ownerHash, scopes) {
+    constructor(id, accessToken, accessTokenExpiry, refreshToken, ownerHash, scopes, ssoVersion) {
         if (id !== undefined) {
             id = id.toString();
             this.id = id;
@@ -28,10 +28,15 @@ class AuthorizedCharacter {
         this.ownerHash = ownerHash;
         this.scopes = scopes;
         this.lastRefresh = {};
+        this.ssoVersion = (ssoVersion !== undefined) ? ssoVersion : 1;
     }
 
-    async getAccessToken() {
-        if (new Date(this.accessTokenExpiry).getTime() <= new Date().getTime() + 30000) { // at least 30 seconds of validity
+    async getAccessToken(minimumValidity) {
+        if (minimumValidity === undefined) {
+            minimumValidity = 30;
+        }
+
+        if (new Date(this.accessTokenExpiry).getTime() <= new Date().getTime() + (1000 * minimumValidity)) {
             await this.refresh();
         }
 
@@ -57,7 +62,11 @@ class AuthorizedCharacter {
 
         let client;
         try {
-            client = new SsoClient();
+            if (this.ssoVersion === 2) {
+                client = new SsoClientv2();
+            } else {
+                client = new SsoClient();
+            }
         } catch(err) {
             this.lastRefresh.success = false;
             this.lastRefresh.error = {
@@ -114,6 +123,9 @@ class AuthorizedCharacter {
         this.lastRefresh.success = true;
         this.accessToken = res.accessToken;
         this.accessTokenExpiry = res.accessTokenExpiry;
+        if ((res.hasOwnProperty('refreshToken')) && (res.refreshToken !== '')) {
+            this.refreshToken = res.refreshToken;
+        }
         this.save();
     }
 
@@ -161,14 +173,6 @@ class AuthorizedCharacter {
             authorizedCharacters[this.id] = this;
             authorizedCharactersStore.set('authorizedCharacters', authorizedCharacters);
         }
-
-        // when a save is triggered, we can assume that a new token+scopes was just granted
-        // we go into the structures cache and we clear this character id from anywhere it appears in an attempted list
-        // this ensures that on next refresh structures will be attempted to be repulled
-        StructureHelper.removeCharacterIdFromAttemptedLists(this.id);
-
-        // we also mark for a force refresh
-        Character.markCharacterForForceRefresh(this.id);
     }
 }
 
