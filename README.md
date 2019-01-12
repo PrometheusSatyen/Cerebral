@@ -4,26 +4,22 @@
 [![appveyor build status](https://ci.appveyor.com/api/projects/status/github/prometheussatyen/cerebral?svg=true)](https://ci.appveyor.com/project/PrometheusSatyen/cerebral)
 [![license: AGPL v3](https://img.shields.io/badge/license-AGPL%20v3-red.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-In May 2018, the EVE XML/CREST APIs will shutdown and take EVEMon and many other legacy tools with them to the grave.
+Cerebral is a tool for monitoring your EVE Online characters. It is focused on ease of use and speed for people who manage larger numbers of characters.
 
-Not being able to live without EVEMon, I decided to try and replicate it as best I could utilizing the new EVE ESI API.  
 If you enjoy using Cerebral, please consider an ISK donation to the in-game character "Prometheus Satyen". Donations mean I have to spend less time ratting and can spend more time developing!
 
-Cerebral is currently in alpha testing! That means:
--------------------------
-* There may be bugs in Cerebral. It won't delete your boot.ini but it might lose your tokens, crash, freeze up, etc.
-* I am only distributing a Windows-x64 version during alpha testing. macOS and Linux versions will be available once I move to beta phase.
+Cerebral is currently in beta testing. That means there may be bugs in Cerebral. It won't delete your boot.ini but it might lose your tokens, crash, freeze up, etc.
 
 Current Functionality:
 -------------------------
-* Add your characters using the EVE SSO.
+* Add your characters using the EVE SSO v2.
 * See an overview of all your characters including: Alpha/Omega Status, Corp/Alliance, ISK, SP, Current skill in training and time remaining
-* SP Farming overview which allows you to add characters as an SP farm, specifying the base SP that character will keep (unextractable), you can then see:
+* SP Farming overview which allows you to add characters as an SP farm, specifying the base SP that character will keep (un-extractable), you can then see:
     * Number of injectors ready to extract
     * Time until next injector is ready to extract
     * Total time left in training queue
     * Current SP/hour
-* Contracts page showing contracts across all your characters, updated every 5 minutes:
+* Contracts page showing contracts across all your characters:
     * Shows contract type, status, title, issuer, assignee/acceptor, date issued and date completed.
     * For courier contracts, shows the origin, destination and volume.
     * Contracts are broken into two table, one for pending/in-progress/otherwise "active" contracts and another for completed contracts (which includes deleted, reversed, etc.)
@@ -31,39 +27,42 @@ Current Functionality:
     * Summary tab:
         * Basic character information: date of birth, security status, SP, wallet balance
         * Home location, current location, active ship
-        * Attributes and remap information
+        * Unallocated SP, Attributes and remap information
         * Active implants
         * Skill queue
         * Jump clones
         * Jump fatigue
         * Loyalty points
     * Skills tab: trained skills by skill group, total SP in skills/skill groups, shows partially trained skills
+    * Skill plans tab: basic skill planning functionality (honestly EVEMon's is a lot better, I'd stick with it for now if I were you until I can make some serious improvements)
+    * Mail tab: quick access to your EVE mails
     * Contracts tab: pending/completed contracts involving the character
     * API tab: shows information on the authorized API token including scopes granted, data refresh intervals and token health
 
 Planned Functionality:
 -------------------------
-* Ability to click on contracts to open them and show full details including contents.
-* More information on the individual character pages, with tabs for a detailed overview of the skill queue, mails, etc.
-* Skill Planner, replicating EVEMon's skill planning functionality, including remaps, implants, etc.
 * Configurable alerts (training stopped, character lapsed to alpha, ready for extraction, etc.)
 * Skill Extraction Planner, experiment with extracting skills from your character to see how much ISK you would get.
 
 Screenshots:
 -------------------------
-![character overview](https://prom.gaydar.space/2018-04-21_17-37-43_tt82j9SmzY8sxzNZwNbEutSEiHz7bF.png)
+![character overview](https://prom.satyen.space/19-01-12_14-35-38_ojDQYDlu.png)
 
-![sp-farming](https://prom.gaydar.space/2018-04-18_12-35-03_WLpFbKvcAgj22eE0t6Ayo1jJ25HUcj.png)
+![sp-farming](https://prom.satyen.space/19-01-12_14-37-10_vrM40Mb7.png)
 
-![contracts](https://prom.gaydar.space/2018-04-18_12-35-17_suf4c19ixNkOZSAerRLqXzaUMVcWDW.png)
+![contracts](https://prom.satyen.space/19-01-12_14-40-50_uhJ7fkbh.png)
 
-![setting](https://prom.gaydar.space/2018-04-21_17-37-14_eHCUBlPheXMwOkz5AdjfGMH5tv6QnN.png)
+![character-summary](https://prom.satyen.space/19-01-12_14-41-50_RteFe5WW.png)
 
-![character-summary](https://prom.gaydar.space/2018-04-21_17-38-05_eytGdToL1qcNdBWOPIiKzipZT0RtKR.png)
+![character-skills](https://prom.satyen.space/19-01-12_14-42-04_3csgCRkM.png)
 
-![character-skills](https://prom.gaydar.space/2018-04-21_17-38-34_9LBjt9ygMukaLkbWGHhKshOHGv9Jnd.png)
+![character-plans](https://prom.satyen.space/19-01-12_14-42-28_h33ExW8J.png)
 
-![character-api](https://prom.gaydar.space/2018-04-21_17-38-48_0esisqZl3KJMzJv9laisY4Lqtrh11F.png)
+![character-mails](https://prom.satyen.space/19-01-12_14-43-29_Z1j8ddWN.png)
+
+![character-mail](https://prom.satyen.space/19-01-12_14-44-36_A6rthoGf.png)
+
+![character-api](https://prom.satyen.space/19-01-12_14-44-55_r5D1s422.png)
 
 Installation Instructions:
 -------------------------
@@ -76,12 +75,12 @@ Update Instructions:
 -------------------------
 Simply follow the installation instructions and install the new version on top of the old version.
 
-Automatic updates will be available in the first full release of Cerebral 1.0.0.
+Automatic updates will be available soon.
 
 Usage:
 -------------------------
-* Add your characters using the "Authorise Character" button.
-* Data will refresh automatically, you can manually trigger a refresh with the Refresh button. Note that CCP caches some data so things you change in-game may not refresh for a while.
+* Add your characters using the "Authorize Character" button.
+* Data will refresh automatically.
 * SP Farming:
     * Click the "Add Farm" button and choose a character, and then enter the amount of SP you would like to always keep on that character (for example it might be a JF pilot and all the skills you need take up 11,000,000 SP).
     * To update the Base SP for a farm, just add it again with the new base SP, Cerebral will update the base SP on the existing farm.
@@ -103,7 +102,15 @@ CCP does not allow us to see Alpha/Omega status directly in the API. Instead I p
 
 Most reputable software is signed using a special signature. To get one of those signatures, you have to pay a fee and your real name goes into the software.
 
-I have no desire to embed my real name into an application I'm distributing to the EVE community, so it's unlikely I will ever be signing my code. As a result many AntIVirus programs will flag the application as a virus, you can safely add an exception if you trust me. :)
+I have no desire to embed my real name into an application I'm distributing to the EVE community, so it's unlikely I will ever be signing my code. As a result many AntiVirus programs will flag the application as a virus, you can safely add an exception if you trust me. :)
+
+**Why does Cerebral use an embedded browser for authorization, isn't using the user's native browser more secure?**
+
+In some ways yes using the native browser can be considered more secure as it provides additional peace of mind to users that their credentials are not being intercepted by the application.
+
+In my opinion, this benefit is completely overshadowed by the huge improvement in user experience for adding large numbers of characters that the embedded flow provides. This combined with the fact that Cerebral is completely open source allowing you to easily verify that it is not intercepting your credentials led me to choose an embedded authorization flow.
+
+If I have some spare time and feel like it, I may implement a setting allowing paranoid/conspiracy-subscribing users to utilize their own browser for the authorization.
 
 **What languages/technologies does Cerebral use?**
 
