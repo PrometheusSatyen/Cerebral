@@ -380,6 +380,9 @@ class Character {
 
             let skillData = await client.get('characters/' + this.id + '/skills', 'v4');
             Object.assign(this, skillData);
+            if (!skillData.hasOwnProperty('unallocated_sp')) {
+                this.unallocated_sp = 0;
+            }
 
             const spRequirements = {};
             spRequirements[0] = [0];
