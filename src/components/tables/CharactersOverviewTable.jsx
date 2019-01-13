@@ -9,7 +9,7 @@ import DateTimeHelper from '../../helpers/DateTimeHelper';
 import Avatar from 'material-ui/Avatar';
 import {Table, TableBody, TableRow, TableRowColumn} from 'material-ui/Table';
 import FontIcon from 'material-ui/FontIcon';
-import {red500, greenA200} from 'material-ui/styles/colors';
+import {red500, greenA200, lightBlueA200} from 'material-ui/styles/colors';
 import AuthorizedCharacter from '../../models/AuthorizedCharacter';
 
 const styles = {
@@ -91,7 +91,7 @@ export default class CharactersOverviewTable extends React.Component {
                                 </TableRowColumn>
 
                                 <TableRowColumn style={{width: 25, paddingLeft: 20, paddingRight: 0}}>
-                                    <FontIcon className="material-icons" color={auth.lastRefresh.success !== false ? greenA200 : red500} style={{marginTop: 5}}>
+                                    <FontIcon className="material-icons" color={auth.lastRefresh.success !== false ? (auth.ssoVersion === 2 ? greenA200 : lightBlueA200) : red500} style={{marginTop: 5}}>
                                         {auth.lastRefresh.success !== false ? 'check_circle' : 'warning'}
                                     </FontIcon>
                                 </TableRowColumn>

@@ -64,7 +64,7 @@ export default class Api extends React.Component {
                     <Card style={styles.card}>
                         <CardHeader title='API Health'/>
                         <CardText>
-                            <strong>SSO Version:</strong> {auth.ssoVersion}<br/>
+                            <strong>SSO Version:</strong> v{auth.ssoVersion}<br/>
                             <strong>Token Status:</strong>&nbsp;
                             <span style={{color: authStatus !== false ? greenA200 : red500}}>
                                 {authStatus ? 'OK' : 'Dead, please re-authorize!'}

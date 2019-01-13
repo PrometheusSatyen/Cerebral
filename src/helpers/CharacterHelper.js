@@ -5,6 +5,8 @@ import electron from 'electron';
 import SsoClientv2 from './eve/SsoClientv2';
 import Character from '../models/Character';
 
+import StructureHelper from './StructureHelper';
+
 import appProperties from '../../resources/properties.js';
 
 let authWindow;
