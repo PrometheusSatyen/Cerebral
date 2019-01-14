@@ -1,8 +1,7 @@
 'use strict';
 
 import rp from 'request-promise-native';
-
-import logger from '../Logger';
+import log from 'electron-log';
 
 import appProperties from './../../../resources/properties';
 
@@ -42,7 +41,7 @@ export default class EsiClient {
         if (requiredScopes.length > 0) {
             for(const scope of requiredScopes) {
                 if (!this.scopes.includes(scope)) {
-                    logger.log('info', `SKIPPING ${method} ${endpoint}.${version}, scope missing from auth.`);
+                    log.warn(`[ESI] Skipping ${method} ${endpoint}.${version}, scope missing.`);
                     throw 'Scope missing';
                 }
             }
@@ -79,16 +78,16 @@ export default class EsiClient {
         requestOptions['qs']['datasource'] = this.dataSource;
 
         try {
-            logger.log('verbose', `Firing ${method} ${endpoint}.${version}...`);
+            log.verbose(`[ESI] Firing ${method} ${endpoint}.${version}...`);
             let body = await rp(requestOptions);
             return (typeof body === 'string') ? JSON.parse(body) : body;
         } catch(err) {
-            logger.log('info', `FAILED ${method} ${endpoint}.${version}, retrying...`);
+            log.warn(`[ESI] Failed ${method} ${endpoint}.${version}, retrying...`);
             try {
                 let body = await rp(requestOptions);
                 return (typeof body === 'string') ? JSON.parse(body) : body;
             } catch(err) {
-                logger.log('info', `FAILED x2 ${method} ${endpoint}.${version}, throwing error.`);
+                log.warn( `[ESI] Failed x2 ${method} ${endpoint}.${version}, throwing error.`);
                 throw err;
             }
         }

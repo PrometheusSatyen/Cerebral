@@ -2,6 +2,7 @@
 
 import rp from 'request-promise-native';
 import queryString from 'querystring';
+import log from 'electron-log';
 
 import AuthorizedCharacter from '../../models/AuthorizedCharacter';
 
@@ -43,6 +44,7 @@ export default class SsoClientv2 {
             }
         };
 
+        log.verbose("[SSOv2] Sending authorize request, code = " + code);
         let body = JSON.parse(await rp(options));
 
         let tokenData = {
@@ -53,6 +55,7 @@ export default class SsoClientv2 {
 
         let charData = SsoClientv2.validate(body.access_token);
 
+        log.verbose(`[SSOv2] Authorization successful, adding/updating character #${charData.characterId}, name: ${charData.characterName}`);
         return new AuthorizedCharacter(
             charData.characterId,
             tokenData.accessToken,
@@ -77,6 +80,7 @@ export default class SsoClientv2 {
             simple: false
         };
 
+        log.verbose("[SSOv2] Sending refresh request, refresh token = " + refreshToken);
         let res;
         try {
             res = await rp(options);
@@ -89,10 +93,9 @@ export default class SsoClientv2 {
             body = JSON.parse(body);
         }
 
-        console.log(body);
-
         switch(res.statusCode) {
             case 200:
+                log.verbose(`[SSOv2] Refresh successful, old refresh token = ${refreshToken}, new access token = ${body.access_token}, new refresh token = ${body.refresh_token}`);
                 return {
                     accessToken: body.access_token,
                     accessTokenExpiry: new Date(new Date().getTime() + (body.expires_in * 1000)),
@@ -102,8 +105,10 @@ export default class SsoClientv2 {
             case 401:
             case 403:
                 if ((body.hasOwnProperty('error')) && (body.error !== undefined) && (body.error !== '')) {
+                    log.verbose(`[SSOv2] Refresh failed, refresh token = ${refreshToken}, error: ${body.error}`);
                     throw body;
                 } else {
+                    log.verbose(`[SSOv2] Refresh failed, refresh token = ${refreshToken}, unknown error`);
                     throw undefined;
                 }
             default:
@@ -133,8 +138,6 @@ export default class SsoClientv2 {
     static validate(accessToken) {
         const payload = accessToken.split('.')[1];
         const data = JSON.parse(Buffer.from(payload, 'base64').toString());
-
-        console.log(data);
 
         return {
             characterId: data.sub.split(':')[2],

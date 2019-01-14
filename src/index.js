@@ -2,6 +2,7 @@
 
 import {app, BrowserWindow, Tray, Menu, shell} from 'electron';
 import path from 'path';
+import log from 'electron-log';
 
 import appProperties from './../resources/properties';
 
@@ -15,6 +16,15 @@ let mainWindow;
 
 const isDevMode = process.execPath.match(/[\\/]electron/);
 const iconPath = path.join(__dirname, '../resources/icon.ico');
+
+if (isDevMode) {
+    log.transports.file.level = 'debug';
+    log.transports.console.level = 'verbose';
+    log.transports.file.appName = 'Electron';
+} else {
+    log.transports.file.level = 'warn';
+    log.transports.console.level = 'warn';
+}
 
 const lockObtained = app.requestSingleInstanceLock();
 app.on('second-instance', (event, commandLine, workingDirectory) => {

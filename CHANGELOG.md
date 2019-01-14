@@ -3,10 +3,12 @@ XXXX-XX-XX: 0.8.0
 * Switch to SSO v2 for native applications for authorizing characters, characters entered previously continue to function as normal and can be gracefully upgraded to v2 by re-authorizing.
     * This removes the need for manually entering developer credentials.
     * Settings panel removed for now since developer credentials was its only use.
+    * SSO v1 characters now show up with a blue check mark on the overview, v2 characters show a green check mark.
 * Fixed bug where unallocated SP would stick on an old value after all SP was allocated.
 * Fixed bug with alpha/omega status (thanks @hreeder).
 * Upgraded most dependencies to their latest versions.
 * Fixed an issue that was causing multiple unnecessary refreshes of access tokens due to parallel data update operations.
+* Added some logging with electron-log.
 
 2019-01-09: 0.7.0
 -------------------------
