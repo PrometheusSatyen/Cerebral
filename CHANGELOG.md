@@ -1,4 +1,4 @@
-XXXX-XX-XX: 0.8.0
+2019-01-14: 0.8.0
 -------------------------
 * Switch to SSO v2 for native applications for authorizing characters, characters entered previously continue to function as normal and can be gracefully upgraded to v2 by re-authorizing.
     * This removes the need for manually entering developer credentials.

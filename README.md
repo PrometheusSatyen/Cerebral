@@ -41,8 +41,11 @@ Current Functionality:
 
 Planned Functionality:
 -------------------------
+* Automated updates
+* Account manager for keeping track of your subscriptions/MPT expiry
 * Configurable alerts (training stopped, character lapsed to alpha, ready for extraction, etc.)
 * Skill Extraction Planner, experiment with extracting skills from your character to see how much ISK you would get.
+* Various small things like deleting characters
 
 Screenshots:
 -------------------------
