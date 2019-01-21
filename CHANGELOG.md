@@ -1,3 +1,8 @@
+2019-01-21: 0.8.1
+-------------------------
+* Fixed serious bug where certain characters authorized via the new SSOv2 would show tokens as dying when they were in fact fine.
+* Node.js version bumped to v10.
+
 2019-01-14: 0.8.0
 -------------------------
 * Switch to SSO v2 for native applications for authorizing characters, characters entered previously continue to function as normal and can be gracefully upgraded to v2 by re-authorizing.

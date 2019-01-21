@@ -6,7 +6,7 @@ platform:
   - x64
 
 environment:
-  nodejs_version: "9"
+  nodejs_version: "10"
 
 init:
   - git config --global core.autocrlf true

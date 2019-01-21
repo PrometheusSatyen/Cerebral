@@ -71,7 +71,11 @@ export default class SsoClientv2 {
         let options = {
             method: 'POST',
             uri: this.constructUrl('token'),
-            body: `client_id=${this.clientId}&grant_type=refresh_token&refresh_token=${refreshToken}`,
+            body: queryString.stringify({
+                client_id: this.clientId,
+                grant_type: 'refresh_token',
+                refresh_token: refreshToken
+            }),
             headers: {
                 'User-Agent': `cerebral/${appProperties.version} ${appProperties.author_email}`,
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -95,7 +99,11 @@ export default class SsoClientv2 {
 
         switch(res.statusCode) {
             case 200:
-                log.verbose(`[SSOv2] Refresh successful, old refresh token = ${refreshToken}, new access token = ${body.access_token}, new refresh token = ${body.refresh_token}`);
+                if (refreshToken !== body.refresh_token) {
+                    log.info(`[SSOv2] Refresh successful, token changed, old refresh token = ${refreshToken}, new refresh token = ${body.refresh_token}`);
+                } else {
+                    log.verbose(`[SSOv2] Refresh successful, token unchanged, refresh token = ${refreshToken}`);
+                }
                 return {
                     accessToken: body.access_token,
                     accessTokenExpiry: new Date(new Date().getTime() + (body.expires_in * 1000)),
@@ -105,10 +113,10 @@ export default class SsoClientv2 {
             case 401:
             case 403:
                 if ((body.hasOwnProperty('error')) && (body.error !== undefined) && (body.error !== '')) {
-                    log.verbose(`[SSOv2] Refresh failed, refresh token = ${refreshToken}, error: ${body.error}`);
+                    log.warn(`[SSOv2] Refresh failed, refresh token = ${refreshToken}, error: ${body.error}`);
                     throw body;
                 } else {
-                    log.verbose(`[SSOv2] Refresh failed, refresh token = ${refreshToken}, unknown error`);
+                    log.warn(`[SSOv2] Refresh failed, refresh token = ${refreshToken}, unknown error`);
                     throw undefined;
                 }
             default:

@@ -22,8 +22,8 @@ if (isDevMode) {
     log.transports.console.level = 'verbose';
     log.transports.file.appName = 'Electron';
 } else {
-    log.transports.file.level = 'warn';
-    log.transports.console.level = 'warn';
+    log.transports.file.level = 'info';
+    log.transports.console.level = 'info';
 }
 
 const lockObtained = app.requestSingleInstanceLock();
